@@ -1,0 +1,207 @@
+@use 'base/variable' as *;
+@use 'base/mixin' as *;
+
+/* Why Choose Us Area ---------------------------------- */
+.why-img-box2 {
+    border-radius: 0 0 50px 0;
+    overflow: hidden;
+    margin-left: -315px;
+    margin-top: -120px;
+    img {
+        width: 100%;
+    }
+    @include xxl {
+        margin-left: -200px;
+    }
+    @include ml {
+        margin-left: 0;
+        margin-top: 0;
+        border-radius: 20px;
+    }
+}
+.why-feature-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 40px;
+    padding-top: 40px;
+    .why-feature-list-wrap {
+        display: flex;
+        gap: 30px;
+        position: relative;
+        padding-bottom: 40px;
+        &:after {
+            content: '';
+            position: absolute;
+            width: 1px;
+            height: calc(100% + 40px);
+            background: $border-color2;
+            left: 20px;
+            z-index: -1;
+            bottom: 0;
+        }
+        .number {
+            flex: none;
+            font-size: 18px;
+            font-weight: 500;
+            color: $theme-color;
+            box-shadow: 0px 0px 20px 10px rgba(190, 190, 190, 0.17);
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 50%;
+            display: inline-block;
+            text-align: center;
+            background: $white-color;
+        }
+        .feature-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 4px;
+            color: $title-color;
+            border-bottom: 1px solid $border-color2;
+            padding-bottom: 22px;
+            margin-bottom: 21px;
+        }
+        .feature-text {
+            margin-bottom: -0.5em;
+            color: $body-color;
+        }
+    }
+    @include sm {
+        grid-template-columns: repeat(1, 1fr);
+        .why-feature-list-wrap {
+            gap: 20px;
+        }
+    }
+}
+.why-info-card {
+    background: $white-color;
+    border-radius: 20px;
+    padding: 0px 20px 20px;
+    margin-top: 23px;
+    .box-icon {
+        position: relative;
+        top: -23px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: $white-color;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+    }
+    .box-title {
+        font-size: 18px;
+        font-weight: 400;
+        margin-top: -20px;
+        margin-bottom: -0.25em;
+        max-width: 150px;
+        @include xl {
+            font-size: 16px;
+        }
+        @include md {
+            font-size: 18px;
+        }
+        @include xs {
+            max-width: none;
+        }
+    }
+    &.style2 {
+        background: $smoke-color3;
+        .box-icon {
+            background: $smoke-color3;
+        }
+    }
+}
+.why-list-wrap {
+    ul {
+        display: flex;
+        gap: 20px 60px;
+        justify-content: center;
+        flex-wrap: wrap;
+        li {
+            color: $white-color;
+            img {
+                width: 28px;
+                align-self: self-start;
+            }
+        }
+    }
+}
+/* Why Choose Us Area 4---------------------------------- */
+.why-wrap4 {
+    border-radius: 24px;
+    overflow: hidden;
+    padding: 220px 60px;
+    @include ml {
+        padding: 120px 60px;
+    }
+    @include md {
+        padding: 80px 40px;
+    }
+    @include xs {
+        padding: 80px 20px;
+    }
+}
+.why-wrap-card4 {
+    background: $white-color;
+    padding: 60px 55px;
+    z-index: 1;
+    border-radius: 24px;
+    .sec-title {
+        font-weight: 600;
+        line-height: 1.15;
+        .number {
+            font-size: 68px;
+            font-weight: 900;
+            @include sm {
+                font-size: 50px;
+            }
+            @include xs {
+                font-size: 40px;
+            }
+        }
+        .content {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 3px;
+            @include xs {
+                font-size: 24px;
+            }
+        }
+    }
+    @include xxl {
+        margin-left: -100px;
+    }
+    @include ml {
+        margin-left: 0;
+    }    
+    @include sm {
+        padding: 50px 30px;
+    }
+}
+.why-card4 {
+    background: $white-color;
+    border-radius: 24px;
+    padding: 30px;
+    margin-bottom: -160px;
+    .box-icon {
+        background: $title-color;
+        width: 80px;
+        height: 80px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+    }
+    .box-title {
+        margin-bottom: 8px;
+    }
+    @include ml {
+        margin-bottom: 0;
+    }
+}

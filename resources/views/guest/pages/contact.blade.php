@@ -1,0 +1,98 @@
+@extends('guest.layouts.app-template')
+
+@section('title', 'CITABIC | ' . __('site.nav.contact'))
+
+@section('content')
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('guest/assets/img/bg/breadcumb-bg.jpg') }}">
+        <div class="breadcumb-overlay" data-bg-src="{{ asset('guest/assets/img/bg/breadcumb-bg-overlay.png') }}"></div>
+        <div class="container">
+            <div class="breadcumb-content">
+                <h1 class="breadcumb-title">{{ __('site.breadcrumbs.contact') }}</h1>
+                <ul class="breadcumb-menu">
+                    <li><a href="{{ route('home') }}">{{ __('site.nav.home') }}</a></li>
+                    <li>{{ __('site.breadcrumbs.contact') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-info-area space">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-md-6 col-xl-4">
+                    <div class="contact-feature">
+                        <div class="box-icon"><img src="{{ asset('guest/assets/img/icon/location-dot.svg') }}" alt="icon"></div>
+                        <div class="media-body">
+                            <h3 class="box-title">{{ __('site.contact.address') }}</h3>
+                            <p class="box-text">{{ $company['head_office'] }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="contact-feature">
+                        <div class="box-icon"><img src="{{ asset('guest/assets/img/icon/phone.svg') }}" alt="icon"></div>
+                        <div class="media-body">
+                            <h3 class="box-title">{{ __('site.contact.phone') }}</h3>
+                            <p class="box-text"><a href="tel:{{ preg_replace('/\s+/', '', $company['phone']) }}">{{ $company['phone'] }}</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="contact-feature">
+                        <div class="box-icon"><img src="{{ asset('guest/assets/img/icon/envelope.svg') }}" alt="icon"></div>
+                        <div class="media-body">
+                            <h3 class="box-title">{{ __('site.contact.email') }}</h3>
+                            <p class="box-text"><a href="mailto:{{ $company['email'] }}">{{ $company['email'] }}</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="space contact-area-5 z-index-common" id="contact-sec">
+        <div class="contact-thumb6-1">
+            <img src="{{ asset('guest/assets/img/normal/contact_thumb_6_1.png') }}" alt="img">
+        </div>
+        <div class="container">
+            <div class="row gx-60 gy-60 justify-content-end">
+                <div class="col-lg-6">
+                    <div class="appointment-wrap contact-wrap6">
+                        <h2 class="form-title fw-semibold mb-35">{{ __('site.contact.title') }}</h2>
+                        <form action="{{ route('contact.submit') }}" method="POST" class="appointment-form ajax-contact">
+                            @csrf
+                            <div class="row">
+                                <div class="form-group style-border2 style-radius col-lg-6">
+                                    <input type="text" class="form-control" name="name" id="name" placeholder="{{ __('site.contact.name_placeholder') }}">
+                                    <i class="fal fa-user"></i>
+                                </div>
+                                <div class="form-group style-border2 style-radius col-lg-6">
+                                    <input type="email" class="form-control" name="email" id="email" placeholder="{{ __('site.contact.email_placeholder') }}">
+                                    <i class="fal fa-envelope"></i>
+                                </div>
+                                <div class="form-group style-border2 style-radius col-md-12">
+                                    <select name="subject" id="subject" class="form-select">
+                                        <option value="" disabled selected hidden>{{ __('site.contact.subject_placeholder') }}</option>
+                                        <option value="{{ __('site.contact.subjects.civil') }}">{{ __('site.contact.subjects.civil') }}</option>
+                                        <option value="{{ __('site.contact.subjects.building') }}">{{ __('site.contact.subjects.building') }}</option>
+                                        <option value="{{ __('site.contact.subjects.real_estate') }}">{{ __('site.contact.subjects.real_estate') }}</option>
+                                        <option value="{{ __('site.contact.subjects.general') }}">{{ __('site.contact.subjects.general') }}</option>
+                                    </select>
+                                    <i class="fal fa-angle-down"></i>
+                                </div>
+                                <div class="col-12 form-group style-border2 style-radius">
+                                    <i class="far fa-comments"></i>
+                                    <textarea name="message" placeholder="{{ __('site.contact.message_placeholder') }}" class="form-control"></textarea>
+                                </div>
+                                <div class="col-12 form-btn">
+                                    <button class="th-btn style4">{{ __('site.actions.send') }} <span class="btn-icon"><img src="{{ asset('guest/assets/img/icon/paper-plane.svg') }}" alt="img"></span></button>
+                                </div>
+                            </div>
+                            <p class="form-messages mb-0 mt-3"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

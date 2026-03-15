@@ -1,0 +1,128 @@
+@use 'base/variable' as *;
+@use 'base/mixin' as *;
+
+/* Award ---------------------------------- */
+.award-slider1 {
+    .client-card {
+        filter: grayscale(1) opacity(0.5);
+        &:hover {
+            filter: none;
+        }
+    }
+}
+.award-list-wrap {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.award-single-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    border-bottom: 1px solid rgba(196, 207, 222, 0.4);
+    padding-bottom: 30px;
+    &:not(:last-child) {
+        margin-bottom: 30px;
+    }
+    .box-title {
+        margin-bottom: 11px;
+        @include xs {
+            font-size: 20px;
+        }
+    }
+    .award-single-list-text {
+        margin-bottom: -0.5em;
+        font-size: 18px;
+    }
+    .icon-btn {
+        background: transparent;
+        border: 1px solid rgba(196, 207, 222, 0.4);
+        border-radius: 50%;
+        i.rotate-right {
+            transform: rotate(45deg);
+            transition: 0.4s;
+        }
+        &:hover {
+            border: 1px solid $theme-color;
+            i {
+                color: $theme-color
+            }
+        }
+    }
+}
+
+/*award-area3********************/
+.award-title-wrap3 {
+    max-width: 466px;
+    margin-top: 110px;
+    @include xxl {
+        margin-top: 0;
+    }
+    @include ml {
+        max-width: none;
+    }
+}
+.award-wrap3 {
+    padding: 75px 100px;
+    margin-left: -596px;
+    margin-top: 30px;
+    border-radius: 24px;
+    @include xxl {
+        padding: 66px 50px;
+        margin-left: -480px;
+    }
+    @include ml {
+        margin-left: 0;
+    }
+}
+.award-thumb1-1 {
+    border-radius: 24px;
+    overflow: hidden;
+    img {
+        width: 100%;
+    }
+}
+.award-experience-wrap {
+    text-align: center;
+    margin-bottom: 32px;
+    .award-counter-title {
+        font-size: 96px;
+        font-weight: 600;
+        color: $title-color;
+        line-height: 0.74;
+        margin-bottom: 24px;
+    }
+    .award-counter-text {
+        font-size: 40px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        margin-top: 0;
+        line-height: 0.8;
+        -webkit-text-stroke: 1px $title-color;
+        -webkit-text-fill-color: transparent;
+    }
+    @include ml {
+        text-align: start;
+        .award-counter-title {
+            font-size: 70px;
+        }
+        .award-counter-text {
+            font-size: 30px;
+        }
+    }
+    @include lg {
+        .award-counter-title {
+            font-size: 50px;
+        }
+        .award-counter-text {
+            font-size: 24px;
+        }
+    }
+    @include sm {
+        .award-counter-title {
+            font-size: 40px;
+        }
+    }
+}

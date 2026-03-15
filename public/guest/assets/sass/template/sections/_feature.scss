@@ -1,0 +1,126 @@
+@use 'base/variable' as *;
+@use 'base/mixin' as *;
+
+/* Feature Area ---------------------------------- */
+.feature-thumb1-1 {
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: -38px;
+    img {
+        width: 100%;
+    }
+    @include lg {
+        margin-top: 0;
+    }
+}
+.feature-list-wrap {
+    display: flex;
+    gap: 40px;
+    @include sm {
+        display: block;
+        .feature-card {
+            &:not(:last-child) {
+                margin-bottom: 40px;
+            }
+        }
+    }
+}
+.feature-card {
+    text-align: center;
+    .icon-wrap {
+        border-radius: 20px;
+        background: rgba($color: #ffffff, $alpha: 0.1);
+        padding: 25px 20px;
+    }
+    .box-icon {
+        margin-bottom: 20px;
+        img {
+            transition: 0.4s;
+        }
+    }
+    .box-title {
+        color: $white-color;
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: -0.35em;
+        @include xl {
+            font-size: 20px;
+        }
+    }
+    .box-text {
+        color: $light-color;
+        margin-top: 23px;
+        text-align: left;
+        @include ml {
+            font-size: 14px;
+        }
+        @include sm {
+            font-size: 16px;
+            text-align: center;
+        }
+    }
+    &:hover {
+        .box-icon {
+            img {
+                transform: rotateY(180deg);
+            }
+        }
+    }
+}
+
+/* Feature Area 2---------------------------------- */
+.feature-card2 {
+    text-align: center;
+    position: relative;
+    padding: 0 40px 40px;
+    &:after {
+        content: '';
+        position: absolute;
+        inset: 126px 0 0 0;
+        border-radius: 50px;
+        border: 1px solid $border-color2;
+    }
+    .box-img {
+        border-radius: 50px;
+        overflow: hidden;
+        margin: 0 14px;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 40px;
+        img {
+            width: 100%;
+            transition: 0.4s;
+        }
+    }
+    .box-title {
+        letter-spacing: 0.02em;
+        font-weight: 600;
+    }
+    &:hover {
+        .box-img {
+            img {
+                transform: scale(1.1);
+            }
+            &:after {
+                animation: imgShine 1s;
+            }
+        }
+    }
+    @include md {
+        .box-img {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+    @include xs {
+        padding: 0 30px 40px;
+    }
+    @include vxs {
+        &:after {
+            border-radius: 30px;
+        }
+        .box-img {
+            border-radius: 30px;
+        }
+    }
+}

@@ -1,0 +1,111 @@
+@use 'base/variable' as *;
+@use 'base/mixin' as *;
+
+.widget_nav_menu,
+.widget_meta,
+.widget_pages,
+.widget_archive,
+.widget_categories,
+.wp-block-categories {
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 0 0;
+    }
+    a {
+        display: block;
+        background-color: $white-color;
+        margin: 0 0 14px;
+        padding: 20.5px 25px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1;
+        color: $body-color;
+        border-radius: 30px;
+        border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.2);
+        transition: 0.4s ease-in-out;
+    }
+
+    li {
+        display: block;
+        position: relative;
+        span {
+            color: inherit;
+            position: absolute;
+            right: 25px;
+            top: 21px;
+            pointer-events: none;
+            text-align: right;
+        }
+    }
+    .menu,
+    > ul {
+        > li {
+            &:last-child {
+                > a {
+                    border-bottom: none;
+                }
+            }
+        }
+    }
+     
+    a {
+        &:hover {
+            background: $theme-color;
+            color: $white-color;
+            &::before {
+                opacity: 1;
+                color: $white-color;
+            }
+            ~ span {
+                color: $white-color;
+            }
+        }
+    }
+
+    .sub-menu,
+    .children {
+        margin-left: 10px;
+    }
+}
+
+.wp-block-categories {
+    list-style: none;
+    padding: 0;
+    > li {
+        &:last-child {
+            > a {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+.widget_nav_menu,
+.widget_meta,
+.widget_pages {
+    a {
+        padding-right: 20px;
+    }
+}
+
+.widget_nav_menu {
+    .sub-menu {
+        margin-left: 10px;
+    }
+}
+
+.wp-block-archives {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 20px;
+
+    a:not(:hover) {
+        color: inherit;
+    }
+}
+
+.th-blog ul.wp-block-archives li {
+    margin: 5px 0;
+}

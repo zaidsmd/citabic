@@ -1,0 +1,665 @@
+@use 'base/variable' as *;
+@use 'base/mixin' as *;
+
+
+
+
+
+
+
+
+
+
+/* Home 6 ---------------------------------- */
+.hero-style6 {
+    padding: 73px 0 104px;
+    .hero-text {
+        margin-bottom: -0.3em;
+    }
+    @include lg {
+        padding: 70px 0 120px;
+    }
+    @include md {
+        padding: 70px 0 50px;
+    }
+}
+.hero-thumb6-1 {
+    display: inline-flex;
+    gap: 24px;
+    margin-right: -232px;
+    position: relative;
+    margin-bottom: 24px;
+    .img1 {
+        margin-top: 133px;
+    }
+    .img2,
+    .img1 {
+        img {
+            border-radius: 16px;
+        }
+    }
+    .about-tag {
+        position: absolute;
+        left: 50%;
+        bottom: 52px;
+        padding: 0;
+        height: 150px;
+        width: 150px;
+        text-align: center;
+        line-height: 150px;
+        transform: translate(-50%, 0);
+        .about-experience-tag {
+            color: $title-color;
+            background: rgba($color: #ffffff, $alpha: 0.8);
+            backdrop-filter: blur(5px);
+            height: 150px;
+            width: 150px;
+            margin-left: -75px;
+            margin-top: -75px;
+            font-size: 14px;
+            font-weight: 500;
+            span {
+                --rotate-letter: 16deg;
+                height: 68px;
+                position: absolute;
+                width: 14px;
+                left: 42%;
+                top: 3px;
+            }
+        }
+        .about-tag-icon {
+            z-index: 1;
+            position: relative;
+        }
+    }
+    @media (max-width: 1700px) {
+        margin-right: -136px;
+    }
+    @include xxl {
+        margin-right: 0;
+    }
+    @include lg {
+        margin-bottom: 0;
+    }
+    @include xs {
+        display: block; 
+        .img1 {
+            margin-top: 0;
+            margin-bottom: 24px;
+        }  
+        .about-tag {
+            bottom: 50%;
+            transform: translate(-50%, 50%);
+        }
+    }
+}
+.hero-6 {
+    .hero-form-wrap {
+        position: relative;
+    }
+    .property-search-form {
+        display: block;
+        max-width: 526px;
+        padding: 0;
+        border: 0;
+        background: $white-color;
+        margin-bottom: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        transform: translate(0, -56px);
+        label {
+            height: auto;
+            line-height: inherit;
+            padding: 15px 32px;
+            text-align: center;
+        }
+        .property-form {
+            padding: 32px;
+        }
+        .form-control,
+        .form-select {
+            border: 1px solid $border-color;
+            border-radius: 4px;
+            max-width: none;
+            height: 36px;
+            line-height: 33px;
+            padding: 0 12px;
+            background-position: right 12px center;
+            background: transparent;
+        }
+        .btn-wrap {
+            margin-top: 32px;
+        }
+        .th-btn {
+            padding: 16px 32px;
+        }
+        @include lg {
+            .form-select {
+                margin: 0;
+                width: 100%;
+            }
+            .th-btn {
+                margin: 0;
+                width: auto;
+            }
+        }
+        @include md {
+            max-width: none;
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.07));
+            position: relative;
+            transform: none;
+            margin-bottom: 30px;
+        }
+    }
+    .hero-thumb6-2 {
+        margin: 0 -232px;
+        position: relative;
+        img {
+            border-radius: 24px;
+            min-height: 600px;
+            object-fit: cover;
+        }
+        .play-btn {
+            position: absolute;
+            right: 85px;
+            bottom: 85px;
+        }
+        @media (max-width: 1700px) {
+            margin: 0 -100px;
+        }
+        @include xxl {
+            margin: 0 -50px;
+        }
+        @include xl {
+            margin: 0 -20px;
+        }
+        @include md {
+            margin: 0;
+            .play-btn {
+                right: 50%;
+                bottom: 50%;
+                transform: translate(50%, 50%);
+            }
+        }
+        @include sm {
+            img {
+                min-height: 400px
+            }
+        }
+    }
+}
+
+/* Property Area 4-------------------------------*/
+.property-area-4 {
+    margin-top: -400px;
+    padding-top: calc(var(--section-space) + 400px);
+    @include md {
+        margin-top: -350px;
+        padding-top: calc(var(--section-space-mobile) + 350px);
+    }
+}
+.property-card4 {
+    .property-card-thumb {
+        overflow: hidden;
+        position: relative;
+        img {
+            border-radius: 24px;
+            width: 100%;
+        }
+        .property-card-tag {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            background: $white-color;
+            border-radius: 8px;
+            padding: 9px 16px;
+        }
+        .th-btn {
+            position: absolute;
+            right: 24px;
+            bottom: 24px;
+            border-radius: 16px;
+            background: $white-color;
+            width: 72px;
+            height: 72px;
+            line-height: 72px;
+            min-width: auto;
+            padding: 0;
+        }
+        .property-card-hover-wrap {
+            background: $white-color;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: 0 16px;
+            border-radius: 16px 16px 0 0;
+            transition: 0.4s;
+            transform: translate(0, calc(100% + 40px));
+            .th-btn {
+                position: absolute;
+                top: 0;
+                transform: translate(0, -50%);
+                background: $theme-color;
+                border: 2px solid $white-color;
+            }
+            .property-card-price {
+                padding: 30px 27px 20px;
+                border-bottom: 1px solid $border-color;
+                font-size: 24px;
+                font-weight: 500;
+                font-family: $title-font;
+                color: $title-color;
+                span {
+                    font-size: 14px;
+                    font-weight: 400;
+                    color: $body-color;
+                }
+            }
+            .property-card-meta {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                padding: 24px 27px;
+                gap: 15px;
+                .meta-wrap {
+                    flex: none;
+                }
+                .meta-title {
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: $body-color;
+                    margin-bottom: 0;
+                    margin-top: -0.3em;
+                }
+                .meta-content {
+                    margin-bottom: -0.3em;
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: $theme-color;
+                }
+            }
+        }
+    }
+    .property-card-location {
+        font-size: 16px;
+        font-weight: 40;
+        color: $white-color;
+        margin-top: 24px;
+        margin-bottom: 15px;
+    }
+    .box-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: -0.1em;
+        a {
+            color: $white-color;
+            &:hover {
+                color: $theme-color2;
+            }
+        }
+    }
+    &:hover {
+        .property-card-thumb {
+            .th-btn {
+                opacity: 0;
+                transform: translate(0, -100%);
+                visibility: hidden;
+            }
+            .property-card-hover-wrap {
+                transform: translate(0 , 0);
+                .th-btn {
+                    transform: translate(0, -50%);
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+        }
+    }
+}
+
+/* About area -------------------------------*/
+.img-box6 {
+    position: relative;
+    padding-left: 172px;
+    .img1 {
+        border-radius: 32px;
+        overflow: hidden;
+        display: inline-block;
+    }
+    .img2 {
+        border-radius: 32px;
+        border: 2px solid $white-color;
+        display: inline-block;
+        overflow: hidden;
+        position: absolute;
+        left: -200px;
+        bottom: -200px;
+    }
+    .about-tag {
+        padding: 0;
+        position: absolute;
+        left: 110px;
+        bottom: 130px;
+        .about-experience-tag {
+            color: $title-color;
+            height: 200px;
+            width: 200px;
+            margin-left: -100px;
+            margin-top: -100px;
+            span {
+                height: 105px;
+            }
+        }
+        .play-btn {
+            --icon-size: 107px;
+            border: 0;
+            border-radius: 50%;
+        }
+    }
+    @include xxl {
+        padding-bottom: 63px;
+        .img2 {
+            left: 0;
+            bottom: 0;
+        }
+        .about-tag {
+            position: absolute;
+            left: 50px;
+            bottom: auto;
+            top: 20px;
+            .play-btn {
+                --icon-size: 80px;
+            }
+            .about-experience-tag {
+                height: 150px;
+                width: 150px;
+                margin-left: -75px;
+                margin-top: -75px;
+                span {
+                    --rotate-letter: 10deg;
+                    height: 80px;
+                    left: 38%;
+                    top: -3px;
+                }
+            }
+        }
+    }
+    @include ml {
+        padding-bottom: 86px;
+    }
+    @include xl {
+        padding-bottom: 128px;
+    }
+    @include lg {
+        padding-left: 212px;
+        .about-tag {
+            left: 60px;
+            top: 70px;
+        }
+    }
+    @include sm {
+        padding-left: 192px;
+        padding-bottom: 248px;
+    }
+    @include xs {
+        padding-left: 0;
+        padding-bottom: 0;
+        .img2 {
+            position: initial;
+            margin-top: 20px;
+            display: block;
+            border: 0;
+            img {
+                width: 100%;
+            }
+        }
+    }
+}
+
+/* About 7 ---------------------------------- */
+.img-box7 {
+    .img1 {
+        img {
+            border-radius: 24px;
+            width: 100%;
+        }
+    }
+}
+
+/* Destination Area 1 ---------------------------------- */
+.destination-wrap1 {
+    position: relative;
+    left: calc((100% - var(--main-container)) / 2);
+    @include xl {
+        left: 0;
+        padding: 0 40px;
+    }
+    @include xs {
+        padding: 0;
+    }
+}
+.destination-card {
+    position: relative;
+    .card-thumb {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        img {
+            width: 100%;
+            border-radius: 16px;
+        }
+        &:after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 34.2%, $theme-color 120.74%);
+        }
+    }
+    .card-details {
+        position: absolute;
+        left: 0;
+        right: 0;
+        text-align: center;
+        bottom: 32px;
+        padding: 0 40px;
+    }
+    .box-title {
+        bottom: 32px;
+        margin-bottom: -0.3em;
+        font-size: 20px;
+        font-weight: 500;
+        text-transform: uppercase;
+        a {
+            color: $white-color;
+            &:hover {
+                color: $theme-color2;
+            }
+        }
+    }
+    .box-text {
+        color: $white-color;
+        font-size: 18px;
+        font-weight: 400;
+        margin-top: 5px;
+    }
+}
+
+/* team area 6-------------------------------*/
+.team-thumb-slider-wrap {
+    margin-top: 24px;
+    @include lg {
+        margin-bottom: 24px;
+    }
+}
+.team-thumb-slider1 {
+    height: 831px;
+    .swiper-wrapper {
+        padding: 0 !important;
+    }
+    .team-box-img {
+        border-radius: 24px;
+        overflow: hidden;
+        transition: 0.4s;
+        .team-img {
+            height: 100%;
+            object-fit: cover;
+        }
+        @include xl {
+            height: 261px;
+        }
+    }
+    .swiper-slide {
+        cursor: pointer;
+        &.swiper-slide-thumb-active {
+            .team-box-img {
+                filter: blur(4px);
+            }
+        }
+    }
+    @include lg {
+        height: auto;
+        .team-box-img {
+            width: 100%;
+            height: auto;
+            .team-img {
+                width: 100%;
+                object-position: top;
+            }
+        }
+    }
+}
+.team-slider6 {
+    .swiper-slide {
+        opacity: 0 !important;
+        &.swiper-slide-active {
+            opacity: 1 !important;
+        }
+    }
+    .icon-box {
+        position: absolute;
+        left: 50%;
+        bottom: 40px;
+        transform: translate(calc(-50% + 102px), 0);
+        z-index: 1;
+        --icon-size: 64px;
+        gap: 10px;
+        .slider-arrow {
+            background: transparent;
+            border: 1px solid $white-color;
+            &:not(:last-child) {
+                margin-right: 15px;
+            }
+            img {
+                filter: brightness(1) invert(1);
+                width: 24px;
+                height: 24px;
+            }
+            &:hover {
+                background: $white-color;
+                img {
+                    filter: none;
+                }
+            }
+        }
+        @include ml {
+            transform: translate(calc(-50% + 120px), 0);
+        }
+        @include xl {
+            transform: translate(calc(-50% + 170px), 0);
+        }
+        @include md {
+            .slider-arrow img {
+                width: auto;
+                height: auto;
+            }
+        }
+        @include sm {
+            left: auto;
+            right: 0;
+            transform: none;
+            bottom: 0;
+            .slider-arrow {
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+            }
+        }
+        @include vxs {
+            display: none;
+        }
+    }
+}
+.team-card5 {
+    display: flex;
+    .team-img {
+        background: $white-color;
+        border-radius: 24px;
+        overflow: hidden;
+    }
+    .team-card-content {
+        padding: 24px 24px 24px 40px;
+        align-self: center;
+        .box-title {
+            font-size: 40px;
+            font-weight: 500;
+            margin-bottom: 0px;
+            a {
+                color: $white-color;
+                &:hover {
+                    color: $theme-color2;
+                }
+            }
+        }
+        .team-desig {
+            margin-bottom: 33px;
+            display: block;
+            color: $white-color;
+        }
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 24px;
+            font-weight: 400;
+            color: $white-color;
+            &:not(:last-child) {
+                margin-bottom: 16px;
+            }
+            &:hover {
+                color: $theme-color2;
+            }
+        }
+        .icon-btn {
+            border: 1px solid $white-color;
+            background: transparent;
+            line-height: 35px;
+            img {
+                filter: contrast(0) brightness(2);
+            }
+        }
+    }
+    @include sm {
+        .team-card-content {
+            padding: 24px;
+            align-self: flex-start;
+            .box-title {
+                font-size: 24px;
+            }
+            .contact-info {
+                font-size: 16px;
+            }
+        }
+    }
+    @include xs {
+        display: block;
+        .team-card-content {
+            padding: 24px 0 0;
+            .team-desig {
+                margin-bottom: 25px;
+            }
+        }
+    }
+}
