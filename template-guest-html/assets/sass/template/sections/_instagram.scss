@@ -1,0 +1,59 @@
+@use 'base/variable' as *;
+@use 'base/mixin' as *;
+
+/* Instagram Area 1-------------------------------*/
+.instagram-slider1 {
+    margin-left: -250px;
+    margin-right: -250px;
+    @include xl {
+        margin-right: -100px;
+        margin-left: -100px;
+    }
+    @include sm {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+.insta-box {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    &:after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: $black-color2;
+        opacity: 0.3;
+        transition: 0.4s;
+    }
+    img {
+        width: 100%;
+    }
+    .icon-btn {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        z-index: 1;
+        height: auto;
+        width: auto;
+        border: 0;
+        line-height: normal;
+        font-size: 26px;
+        color: $white-color;
+        background: transparent;
+        &:hover {
+            color: $theme-color;
+        }
+    }
+    &:hover {
+        &:after {
+            opacity: 0.5;
+        }
+        .icon-btn {
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -50%) scale(1.5);
+
+        }
+    }
+}

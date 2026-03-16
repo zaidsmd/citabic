@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('company_infos', function (Blueprint $table) {
             $table->id();
             $table->string('key');
-            $table->string('value');
+            $table->text('value');
             $table->string('lang');
             $table->timestamps();
         });

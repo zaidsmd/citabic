@@ -1,0 +1,56 @@
+@use 'base/variable' as *;
+@use 'base/mixin' as *;
+
+/* Skill Area ---------------------------------- */
+.skill-feature {
+    .skill-feature-icon {
+        height: 60px;
+    }
+    &:not(:last-child) {
+        margin-bottom: 30px;
+    }
+    .skill-feature-logo-wrap {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        flex-wrap: wrap;
+    }
+    &_title {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        margin-top: -0.2em;
+        font-family: $title-font;
+        color: $title-color;
+        @include xl {
+            font-size: 20px;
+        }
+    }
+    .progress {
+        position: relative;
+        height: 8px;
+        background-color: $smoke-color;
+        overflow: visible;
+        border-radius: 10px;
+    }
+    .progress-bar {
+        background-color: $theme-color;
+        height: 4px;
+        border-radius: inherit;
+        overflow: visible;
+        position: relative;
+        border: 0;
+        margin: 2px;
+        border-radius: 10px;
+    }
+    .progress-value {
+        font-size: 18px;
+        font-weight: 500;
+        font-family: $title-font;
+        color: $title-color;
+        text-align: end;
+        position: absolute;
+        right: 0;
+        top: -30px;
+    }
+}

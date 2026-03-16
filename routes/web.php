@@ -46,6 +46,7 @@ Route::prefix('admins')->name('admin.')->middleware('admin.auth')->group(functio
 
     Route::resource('certifications', \App\Http\Controllers\Admin\CertificationController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     Route::get('company-info', [\App\Http\Controllers\Admin\CompanyInfoController::class, 'index'])->name('company-info.index');
+    Route::put('company-info', [\App\Http\Controllers\Admin\CompanyInfoController::class, 'update'])->name('company-info.update');
 
     Route::resource('processes', ProcessController::class);
     Route::resource('values', ValueController::class);

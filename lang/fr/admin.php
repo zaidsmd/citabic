@@ -10,7 +10,12 @@ return [
         'cancel' => 'Annuler',
         'edit' => 'Editer',
         'delete' => 'Supprimer',
-        'actions' => 'Actions'
+        'actions' => 'Actions',
+        'save' => 'Enregistrer',
+    ],
+    'language' => [
+        'fr' => 'Francais',
+        'en' => 'Anglais',
     ],
     'certifications' => [
         'title' => 'Certifications',
@@ -45,6 +50,48 @@ return [
                 'create_help' => 'Une image est requise pour les nouvelles certifications.',
                 'edit_help' => 'Laissez vide pour conserver l\'image actuelle.',
             ],
+        ],
+    ],
+    'company_info' => [
+        'title' => 'Informations de l\'entreprise',
+        'subtitle' => 'Gerez les informations juridiques et de contact affichees sur le site.',
+        'language_title' => 'Langue d edition',
+        'language_help' => 'Choisissez la langue a modifier.',
+        'last_updated' => 'Derniere mise a jour',
+        'messages' => [
+            'updated' => 'Les informations de l entreprise ont ete mises a jour avec succes.',
+        ],
+        'sections' => [
+            'basic_info' => 'Informations de base',
+            'contact_info' => 'Informations de contact',
+            'legal_info' => 'Informations legales',
+        ],
+        'status' => [
+            'active' => 'Actif',
+            'inactive' => 'Inactif',
+            'pending' => 'En attente',
+        ],
+        'labels' => [
+            'legal_name' => 'Raison sociale',
+            'address' => 'Adresse',
+            'phone' => 'Telephone',
+            'email' => 'Email',
+            'legal_form' => 'Forme juridique',
+            'capital' => 'Capital',
+            'ice' => 'ICE',
+            'rc' => 'RC',
+            'status' => 'Statut',
+            'creation_date' => 'Date de creation',
+            'full_name' => 'Nom complet',
+        ],
+        'placeholders' => [
+            'full_name' => 'Groupe CITABIC',
+            'legal_name' => 'CITABIC SARL',
+            'legal_form' => 'SARL',
+            'address' => 'Adresse complete de l entreprise',
+        ],
+        'help' => [
+            'full_name' => 'Nom public affiche sur le site.',
         ],
     ],
 ];

@@ -1,0 +1,26 @@
+@use 'base/variable' as *;
+@use 'base/mixin' as *;
+
+/* Client Card -------------------------------------*/
+.client-card {
+    text-align: center;
+    transition: 0.4s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+/*client area 3****************/
+.client-slider3 {
+    border-bottom: 1px solid $light-color;
+    padding-bottom: 32px;
+    .client-card {
+        filter: invert(1) brightness(0);
+        &:hover {
+            filter: none;
+        }
+    }
+}
