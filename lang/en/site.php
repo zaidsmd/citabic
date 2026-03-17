@@ -119,4 +119,5 @@ return [
         'fr_name' => 'Francais',
         'en_name' => 'English',
     ],
+    'about'=>'About US'
 ];

@@ -11,7 +11,7 @@ class CompanyInfoRequest extends FormRequest
     {
 
         return [
-            CompanyInfoKey::CREATION_DATE->value => 'required|date|date_format:Y-m-d',
+            CompanyInfoKey::CREATION_DATE->value => 'required|date|date_format:m/d/Y',
             CompanyInfoKey::FULL_NAME->value => 'required|string|max:255',
             CompanyInfoKey::LEGAL_NAME->value => 'required|string|max:255',
             CompanyInfoKey::STATUS->value => 'required|string|max:255',

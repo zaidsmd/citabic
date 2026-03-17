@@ -1,3 +1,4 @@
+@php use App\Helpers\NumberWrapper; @endphp
 @extends('guest.layouts.app-template')
 
 @section('title', 'CITABIC | ' . __('site.nav.home'))
@@ -21,9 +22,8 @@
             content: "";
             position: absolute;
             inset: 0;
-            background:
-                linear-gradient(0deg, rgba(249, 99, 20, 0.24), rgba(249, 99, 20, 0.24)),
-                linear-gradient(90deg, rgba(11, 16, 27, 0.56) 0%, rgba(11, 16, 27, 0.34) 48%, rgba(11, 16, 27, 0.56) 100%);
+            background: linear-gradient(0deg, rgba(249, 99, 20, 0.24), rgba(249, 99, 20, 0.24)),
+            linear-gradient(90deg, rgba(11, 16, 27, 0.56) 0%, rgba(11, 16, 27, 0.34) 48%, rgba(11, 16, 27, 0.56) 100%);
         }
 
         .hero-slider10 .swiper-slide {
@@ -49,37 +49,42 @@
 
     </style>
     <div class="th-hero-wrapper hero-10 bg-smoke2" id="hero">
-        <div class="hero-slider10" id="heroSlide10">
+        <div class="swiper th-slider hero-slider10" id="heroSlide10"
+             data-slider-options='{"effect":"fade","loop":false,"autoHeight": true}'>
+            <div class="swiper-wrapper">
                 <div class="swiper-slide">
-                    <div class="th-hero-bg"
-                     data-mask-src="{{ asset('guest/assets/img/hero/hero_10_bg_mask.png') }}"
-                     style="-webkit-mask-image: url('{{ asset('guest/assets/img/hero/hero_10_bg_mask.png') }}'); mask-image: url('{{ asset('guest/assets/img/hero/hero_10_bg_mask.png') }}'); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: cover; mask-size: cover;">
-                    <div class="hero-video-bg-wrap">
-                        <video data-hero-video data-playback-rate="0.7" autoplay muted loop playsinline poster="{{ asset('guest/assets/img/hero/hero_bg_10_1.jpg') }}">
-                            @if (! empty($site['hero_video_url']))
-                                <source src="{{ $site['hero_video_url'] }}" type="video/mp4">
-                            @endif
-                        </video>
+                    <div class="th-hero-bg" data-bg-src="{{asset('guest/assets/img/hero/hero_bg_10_1.jpg')}}"
+                         data-mask-src="{{asset('guest/assets/img/hero/hero_10_bg_mask.png')}}">
+                        <div class="hero-video-bg-wrap">
+                            <video data-hero-video data-playback-rate="0.7" autoplay muted loop playsinline
+                                   poster="{{ asset('guest/assets/img/hero/hero_bg_10_1.jpg') }}">
+                                @if (! empty($site['hero_video_url']))
+                                    <source src="{{ $site['hero_video_url'] }}" type="video/mp4">
+                                @endif
+                            </video>
+                        </div>
                     </div>
-                    <img src="{{ asset('guest/assets/img/hero/hero_bg_overlay10_1.png') }}" alt="img">
-                </div>
-                <div class="container">
-                    <div class="hero-inner">
-                        <div class="row justify-content-center">
-                            <div class="col-xl-10">
-                                <div class="hero-style10 text-center">
-                                    <span class="hero-sub-title text-theme" data-ani="slideinup" data-ani-delay="0.3s">{{ $company['full_name'] }}</span>
-                                    <h1 class="hero-title text-white">
-                                        <span class="title1" data-ani="slideinup" data-ani-delay="0.4s">{{ $company['tagline'] }}</span>
-                                    </h1>
-                                    <div class="btn-wrap justify-content-center" data-ani="slideinup" data-ani-delay="0.7s">
-                                        <a href="{{ route('references.index') }}" class="th-btn style4 th-btn-icon">{{ __('site.actions.see_references') }}</a>
-                                        <a href="{{ route('contact') }}" class="th-btn style-border ms-3">{{ __('site.actions.contact_company') }}</a>
+                    <div class="container">
+                        <div class="hero-inner">
+                            <div class="row justify-content-center">
+                                <div class="col-xl-10">
+                                    <div class="hero-style10 text-center">
+                                        <span class="hero-sub-title text-theme" data-ani="slideinup"
+                                              data-ani-delay="0.3s">{{\App\Models\SectionContent::where('section',\App\Enums\Section::HERO->value)->where('language',config('app.locale'))->where('key',\App\Enums\ContentKey::HERO_SUBTITLE->value)->first()?->value}}</span>
+                                        <h1 class="hero-title text-white">
+                                            <span class="title1" data-ani="slideinup" data-ani-delay="0.4s">
+                                                {{\App\Models\SectionContent::where('section',\App\Enums\Section::HERO->value)->where('language',config('app.locale'))->where('key',\App\Enums\ContentKey::HERO_TITLE->value)->first()?->value}} </span>
+                                        </h1>
+                                        <div class="btn-wrap justify-content-center" data-ani="slideinup"
+                                             data-ani-delay="0.7s">
+                                            <a href="contact.html" class="th-btn style4 th-btn-icon">Discover More</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -95,13 +100,13 @@
         </div>
     </div>
 
-    <div class="bg-smoke2 overflow-hidden pt-60 pt-xl-0 pb-60">
+    <div class="bg-smoke2 overflow-hidden pt-60  pb-60">
         <div class="container">
             <div class="counter-card-wrap">
-                @foreach (array_slice($site['figures'], 0, 4) as $figure)
+                @foreach ($site['figures'] as $figure)
                     <div class="counter-card style4">
                         <div class="media-body">
-                            <h2 class="box-number">{{ $figure['value'] }}</h2>
+                            <h2 class="box-number">{!! NumberWrapper::wrapNumbers($figure['value']) !!}</h2>
                             <p class="box-text">{{ $figure['label'] }}</p>
                         </div>
                     </div>
@@ -115,31 +120,28 @@
             <div class="row gx-80 justify-content-between align-items-center">
                 <div class="col-xl-6 mb-40 mb-xl-0">
                     <div class="img-box10">
-                        <div class="img1"><img src="{{ asset('guest/assets/img/normal/about_10_1.png') }}" alt="img"></div>
-                        <div class="img2"><img src="{{ asset('guest/assets/img/normal/about_10_2.png') }}" alt="img"></div>
-                        <div class="img3"><img src="{{ asset('guest/assets/img/citabic/cover-01.png') }}" alt="Presentation CITABIC"></div>
+                        <div class="img1">
+                            <img src="{{asset('guest/assets/img/about/1.JPG')}}" style="width: 410px; min-height: 419px ; object-fit: cover" alt="img">
+                        </div>
+                        <div class="img2">
+                            <img src="{{asset('guest/assets/img/about/2.JPG')}}" style="width: 193px; min-height: 185px; object-fit: cover"  alt="img">
+                        </div>
+                        <div class="img3">
+                            <img src="{{asset('guest/assets/img/about/3.JPG')}}" style="width: 193px; min-height: 185px; object-fit: cover"  alt="img">
+                        </div>
                         <div class="about-tag">
                             <div class="about-experience-tag">
-                                <span class="circle-title-anime">{{ __('site.home.about_location') }}</span>
+                                <span class="circle-title-anime">CITABIC</span>
                             </div>
-                            <a href="{{ route('company') }}" class="play-btn"><i class="fa-sharp fa-solid fa-arrow-right"></i></a>
+                            <a href="{{asset('guest/assets/video/citabic-hero.mp4')}}" class="play-btn popup-video"><i class="fa-sharp fa-solid fa-play"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-xl-6">
                     <div class="title-area mb-32">
-                        <span class="sub-title">{{ __('site.home.about_eyebrow') }}</span>
-                        <h2 class="sec-title">{{ __('site.home.about_title') }}</h2>
-                        @foreach (array_slice($site['intro'], 0, 2) as $paragraph)
-                            <p class="sec-text">{{ $paragraph }}</p>
-                        @endforeach
-                    </div>
-                    <div class="checklist style5">
-                        <ul>
-                            @foreach ($site['mission'] as $item)
-                                <li>{{ $item }}</li>
-                            @endforeach
-                        </ul>
+                        <span class="sub-title">{{ __('site.sections.about') }}</span>
+                        <h2 class="sec-title">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::ABOUT->value)->where('key',\App\Enums\ContentKey::ABOUT_TITLE)->where('language',config('app.locale'))->first()?->value }}</h2>
+                        <p class="sec-text">{!!  \App\Models\SectionContent::where('section',\App\Enums\Section::ABOUT->value)->where('key',\App\Enums\ContentKey::ABOUT_TEXT)->where('language',config('app.locale'))->first()?->value !!}</p>
                     </div>
                 </div>
             </div>
@@ -158,7 +160,8 @@
                 </div>
                 <div class="col-auto">
                     <div class="sec-btn">
-                        <a href="{{ route('expertise') }}" class="th-btn style4 th-btn-icon">{{ __('site.actions.all_expertise') }}</a>
+                        <a href="{{ route('expertise') }}"
+                           class="th-btn style4 th-btn-icon">{{ __('site.actions.all_expertise') }}</a>
                     </div>
                 </div>
             </div>
@@ -167,13 +170,18 @@
                     <div class="col-md-6 col-xl-4">
                         <div class="service-card style6">
                             <div class="service-card-icon">
-                                <img src="{{ asset('guest/assets/img/icon/service-icon3-' . (($loop->index % 3) + 1) . '.svg') }}" alt="Icon">
+                                <img
+                                    src="{{ asset('guest/assets/img/icon/service-icon3-' . (($loop->index % 3) + 1) . '.svg') }}"
+                                    alt="Icon">
                             </div>
                             <h3 class="box-title"><a href="{{ route('expertise') }}">{{ $domain['title'] }}</a></h3>
                             <p class="box-text">{{ implode(' . ', array_slice($domain['items'], 0, 3)) }}</p>
                             <div class="service-img img-shine">
-                                <img src="{{ asset('guest/assets/img/service/3-' . (($loop->index % 3) + 1) . '.png') }}" alt="img">
-                                <a href="{{ route('expertise') }}" class="icon-btn"><img src="{{ asset('guest/assets/img/icon/arrow-right.svg') }}" alt="img"></a>
+                                <img
+                                    src="{{ asset('guest/assets/img/service/3-' . (($loop->index % 3) + 1) . '.png') }}"
+                                    alt="img">
+                                <a href="{{ route('expertise') }}" class="icon-btn"><img
+                                        src="{{ asset('guest/assets/img/icon/arrow-right.svg') }}" alt="img"></a>
                             </div>
                         </div>
                     </div>
@@ -196,12 +204,16 @@
                 @php($valuesCount = count($site['values'] ?? []))
                 @foreach ($site['why_choose_us'] as $item)
                     <div class="col-xl-4 col-md-6">
-                        <div class="process-card2" data-bg-src="{{ asset('guest/assets/img/bg/process-card2-bg.png') }}">
-                            <div class="box-icon"><img src="{{ asset('guest/assets/img/icon/process_card_2_' . (($loop->index % 3) + 1) . '.svg') }}" alt="icon"></div>
+                        <div class="process-card2"
+                             data-bg-src="{{ asset('guest/assets/img/bg/process-card2-bg.png') }}">
+                            <div class="box-icon"><img
+                                    src="{{ asset('guest/assets/img/icon/process_card_2_' . (($loop->index % 3) + 1) . '.svg') }}"
+                                    alt="icon"></div>
                             <div class="box-content">
                                 <h3 class="box-title">{{ $item }}</h3>
                                 <p class="box-text">{{ $valuesCount > 0 ? ($site['values'][$loop->index % $valuesCount]['text'] ?? '') : '' }}</p>
-                                <p class="box-number">{{ __('site.home.point_label') }} - {{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</p>
+                                <p class="box-number">{{ __('site.home.point_label') }}
+                                    - {{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</p>
                             </div>
                         </div>
                     </div>
@@ -221,7 +233,8 @@
                 </div>
                 <div class="col-auto">
                     <div class="sec-btn">
-                        <a href="{{ route('references.index') }}" class="th-btn style4 th-btn-icon">{{ __('site.actions.all_references') }}</a>
+                        <a href="{{ route('references.index') }}"
+                           class="th-btn style4 th-btn-icon">{{ __('site.actions.all_references') }}</a>
                     </div>
                 </div>
             </div>
@@ -230,10 +243,13 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="team-card style9">
                             <div class="team-card-thumb img-shine">
-                                <img src="{{ $reference['image_url'] ?? asset($reference['image']) }}" alt="{{ $reference['title'] }}">
+                                <img src="{{ $reference['image_url'] ?? asset($reference['image']) }}"
+                                     alt="{{ $reference['title'] }}">
                             </div>
                             <div class="team-card-content">
-                                <h3 class="box-title"><a href="{{ route('references.show', $reference['slug']) }}">{{ $reference['title'] }}</a></h3>
+                                <h3 class="box-title"><a
+                                        href="{{ route('references.show', $reference['slug']) }}">{{ $reference['title'] }}</a>
+                                </h3>
                                 <span class="team-desig">{{ $reference['client'] }}</span>
                             </div>
                         </div>

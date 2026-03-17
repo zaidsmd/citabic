@@ -12,6 +12,11 @@ return [
         'delete' => 'Supprimer',
         'actions' => 'Actions',
         'save' => 'Enregistrer',
+        'locale'=>[
+            'fr'=>'Francais',
+            'en'=>'Anglais',
+        ],
+        'saved'=>'Enregistrement effectue avec succes'
     ],
     'language' => [
         'fr' => 'Francais',
@@ -115,4 +120,23 @@ return [
             'updated' => 'La section Notre approche a ete mise a jour avec succes.',
         ],
     ],
+    'section'=>[
+        'title'=>'Sections de site',
+        'hero'=>'Hero Section',
+        'about'=>'Section A propos',
+        'contents'=>[
+            'labels'=>[
+                'hero_title'=>'Titre de la hero',
+                'hero_subtitle'=>'Sous titre de la hero',
+                'about_title'=>'Titre de la section à propos',
+                'about_text'=>'Texte de la section à propos'
+            ]
+        ],
+        'placeholders'=>[
+            'hero_title'=>'Titre de la hero',
+            'hero_subtitle'=>'Sous titre de la hero',
+            'about_title'=>'Titre de la section à propos',
+            'about_text'=>'Texte de la section à propos'
+        ]
+    ]
 ];

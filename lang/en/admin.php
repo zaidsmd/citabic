@@ -12,12 +12,12 @@ return [
         'delete' => 'Delete',
         'actions' => 'Actions',
         'save'=> 'Save',
+        'language'=>[
+            'fr'=>'French',
+            'en'=>'English',
+        ],
+        'saved'=>'Saved successfully'
     ],
-    'language'=>[
-        'fr'=>'French',
-        'en'=>'English',
-    ],
-
     'certification' => [
         'title' => 'Certifications',
         'list'=> 'List of certifications',
@@ -114,4 +114,23 @@ return [
             'updated' => 'Our Approach updated successfully.',
         ],
     ],
+    'section'=>[
+        'title'=>'Sections of website',
+        'hero'=>'Hero Section',
+        'about'=>'About Section',
+        'contents'=>[
+            'labels'=>[
+                'hero_title'=>'Hero Title',
+                'hero_subtitle'=>'Hero Subtitle',
+                'about_title'=>'About title',
+                'about_text'=>'About text'
+            ]
+        ],
+        'placeholders'=>[
+            'hero_title'=>'Hero Title',
+            'hero_subtitle'=>'Hero Subtitle',
+            'about_title'=>'About title',
+            'about_text'=>'About text'
+        ]
+    ]
 ];

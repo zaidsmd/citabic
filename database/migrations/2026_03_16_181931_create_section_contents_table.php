@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('section');
             $table->string('key');
-            $table->string('value');
+            $table->text('value');
             $table->string('language');
             $table->timestamps();
         });
