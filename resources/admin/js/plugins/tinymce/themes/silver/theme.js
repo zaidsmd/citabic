@@ -1423,7 +1423,7 @@
         if (rng.collapsed) {
             // Let's check if it's RTL ... if it is, then reversing the direction will not be collapsed
             const reversed = ranges.rtl().filter((rev) => rev.collapsed === false);
-            return reversed.map((rev) => 
+            return reversed.map((rev) =>
             // We need to use "reversed" here, because the original only has one point (collapsed)
             adt$a.rtl(SugarElement.fromDom(rev.endContainer), rev.endOffset, SugarElement.fromDom(rev.startContainer), rev.startOffset)).getOrThunk(() => fromRange(win, adt$a.ltr, rng));
         }
@@ -1486,7 +1486,7 @@
             } // unfortunately we can't throw this on startup :(
         }
     };
-    const bypassSelector = (dom) => 
+    const bypassSelector = (dom) =>
     // Only elements, documents and shadow roots support querySelector
     // shadow root element type is DOCUMENT_FRAGMENT
     dom.nodeType !== ELEMENT && dom.nodeType !== DOCUMENT && dom.nodeType !== DOCUMENT_FRAGMENT ||
@@ -1939,7 +1939,7 @@
     const isShadowRoot = (dos) => isDocumentFragment(dos) && isNonNullable(dos.dom.host);
     const getRootNode = (e) => SugarElement.fromDom(e.dom.getRootNode());
     /** Where content needs to go. ShadowRoot or document body */
-    const getContentContainer = (dos) => 
+    const getContentContainer = (dos) =>
     // Can't use SugarBody.body without causing a circular module reference (since SugarBody.inBody uses SugarShadowDom)
     isShadowRoot(dos) ? dos : SugarElement.fromDom(documentOrOwner(dos).dom.body);
     /** Is this element either a ShadowRoot or a descendent of a ShadowRoot. */
@@ -2210,7 +2210,7 @@
 
     // some elements, such as mathml, don't have style attributes
     // others, such as angular elements, have style attributes that aren't a CSSStyleDeclaration
-    const isSupported = (dom) => 
+    const isSupported = (dom) =>
     // eslint-disable-next-line @typescript-eslint/unbound-method
     dom.style !== undefined && isFunction(dom.style.getPropertyValue);
 
@@ -2380,7 +2380,7 @@
             );
           }
         };
-      
+
         var getWindowWidth = (element) => {
           var dom = element.dom;
           if (dom.window === dom) {
@@ -2439,7 +2439,7 @@
     const isHidden$1 = (dom) => dom.offsetWidth <= 0 && dom.offsetHeight <= 0;
     const isVisible = (element) => !isHidden$1(element.dom);
 
-    const api$1 = Dimension('width', (element) => 
+    const api$1 = Dimension('width', (element) =>
     // IMO passing this function is better than using dom['offset' + 'width']
     element.dom.offsetWidth);
     const apiExact = Dimension('width', (element) => {
@@ -2868,7 +2868,7 @@
             return after$2(anchor, selection.anchorOffset, focus, selection.focusOffset) ? Optional.some(SimRange.create(anchor, selection.anchorOffset, focus, selection.focusOffset)) : readRange(selection);
         }
     };
-    const getExact = (win) => 
+    const getExact = (win) =>
     // We want to retrieve the selection as it is.
     getNativeSelection(win)
         .filter((sel) => sel.rangeCount > 0)
@@ -2977,7 +2977,7 @@
             const width = html.clientWidth;
             const height = html.clientHeight;
             return bounds$1(scroll.left, scroll.top, width, height);
-        }, (visualViewport) => 
+        }, (visualViewport) =>
         // iOS doesn't update the pageTop/pageLeft when element.scrollIntoView() is called, so we need to fallback to the
         // scroll position which will always be less than the page top/left values when page top/left are accurate/correct.
         bounds$1(Math.max(visualViewport.pageLeft, scroll.left), Math.max(visualViewport.pageTop, scroll.top), visualViewport.width, visualViewport.height));
@@ -3298,7 +3298,7 @@
         consolidateArr
     };
 
-    const requiredAccess = (path, obj, key, bundle) => 
+    const requiredAccess = (path, obj, key, bundle) =>
     // In required mode, if it is undefined, it is an error.
     get$h(obj, key).fold(() => missingRequired(path, key, obj), bundle);
     const fallbackAccess = (obj, key, fallback, bundle) => {
@@ -3766,7 +3766,7 @@
     const onPresenceHandler = (label, fieldName, presence) => {
         // We care about where the handler was declared (in terms of which schema)
         getTrace();
-        return field$1(fieldName, fieldName, presence, 
+        return field$1(fieldName, fieldName, presence,
         // Apply some wrapping to their supplied function
         valueOf((f) => Result.value((...args) => {
             return f.apply(undefined, args);
@@ -3931,7 +3931,7 @@
         return get$h(placeholders, compSpec.name).fold(() => {
             throw new Error('Unknown placeholder component: ' + compSpec.name + '\nKnown: [' +
                 keys(placeholders) + ']\nNamespace: ' + owner.getOr('none') + '\nSpec: ' + JSON.stringify(compSpec, null, 2));
-        }, (newSpec) => 
+        }, (newSpec) =>
         // Must return a single/multiple type
         newSpec.replace());
     };
@@ -4063,7 +4063,7 @@
         original: original
     });
 
-    const combine$2 = (detail, data, partSpec, partValidated) => 
+    const combine$2 = (detail, data, partSpec, partValidated) =>
     // Extremely confusing names and types :(
     deepMerge(data.defaults(detail, partSpec, partValidated), partSpec, { uid: detail.partUids[data.name] }, data.overrides(detail, partSpec, partValidated));
     const subs = (owner, detail, parts) => {
@@ -4074,23 +4074,23 @@
             // Internal
             (data) => {
                 internals[data.pname] = single$2(true, (detail, partSpec, partValidated) => data.factory.sketch(combine$2(detail, data, partSpec, partValidated)));
-            }, 
+            },
             // External
             (data) => {
                 const partSpec = detail.parts[data.name];
                 externals[data.name] = constant$1(data.factory.sketch(combine$2(detail, data, partSpec[original()]), partSpec) // This is missing partValidated
                 );
                 // no placeholders
-            }, 
+            },
             // Optional
             (data) => {
                 internals[data.pname] = single$2(false, (detail, partSpec, partValidated) => data.factory.sketch(combine$2(detail, data, partSpec, partValidated)));
-            }, 
+            },
             // Group
             (data) => {
                 internals[data.pname] = multiple(true, (detail, _partSpec, _partValidated) => {
                     const units = detail[data.name];
-                    return map$2(units, (u) => 
+                    return map$2(units, (u) =>
                     // Group multiples do not take the uid because there is more than one.
                     data.factory.sketch(deepMerge(data.defaults(detail, u, _partValidated), u, data.overrides(detail, u))));
                 });
@@ -4133,7 +4133,7 @@
         config,
         validated: {}
     });
-    const schemas = (parts) => 
+    const schemas = (parts) =>
     // This actually has to change. It needs to return the schemas for things that will
     // not appear in the components list, which is only externals
     bind$3(parts, (part) => part.fold(Optional.none, Optional.some, Optional.none, Optional.none).map((data) => requiredObjOf(data.name, data.schema.concat([
@@ -6111,7 +6111,7 @@
          * and ensures that all the behaviours were valid. Will need to document
          * this entire process. Let's see where this is used.
          */
-        const schema = map$2(all, (a) => 
+        const schema = map$2(all, (a) =>
         // Optional here probably just due to ForeignGui listing everything it supports. Can most likely
         // change it to strict once I fix the other errors.
         optionObjOf(a.name(), [
@@ -6309,7 +6309,7 @@
         option$3('domModification')
     ]);
     const toInfo = (spec) => asRaw('custom.definition', schema$t, spec);
-    const toDefinition = (detail) => 
+    const toDefinition = (detail) =>
     // EFFICIENCY: Consider not merging here.
     ({
         ...detail.dom,
@@ -6579,7 +6579,7 @@
     const premade = premade$1;
 
     // Mark this component as busy, or blocked.
-    const block = (component, config, state, 
+    const block = (component, config, state,
     // This works in conjunction with the 'getRoot' function in the config. To
     // attach a blocker component to the dom, ensure that 'getRoot' returns a
     // component, and this function returns the specification of the component to
@@ -7315,23 +7315,23 @@
     const transform = (changes) => (x, y) => foldl(changes, (rest, f) => f(rest), SugarPosition(x, y));
     const asFixed = (coord, scroll, origin) => coord.fold(
     // offset to fixed
-    transform([add(origin), subtract(scroll)]), 
+    transform([add(origin), subtract(scroll)]),
     // absolute to fixed
-    transform([subtract(scroll)]), 
+    transform([subtract(scroll)]),
     // fixed to fixed
     transform([]));
     const asAbsolute = (coord, scroll, origin) => coord.fold(
     // offset to absolute
-    transform([add(origin)]), 
+    transform([add(origin)]),
     // absolute to absolute
-    transform([]), 
+    transform([]),
     // fixed to absolute
     transform([add(scroll)]));
     const asOffset = (coord, scroll, origin) => coord.fold(
     // offset to offset
-    transform([]), 
+    transform([]),
     // absolute to offset
-    transform([subtract(origin)]), 
+    transform([subtract(origin)]),
     // fixed to offset
     transform([add(scroll), subtract(origin)]));
     const withinRange = (coord1, coord2, xRange, yRange, scroll, origin) => {
@@ -7420,7 +7420,7 @@
     // that we put on it before we snapped it into place (before dropping). Once it's dropped, the presnap
     // position will go away. It is used to avoid the situation where you can't escape the snap unless you
     // move the mouse really quickly :)
-    const getCoords = (component, snapInfo, coord, delta) => get$3(component, snapInfo).fold(() => coord, (fixed) => 
+    const getCoords = (component, snapInfo, coord, delta) => get$3(component, snapInfo).fold(() => coord, (fixed) =>
     // We have a pre-snap position, so we have to apply the delta ourselves
     fixed$1(fixed.left + delta.left, fixed.top + delta.top));
     const moveOrSnap = (component, snapInfo, coord, delta, scroll, origin) => {
@@ -7745,9 +7745,9 @@
         () => {
             const offset$1 = asOffset(newCoords, scroll, origin);
             return offset(offset$1.left, offset$1.top);
-        }, 
+        },
         // absolute
-        constant$1(newCoords), 
+        constant$1(newCoords),
         // fixed
         () => {
             const fixed = asFixed(newCoords, scroll, origin);
@@ -8457,7 +8457,7 @@
     };
     const viewport = (origin, optBounds) => optBounds.fold(
     /* There are no bounds supplied */
-    () => origin.fold(win, win, bounds), (bounds$1) => 
+    () => origin.fold(win, win, bounds), (bounds$1) =>
     /* Use any bounds supplied or remove the scroll position of the bounds for fixed. */
     origin.fold(constant$1(bounds$1), constant$1(bounds$1), () => {
         const pos = translate$1(origin, bounds$1.x, bounds$1.y);
@@ -8636,7 +8636,7 @@
         const abc = foldl(candidates, (b, a) => {
             const bestNext = curry(attemptBestFit, a);
             return b.fold(constant$1(b), bestNext);
-        }, 
+        },
         // fold base case: No candidates, it's never going to be correct, so do whatever
         adt$2.nofit({
             rect: anchorBox,
@@ -8897,7 +8897,7 @@
     const placement$3 = (component, anchorInfo, origin) => {
         const pos = translate$1(origin, anchorInfo.x, anchorInfo.y);
         const anchorBox = bounds(pos.left, pos.top, anchorInfo.width, anchorInfo.height);
-        const layouts = get$1(component.element, anchorInfo, all$2(), allRtl$1(), 
+        const layouts = get$1(component.element, anchorInfo, all$2(), allRtl$1(),
         // No default bottomToTop layouts currently needed
         all$2(), allRtl$1(), Optional.none());
         return Optional.some(nu$1({
@@ -8922,7 +8922,7 @@
         { screen: ['point'] },
         { absolute: ['point', 'scrollLeft', 'scrollTop'] }
     ]);
-    const toFixed = (pos) => 
+    const toFixed = (pos) =>
     // TODO: Use new ADT methods
     pos.fold(identity, (point, scrollLeft, scrollTop) => point.translate(-scrollLeft, -scrollTop));
     const toAbsolute = (pos) => pos.fold(identity, identity);
@@ -9115,7 +9115,7 @@
 
     const placement = (component, submenuInfo, origin) => {
         const anchorBox = toBox(origin, submenuInfo.item.element);
-        const layouts = get$1(component.element, submenuInfo, all(), allRtl(), 
+        const layouts = get$1(component.element, submenuInfo, all(), allRtl(),
         // No default bottomToTop layouts currently needed
         all(), allRtl(), Optional.none());
         return Optional.some(nu$1({
@@ -10492,9 +10492,9 @@
     };
     const doTriggerOnUntilStopped = (lookup, eventType, rawEvent, rawTarget, source, logger) => doTriggerHandler(lookup, eventType, rawEvent, rawTarget, source, logger).fold(
     // stopped.
-    always, 
+    always,
     // Go again.
-    (parent) => doTriggerOnUntilStopped(lookup, eventType, rawEvent, parent, source, logger), 
+    (parent) => doTriggerOnUntilStopped(lookup, eventType, rawEvent, parent, source, logger),
     // completed
     never);
     const triggerHandler = (lookup, eventType, rawEvent, target, logger) => {
@@ -10565,7 +10565,7 @@
         const components = {};
         const readOrTag = (component) => {
             const elem = component.element;
-            return read(elem).getOrThunk(() => 
+            return read(elem).getOrThunk(() =>
             // No existing tag, so add one.
             write('uid-', component.element));
         };
@@ -10620,7 +10620,7 @@
             // This is a real system
             debugInfo: constant$1('real'),
             triggerEvent: (eventName, target, data) => {
-                monitorEvent(eventName, target, (logger) => 
+                monitorEvent(eventName, target, (logger) =>
                 // The return value is not used because this is a fake event.
                 triggerOnUntilStopped(lookup, eventName, data, target, logger));
             },
@@ -11356,10 +11356,10 @@
         factory: make$6
     });
 
-    const transpose$1 = (obj) => 
+    const transpose$1 = (obj) =>
     // Assumes no duplicate fields.
     tupleMap(obj, (v, k) => ({ k: v, v: k }));
-    const trace = (items, byItem, byMenu, finish) => 
+    const trace = (items, byItem, byMenu, finish) =>
     // Given a finishing submenu (which will be the value of expansions),
     // find the triggering item, find its menu, and repeat the process. If there
     // is no triggering item, we are done.
@@ -11427,7 +11427,7 @@
                 // could combine into a fold ... probably a left to reverse ... but we'll take the
                 // straightforward version when prototyping
                 const revPath = reverse(extraPath.concat(path));
-                const triggers = bind$3(revPath, (menuValue, menuIndex) => 
+                const triggers = bind$3(revPath, (menuValue, menuIndex) =>
                 // finding menuValue, it should match the trigger
                 getTriggerData(menuValue, getItemByValue, revPath.slice(0, menuIndex + 1)).fold(() => is$1(primary.get(), menuValue) ? [] : [Optional.none()], (data) => [Optional.some(data)]));
                 // Convert List<Optional<X>> to Optional<List<X>> if ALL are Some
@@ -11439,7 +11439,7 @@
             const current = get$h(paths.get(), itemValue).getOr([]);
             return [menu].concat(current);
         });
-        const collapse = (itemValue) => 
+        const collapse = (itemValue) =>
         // Look up which key has the itemValue
         get$h(paths.get(), itemValue).bind((path) => path.length > 1 ? Optional.some(path.slice(1)) : Optional.none());
         const refresh = (itemValue) => get$h(paths.get(), itemValue);
@@ -11539,7 +11539,7 @@
         };
         const getItemValue = (item) => Representing.getValue(item).value;
         // Find the first item with value `itemValue` in any of the menus inside this tiered menu structure
-        const getItemByValue = (_container, menus, itemValue) => 
+        const getItemByValue = (_container, menus, itemValue) =>
         // Can *greatly* improve the performance of this by calculating things up front.
         findMap(menus, (menu) => {
             if (!menu.getSystem().isConnected()) {
@@ -11695,7 +11695,7 @@
             });
         };
         const onRight = (container, item) => inside(item.element) ? Optional.none() : expandRight(container, item, ExpandHighlightDecision.HighlightSubmenu);
-        const onLeft = (container, item) => 
+        const onLeft = (container, item) =>
         // Exclude inputs, textareas etc.
         inside(item.element) ? Optional.none() : collapseLeft(container, item);
         const onEscape = (container, item) => collapseLeft(container, item).orThunk(() => detail.onEscape(container, item).map(() => container) // This should only fire when the user presses ESC ... not any other close.
@@ -11797,7 +11797,7 @@
         const extractMenuFromContainer = (container) => Optional.from(container.components()[0]).filter((comp) => get$g(comp.element, 'role') === 'menu');
         const repositionMenus = (container) => {
             // Get the primary menu
-            const maybeActivePrimary = layeredState.getPrimary().bind((primary) => 
+            const maybeActivePrimary = layeredState.getPrimary().bind((primary) =>
             // Get the triggering path (item, menu) up to the active item
             getActiveItem(container).bind((currentItem) => {
                 const itemValue = getItemValue(currentItem);
@@ -12261,7 +12261,7 @@
                     // even if it's already open. If we just used apis.open, it wouldn't do
                     // anything if it was already open, which means we wouldn't see the new
                     // refetched data.
-                    return open(detail, identity, comp, 
+                    return open(detail, identity, comp,
                     // NOTE: The TieredMenu is inside the sandbox. They aren't the same component.
                     sandboxComp, externals, noop, HighlightOnOpen.HighlightMenuAndItem).map(noop);
                 });
@@ -12793,7 +12793,7 @@
         ]);
         const apis = {
             getField: (container) => getPart(container, detail, 'field'),
-            getLabel: (container) => 
+            getLabel: (container) =>
             // TODO: Use constants for part names
             getPart(container, detail, 'label')
         };
@@ -13324,7 +13324,7 @@
         }),
         external$1({
             factory: {
-                sketch: (spec, detail) => 
+                sketch: (spec, detail) =>
                 // Merging should take care of the uid
                 ({
                     ...spec,
@@ -13708,7 +13708,7 @@
         }
     };
     const capValue = (value, min, max) => Math.max(min, Math.min(max, value));
-    const snapValueOf = (value, min, max, step, snapStart) => 
+    const snapValueOf = (value, min, max, step, snapStart) =>
     // We are snapping by the step size. Therefore, find the nearest multiple of
     // the step
     snapStart.fold(() => {
@@ -14693,7 +14693,7 @@
     };
     const partition = (total, units, len, overflower) => {
         // Firstly, we try without the overflower.
-        const divide = tryFit(total, units, len).getOrThunk(() => 
+        const divide = tryFit(total, units, len).getOrThunk(() =>
         // If that doesn't work, overflow
         apportion(units, total - len(overflower), len));
         const within = divide.within;
@@ -15536,7 +15536,7 @@
                                     });
                                 });
                             };
-                            open(detail, mapFetch(component), component, sandbox, externals, onOpenSync, 
+                            open(detail, mapFetch(component), component, sandbox, externals, onOpenSync,
                             // The onOpenSync takes care of what should be given the highlights, but
                             // we want to highlight just the menu so that the onOpenSync can find the
                             // activeMenu.
@@ -18091,7 +18091,7 @@
                     // No current item, so highlight the first one
                     () => {
                         api.getMenu().each(Highlighting.highlightFirst);
-                    }, 
+                    },
                     // There is a current item, so move down in the menu
                     (item) => {
                         redirectKeyToItem(item, e);
@@ -18979,7 +18979,7 @@
         optionString('text'),
         optionString('tooltip'),
         optionString('icon'),
-        defaultedOf('search', false, 
+        defaultedOf('search', false,
         // So our boulder validation are:
         // a) boolean -> we need to map it into an Option
         // b) object -> we need to map it into a Some
@@ -18990,7 +18990,7 @@
             objOf([
                 optionString('placeholder')
             ])
-        ], 
+        ],
         // This function allows you to standardise the output.
         (x) => {
             if (isBoolean(x)) {
@@ -21522,7 +21522,7 @@
             case 'separator':
                 return createSeparatorMenuItem(item).fold(handleError, (d) => Optional.some(separator$3(d)));
             case 'fancymenuitem':
-                return createFancyMenuItem(item).fold(handleError, 
+                return createFancyMenuItem(item).fold(handleError,
                 // Fancy menu items don't have shortcuts or icons
                 (d) => fancy(d, backstage));
             default: {
@@ -21687,7 +21687,7 @@
                     getSelection: () => activeRange.get().map(rangeToSimRange),
                     root: SugarElement.fromDom(editor.getBody()),
                 }
-            }, createInlineMenuFrom(createPartialMenuWithAlloyItems('autocompleter-value', true, items, columns, { menuType: 'normal' }), columns, FocusMode.ContentFocus, 
+            }, createInlineMenuFrom(createPartialMenuWithAlloyItems('autocompleter-value', true, items, columns, { menuType: 'normal' }), columns, FocusMode.ContentFocus,
             // Use the constant.
             'normal'));
             getMenu().each(Highlighting.highlightFirst);
@@ -21968,7 +21968,7 @@
         lazySink: sharedBackstage.getSink,
         fetch: (comp) => Future.nu((callback) => spec.fetch(callback)).map((items) => Optional.from(createTieredDataFrom(deepMerge(createPartialChoiceMenu(generate$6('menu-value'), items, (value) => {
             spec.onItemAction(comp, value);
-        }, spec.columns, spec.presets, ItemResponse$1.CLOSE_ON_EXECUTE, 
+        }, spec.columns, spec.presets, ItemResponse$1.CLOSE_ON_EXECUTE,
         // No colour is ever selected on opening
         never, sharedBackstage.providers), {
             movement: deriveMenuMovement(spec.columns, spec.presets)
@@ -23114,7 +23114,7 @@
     const isSafariOrFirefox = isSafari || isFirefox;
     const isChromium = browser.isChromium();
     const isElementScrollAtBottom = ({ scrollTop, scrollHeight, clientHeight }) => Math.ceil(scrollTop) + clientHeight >= scrollHeight;
-    const scrollToY = (win, y) => 
+    const scrollToY = (win, y) =>
     // TINY-10128: The iframe body is occasionally null when we attempt to scroll, so instead of using body.scrollHeight, use a
     // fallback value of 99999999. To minimise the potential impact of future browser changes, this fallback is significantly smaller
     // than the minimum of the maximum value Window.scrollTo would take on supported browsers:
@@ -23178,7 +23178,7 @@
     const getDynamicSource = (initialData, stream) => {
         const cachedValue = Cell(initialData.getOr(''));
         return {
-            getValue: (_frameComponent) => 
+            getValue: (_frameComponent) =>
             // Ideally we should fetch data from the iframe...innerHtml, this triggers Cors errors
             cachedValue.get(),
             setValue: (frameComponent, html) => {
@@ -23352,10 +23352,10 @@
             ],
             behaviours: derive$1([
                 ComposingConfigs.self(),
-                withComp(fakeValidatedData, () => 
+                withComp(fakeValidatedData, () =>
                 /*
                   NOTE: This is intentionally returning the cached image width and height.
-      
+
                   Including those details in the dialog data helps when `setData` only changes the URL, as
                   the old image must continue to be displayed at the old size until the new image has loaded.
                 */
@@ -23789,7 +23789,7 @@
         // The submenus do not have the search field, but will have search results for
         // connecting to the search field via aria-controls
         const submenuSearchMode = getSearchModeForResults(settings);
-        const submenus = map$1(data.menus, (menuItems, menuName) => createPartialMenu(menuName, menuItems, itemResponse, backstage, 
+        const submenus = map$1(data.menus, (menuItems, menuName) => createPartialMenu(menuName, menuItems, itemResponse, backstage,
         // Currently, submenus cannot be horizontal menus (so always false)
         false, submenuSearchMode));
         const menus = deepMerge(submenus, wrap(primary, mainMenu));
@@ -25132,7 +25132,7 @@
                     disabled: () => !spec.enabled || providersBackstage.checkUiComponentContext(spec.context).shouldDisable
                 }),
                 Tabstopping.config({}),
-                config('urlinput-events', 
+                config('urlinput-events',
                 // We want to get fast feedback for the link dialog, but not sure about others
                 [
                     run$1(input(), (comp) => {
@@ -26419,13 +26419,13 @@
         // When the header is hidden, then the element that was focused will be lost
         // so we need to restore it if nothing else has already been focused (eg anything other than the body)
         const ownerDoc = owner$4(focusedElem);
-        active$1(ownerDoc).filter((activeElm) => 
+        active$1(ownerDoc).filter((activeElm) =>
         // Don't try to refocus the same element
-        !eq(focusedElem, activeElm)).filter((activeElm) => 
+        !eq(focusedElem, activeElm)).filter((activeElm) =>
         // Only attempt to refocus if the current focus is the body or is in the header element
         eq(activeElm, SugarElement.fromDom(ownerDoc.dom.body)) || contains(headerElem, activeElm)).each(() => focus$4(focusedElem));
     };
-    const findFocusedElem = (rootElm, lazySink) => 
+    const findFocusedElem = (rootElm, lazySink) =>
     // Check to see if an element is focused inside the header or inside the sink
     // and if so store the element so we can restore it later
     search(rootElm).orThunk(() => lazySink().toOptional().bind((sink) => search(sink.element)));
@@ -26527,7 +26527,7 @@
                                 const constrainedBoundsY = isDockedMode(comp, 'top')
                                     ? constrainedBounds.y
                                     : constrainedBounds.y + headerHeight;
-                                return bounds(constrainedBounds.x, 
+                                return bounds(constrainedBounds.x,
                                 // ASSUMPTION: The constrainedBounds removes the need for us to set this to 0px
                                 // for docked mode. Also, docking in a scrolling environment will often be
                                 // at the scroller top, not the window top
@@ -26618,7 +26618,7 @@
                 };
                 // Convert to an internal bridge spec
                 const internal = createMenuButton(buttonSpec).mapError((errInfo) => formatError(errInfo)).getOrDie();
-                return renderMenuButton(internal, "tox-mbtn" /* MenuButtonClasses.Button */, spec.backstage, 
+                return renderMenuButton(internal, "tox-mbtn" /* MenuButtonClasses.Button */, spec.backstage,
                 // https://www.w3.org/TR/wai-aria-practices/examples/menubar/menubar-2/menubar-2.html
                 Optional.some('menuitem'));
             });
@@ -28528,7 +28528,7 @@
                 ]),
                 Keying.config({
                     mode: 'special',
-                    onEscape: (comp) => last$1(stack.get()).fold(() => 
+                    onEscape: (comp) => last$1(stack.get()).fold(() =>
                     // Escape just focuses the content. It no longer closes the toolbar.
                     spec.onEscape(), (_) => {
                         emit(comp, backSlideEvent);
@@ -29438,7 +29438,7 @@
     };
     const lookupButton = (editor, buttons, toolbarItem, allowToolbarGroups, backstage, prefixes) => get$h(buttons, toolbarItem.toLowerCase())
         .orThunk(() => prefixes.bind((ps) => findMap(ps, (prefix) => get$h(buttons, prefix + toolbarItem.toLowerCase()))))
-        .fold(() => get$h(bespokeButtons, toolbarItem.toLowerCase()).map((r) => r(editor, backstage)), 
+        .fold(() => get$h(bespokeButtons, toolbarItem.toLowerCase()).map((r) => r(editor, backstage)),
     // TODO: Add back after TINY-3232 is implemented
     // .orThunk(() => {
     //   console.error('No representation for toolbarItem: ' + toolbarItem);
@@ -29719,7 +29719,7 @@
         const isVisible = () => visible.get() && !editor.removed;
         // Calculate the toolbar offset when using a split toolbar drawer
         const calcToolbarOffset = (toolbar) => isSplitToolbar ?
-            toolbar.fold(constant$1(0), (tbar) => 
+            toolbar.fold(constant$1(0), (tbar) =>
             // If we have an overflow toolbar, we need to offset the positioning by the height of the overflow toolbar
             tbar.components().length > 1 ? get$d(tbar.components()[1].element) : 0) : 0;
         const calcMode = (container) => {
@@ -29818,7 +29818,7 @@
                         : targetBounds.bottom;
                 });
                 const left = getLeft();
-                const widthProperties = someIf(isOuterContainerWidthRestored, 
+                const widthProperties = someIf(isOuterContainerWidthRestored,
                 // This width can be used for calculating the "width" when resolving issues with flex-wrapping being triggered at the window width, despite scroll space being available to the right.
                 Math.ceil(mainUi.outerContainer.element.dom.getBoundingClientRect().width))
                     // this check is needed because if the toolbar is rendered outside of the `outerContainer` because the toolbar have `position: "fixed"`
@@ -29827,11 +29827,11 @@
                     const scroll = prevScroll.getOr(get$b());
                     /*
                   As the editor container can wrap its elements (due to flex-wrap), the width of the container impacts also its height. Adding a minimum width works around two problems:
-        
+
                   a) The docking behaviour (e.g. lazyContext) does not handle the situation of a very thin component near the edge of the screen very well, and actually has no concept of horizontal scroll - it only checks y values.
-        
+
                   b) A very small toolbar is essentially unusable. On scrolling of X, we keep updating the width of the toolbar so that it can grow to fit the available space.
-        
+
                   Note: this is entirely determined on the number of items in the menu and the toolbar, because when they wrap, that's what causes the height. Also, having multiple toolbars can also make it higher.
                   */
                     const availableWidth = window.innerWidth - (left - scroll.left);
@@ -31988,7 +31988,7 @@
     };
     const isNativeOverrideKeyEvent = (editor, e) => e.ctrlKey && !shouldNeverUseNative(editor);
     const isTouchEvent = (e) => e.type === 'longpress' || has$2(e, 'touches');
-    const isTriggeredByKeyboard = (editor, e) => 
+    const isTriggeredByKeyboard = (editor, e) =>
     // Different browsers trigger the context menu from keyboards differently, so need to check various different things here.
     // If a longpress touch event, always treat it as a pointer event
     // Chrome: button = 0, pointerType = undefined & target = the selection range node
@@ -32142,7 +32142,7 @@
             const box = absolute$2(td);
             return calcSnap(memTopLeft.getOpt(sink), td, box.x, box.y, box.width, box.height);
         };
-        const getTopLeftSnaps = () => 
+        const getTopLeftSnaps = () =>
         // const body = SugarBody.body();
         // const debugs = SelectorFilter.descendants(body, '.top-left-snap-debug');
         // Arr.each(debugs, (debugArea) => {
@@ -32153,7 +32153,7 @@
             const box = absolute$2(td);
             return calcSnap(memBottomRight.getOpt(sink), td, box.right, box.bottom, box.width, box.height);
         };
-        const getBottomRightSnaps = () => 
+        const getBottomRightSnaps = () =>
         // const body = SugarBody.body();
         // const debugs = SelectorFilter.descendants(body, '.bottom-right-snap-debug');
         // Arr.each(debugs, (debugArea) => {

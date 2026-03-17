@@ -30,6 +30,16 @@
   </a>
 </li>
 <li class="pc-item">
+    <a href="{{ route('admin.sections.index') }}" class="pc-link">
+    <span class="pc-micon">
+      <svg class="pc-icon">
+        <use xlink:href="#custom-user"></use>
+      </svg>
+    </span>
+        <span class="pc-mtext">Sections</span>
+    </a>
+</li>
+<li class="pc-item">
   <a href="{{ route('admin.references.index') }}" class="pc-link">
     <span class="pc-micon">
       <svg class="pc-icon">

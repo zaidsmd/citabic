@@ -95,4 +95,23 @@ return [
             'full_name' => 'Public display name used across the site.',
         ],
     ],
+    'our_approach' => [
+        'title' => 'Our Approach',
+        'section_title' => 'Section Title',
+        'visible'=> 'Visible',
+        'design_only'=> 'Design Only',
+        'items' => 'Items',
+        'add_item' => 'Add Item',
+        'icon' => 'Icon',
+        'color' => 'Color',
+        'item_title' => 'Title',
+        'label' => 'Label',
+        'description' => 'Description',
+        'action' => 'Action',
+        'remove' => 'Remove',
+        'save_changes' => 'Save Changes',
+        'messages' => [
+            'updated' => 'Our Approach updated successfully.',
+        ],
+    ],
 ];

@@ -48,6 +48,12 @@ Route::prefix('admins')->name('admin.')->middleware('admin.auth')->group(functio
     Route::get('company-info', [\App\Http\Controllers\Admin\CompanyInfoController::class, 'index'])->name('company-info.index');
     Route::put('company-info', [\App\Http\Controllers\Admin\CompanyInfoController::class, 'update'])->name('company-info.update');
 
+    Route::get('sections',[\App\Http\Controllers\Admin\SectionContentController::class,'index'])->name('sections.index');
+    Route::put('sections',[\App\Http\Controllers\Admin\SectionContentController::class,'update'])->name('sections.update');
+
+    Route::get('our-approach', [\App\Http\Controllers\Admin\OurApproachController::class, 'index'])->name('our-approach.index');
+    Route::put('our-approach', [\App\Http\Controllers\Admin\OurApproachController::class, 'update'])->name('our-approach.update');
+
     Route::resource('processes', ProcessController::class);
     Route::resource('values', ValueController::class);
     Route::resource('domains', DomainController::class);
