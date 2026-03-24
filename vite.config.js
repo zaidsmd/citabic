@@ -24,7 +24,7 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                "resources/css/guest/app.css",
+                "resources/css/guest/sass/guest.scss",
                 "resources/js/guest/app-guest.js",
                 'resources/admin/scss/landing.scss',
                 'resources/admin/scss/style-preset.scss',

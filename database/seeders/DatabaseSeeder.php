@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CitabicSeeder::class,
             AdminUserSeeder::class,
+            MissionSeeder::class,
         ]);
     }
 }

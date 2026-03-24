@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{{ asset('guest/assets/css/magnific-popup.min.css') }}">
     <link rel="stylesheet" href="{{ asset('guest/assets/css/swiper-bundle.min.css') }}">
     <link rel="stylesheet" href="{{ asset('guest/assets/css/jquery.datetimepicker.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('guest/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/css/guest.css') }}">
     <link rel="stylesheet" href="{{asset('build/js/app-guest.js')}}">
     <style>
         .lang-switcher {
@@ -69,7 +69,7 @@
 
         .lang-switcher-link.is-active {
             background: var(--theme-color);
-            box-shadow: 0 10px 25px rgba(249, 99, 20, 0.28);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.28);
         }
 
         .lang-switcher-link small {
@@ -109,6 +109,7 @@
             letter-spacing: 0.06em;
         }
     </style>
+    @stack('styles')
 </head>
 <body>
     @php($currentLocale = app()->getLocale())
@@ -212,16 +213,7 @@
 
     <footer class="footer-wrapper footer-default bg-black2">
         <div class="container">
-            <div class="footer-wrap space-top">
-                <div class="newsletter-wrap">
-                    <h5 class="newsletter-title text-white">{{ $company['full_name'] }}</h5>
-                    <form action="{{ route('contact') }}" class="newsletter-form">
-                        <div class="form-group">
-                            <input type="text" class="form-control" value="{{ $company['email'] }}" readonly>
-                        </div>
-                        <button class="th-btn" type="submit">{{ __('site.actions.contact_company_footer') }} <i class="far fa-paper-plane"></i></button>
-                    </form>
-                </div>
+            <div class="footer-wrap ">
                 <div class="widget-area">
                     <div class="row justify-content-between">
                         <div class="col-md-6 col-xl-4">
@@ -329,5 +321,6 @@
     <script src="{{ asset('guest/assets/js/lenis.min.js') }}"></script>
     <script src="{{ asset('guest/assets/js/jquery.datetimepicker.min.js') }}"></script>
     <script src="{{ asset('guest/assets/js/main.js') }}"></script>
+@stack('scripts')
 </body>
 </html>

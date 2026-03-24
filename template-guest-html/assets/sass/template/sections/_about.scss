@@ -42,8 +42,12 @@
     padding: 22px;
     .about-tag-thumb {
         display: inline-block;
-        border-radius: 50%;
+        border-radius: 99999px;
         overflow: hidden;
+        img {
+            max-width: 120px;
+            max-height: 120px;
+        }
     }
 }
 .about-experience-tag {
@@ -135,61 +139,61 @@
         }
         &.char22 {
             transform: rotate(calc(var(--rotate-letter) * 22));
-        }   
+        }
         &.char23 {
             transform: rotate(calc(var(--rotate-letter) * 23));
-        }            
+        }
         &.char24 {
             transform: rotate(calc(var(--rotate-letter) * 24));
-        }  
+        }
         &.char25 {
             transform: rotate(calc(var(--rotate-letter) * 25));
-        }    
+        }
         &.char26 {
             transform: rotate(calc(var(--rotate-letter) * 26));
-        }   
+        }
         &.char27 {
             transform: rotate(calc(var(--rotate-letter) * 27));
-        }   
+        }
         &.char28 {
             transform: rotate(calc(var(--rotate-letter) * 28));
-        }   
+        }
         &.char29 {
             transform: rotate(calc(var(--rotate-letter) * 29));
-        }   
+        }
         &.char30 {
             transform: rotate(calc(var(--rotate-letter) * 30));
-        }   
+        }
         &.char31 {
             transform: rotate(calc(var(--rotate-letter) * 31));
         }
         &.char32 {
             transform: rotate(calc(var(--rotate-letter) * 32));
-        } 
+        }
         &.char33 {
             transform: rotate(calc(var(--rotate-letter) * 33));
-        } 
+        }
         &.char34 {
             transform: rotate(calc(var(--rotate-letter) * 34));
-        }   
+        }
         &.char35 {
             transform: rotate(calc(var(--rotate-letter) * 35));
-        } 
+        }
         &.char36 {
             transform: rotate(calc(var(--rotate-letter) * 36));
-        } 
+        }
         &.char37 {
             transform: rotate(calc(var(--rotate-letter) * 37));
-        } 
+        }
         &.char38 {
             transform: rotate(calc(var(--rotate-letter) * 38));
-        } 
+        }
         &.char39 {
             transform: rotate(calc(var(--rotate-letter) * 39));
-        } 
+        }
         &.char40 {
             transform: rotate(calc(var(--rotate-letter) * 40));
-        } 
+        }
     }
 }
 
@@ -282,7 +286,7 @@
         font-weight: 700;
         color: $title-color;
         a {
-            color: inherit;            
+            color: inherit;
         }
         &:hover {
             color: $theme-color;
@@ -759,7 +763,7 @@
                     left: 30%;
                 }
             }
-        }        
+        }
     }
 }
 
@@ -941,13 +945,13 @@
         -webkit-text-stroke: 1px $theme-color2;
         display: block;
         line-height: 1;
-        letter-spacing: 0.13em; 
+        letter-spacing: 0.13em;
         @include lg {
             font-size: 30px;
-        }  
+        }
         @include sm {
             font-size: 24px;
-        }     
+        }
     }
 }
 .img-box11 {
@@ -1098,7 +1102,7 @@
                 --icon-size: 64px;
                 background: $title-color;
                 color: $white-color;
-            }   
+            }
         }
     }
     .about-shape17-1 {

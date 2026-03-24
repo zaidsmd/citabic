@@ -71,26 +71,45 @@
 
                             <div class="col-12">
                                 <label class="form-label d-block">{{ __('admin.certification.form.fields.image') }}</label>
-                                <div id="certification-image-dropzone" class="dropzone">
-                                    <div class="dz-message needsclick">
-                                        <div class="fw-semibold">{{ __('admin.certification.form.dropzone.prompt') }}</div>
-                                        <small class="text-muted d-block mt-1">
-                                            {{ $mode === 'edit' ? __('admin.certification.form.dropzone.edit_help') : __('admin.certification.form.dropzone.create_help') }}
-                                        </small>
+
+                                @php $hasImage = !empty($form['image_url']); @endphp
+
+                                <div id="certification-image-existing" style="{{ $hasImage ? '' : 'display:none' }}">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <p class="text-secondary-emphasis small mb-0">
+                                            <i class="fa fa-check-circle text-success me-1"></i>{{ __('admin.certification.form.fields.current_image') }}
+                                        </p>
+                                        <button type="button" class="btn btn-sm btn-outline-warning" id="certification-image-change-btn">
+                                            <i class="fa fa-pencil me-1"></i>@lang('admin.common.change')
+                                        </button>
                                     </div>
-                                    <div class="fallback">
-                                        <input name="file" type="file" />
-                                    </div>
+                                    <img id="certification-image-preview-img"
+                                         src="{{ $form['image_url'] ?? '' }}"
+                                         alt="{{ __('admin.certification.form.fields.current_image_alt') }}"
+                                         class="rounded img-thumbnail shadow-sm" style="max-height:120px;">
                                 </div>
+
+                                <div id="certification-image-dropzone-wrapper" style="{{ $hasImage ? 'display:none' : '' }}">
+                                    <div id="certification-image-dropzone" class="dropzone">
+                                        <div class="dz-message needsclick">
+                                            <div class="fw-semibold">{{ __('admin.certification.form.dropzone.prompt') }}</div>
+                                            <small class="text-muted d-block mt-1">
+                                                {{ $mode === 'edit' ? __('admin.certification.form.dropzone.edit_help') : __('admin.certification.form.dropzone.create_help') }}
+                                            </small>
+                                        </div>
+                                        <div class="fallback">
+                                            <input name="file" type="file" />
+                                        </div>
+                                    </div>
+                                    @if($hasImage)
+                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="certification-image-cancel-btn">
+                                        <i class="fa fa-times me-1"></i>Cancel
+                                    </button>
+                                    @endif
+                                </div>
+
                                 <input type="file" class="d-none" id="certification-image" name="image" accept="image/*">
                             </div>
-
-                            @if (!empty($form['image_url']))
-                                <div class="col-12">
-                                    <label class="form-label d-block">{{ __('admin.certification.form.fields.current_image') }}</label>
-                                    <img src="{{ $form['image_url'] }}" alt="{{ __('admin.certification.form.fields.current_image_alt') }}" class="rounded" style="max-height:120px;">
-                                </div>
-                            @endif
                         </div>
 
                         <div class="mt-4 d-flex gap-2">
@@ -115,6 +134,18 @@
 
             Dropzone.autoDiscover = false;
 
+            const existingDiv   = document.getElementById('certification-image-existing');
+            const wrapperDiv    = document.getElementById('certification-image-dropzone-wrapper');
+            const previewImg    = document.getElementById('certification-image-preview-img');
+            const changeBtn     = document.getElementById('certification-image-change-btn');
+            const cancelBtn     = document.getElementById('certification-image-cancel-btn');
+
+            const showDropzone  = () => { existingDiv.style.display = 'none';  wrapperDiv.style.display = ''; };
+            const showExisting  = () => { wrapperDiv.style.display  = 'none';  existingDiv.style.display = ''; };
+
+            if (changeBtn) changeBtn.addEventListener('click', showDropzone);
+            if (cancelBtn) cancelBtn.addEventListener('click', showExisting);
+
             const certificationDropzone = new Dropzone('#certification-image-dropzone', {
                 url: '#',
                 autoProcessQueue: false,
@@ -137,6 +168,15 @@
                 const dt = new DataTransfer();
                 dt.items.add(file);
                 imageInput.files = dt.files;
+
+                // Show preview of newly selected file
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    existingDiv.style.display = '';
+                    wrapperDiv.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
             });
 
             certificationDropzone.on('removedfile', () => {

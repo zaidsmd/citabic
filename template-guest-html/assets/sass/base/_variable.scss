@@ -1,20 +1,20 @@
 :root {
-  --theme-color         : #FF6600;
-  --theme-color2        : #F0A538;
+  --theme-color         : #D4AF37;
+  --theme-color2        : #C9A227;
   --theme-color3        : #209E2E;
   --title-color         : #0C0A0A;
   --title-dark          : #0C0A0A;
   --body-color          : #555555;
-  --smoke-color         : #FFEEDB;
+  --smoke-color         : #FBF5DC;
   --smoke-color2        : #F2F3F5;
-  --smoke-color3        : #FFF5EB;
+  --smoke-color3        : #FDF8E1;
   --black-color         : #000000;
   --black-color2        : #171717;
   --gray-color          : #333333;
   --th-border-color     : #B3B3B3;
   --th-border-color2    : #D4D4D4;
   --white-color         : #ffffff;
-  
+
   --smoke-color4        : #F5F7F9;
   --black-color3        : #1A1A1A;
   --black-color4        : #23343E;
@@ -25,7 +25,7 @@
   --gray-color6         : #968D81;
   --gray-color7         : #ECE5DB;
   --light-color         : #A4B5BA;
-  --light-color2        : #FBF5EC;
+  --light-color2        : #FBF8E8;
   --yellow-color        : #E2B93B;
   --success-color       : #27AE60;
   --error-color         : #EB5757;
@@ -108,7 +108,7 @@ $space-mobile         : var(--section-space-mobile);
 $space-mobile-extra: calc(var(--section-space-mobile) - 30px);
 
 
-// BG Color Mapping 
+// BG Color Mapping
 $bgcolorMap  : (
   "theme"    : $theme-color,
   "theme2"   : $theme-color2,
@@ -136,7 +136,7 @@ $bgcolorMap  : (
 );
 
 
-// Overlay Color Mapping 
+// Overlay Color Mapping
 $overlaycolorMap : (
   "theme"        : $theme-color,
   "title"        : $title-color,
@@ -148,7 +148,7 @@ $overlaycolorMap : (
 );
 
 
-// Text Color Mapping 
+// Text Color Mapping
 $textColorsMap : (
     "theme"      : $theme-color,
     "theme2"     : $theme-color2,
@@ -165,7 +165,7 @@ $textColorsMap : (
 );
 
 
-// Font Mapping 
+// Font Mapping
 $fontsMap    : (
   "icon"     : $icon-font,
   "title"    : $title-font,

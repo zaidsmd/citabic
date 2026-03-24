@@ -8,14 +8,36 @@ enum ContentKey: string
     case HERO_TITLE = 'hero_title';
     case HERO_SUBTITLE = 'hero_subtitle';
     case HERO_BACKGROUND = 'hero_background';
+    case HERO_VIDEO = 'hero_video';
     case CTA_1_TEXT = 'cta_1_text';
     case CTA_1_LINK = 'cta_1_link';
     case CTA_2_TEXT = 'cta_2_text';
     case CTA_2_LINK = 'cta_2_link';
 
-    // ABOUT SECTION
+    // ABOUT
     case ABOUT_TITLE = 'about_title';
     case ABOUT_TEXT = 'about_text';
+    case ABOUT_HEADER_BG_IMG = 'about_header_bg_img';
+    case ABOUT_IMAGE_1 = 'about_image_1';
+    case ABOUT_IMAGE_2 = 'about_image_2';
+    case ABOUT_IMAGE_3 = 'about_image_3';
+
+
+    case ROUNDED_TEXT = 'rounded_text';
+    case SECTION_IMAGE = 'section_image';
+    case ORGANIGRAME = 'organigrame';
+    case ORGANIGRAME_TITLE = 'organigrame_title';
+    case CARTOGRAPHIE = 'cartographie';
+    case CARTOGRAPHIE_TITLE = 'cartographie_title';
+
+    case MISSION_TITLE = 'mission_title';
+    case MISSION_TEXT = 'mission_text';
+
+    case WHY_US_TITLE = 'why_us_title';
+    case WHY_US_TEXT = 'why_us_text';
+    case WHY_US_CARDS = 'why_us_cards';
+
+
 
     case OUR_APPROACH_TITLE = 'our_approach_title';
 
@@ -33,12 +55,23 @@ enum ContentKey: string
     case VALUE_6_TITLE = 'value_6_title';
     case VALUE_6_TEXT = 'value_6_text';
 
+    // WHY CHOOSE US SECTION
+    case WHY_TITLE = 'why_title';
+    case WHY_SUBTITLE = 'why_subtitle';
+    case WHY_TEXT = 'why_text';
+    case WHY_IMAGE = 'why_image';
+    case WHY_FEATURES = 'why_features';
+    // DOMAIN SECTION
+    case DOMAIN_TITLE = 'domain_title';
+    case DOMAIN_TEXT = 'domain_text';
     // CONTACT SECTION
     case ADDRESS = 'address';
     case PHONE = 'phone';
     case EMAIL = 'email';
     case MAP_EMBED = 'map_embed';
     case CONTACT_FORM_TEXT = 'contact_form_text';
+    case CONTACT_TITLE = 'contact_title';
+    case CONTACT_IMAGE = 'contact_image';
 
     // FOOTER SECTION
     case FOOTER_ADDRESS = 'footer_address';
@@ -56,11 +89,10 @@ enum ContentKey: string
 
     public function section(): Section
     {
-        return match($this) {
+        return match ($this) {
             self::HERO_TITLE, self::HERO_SUBTITLE, self::HERO_BACKGROUND,
             self::CTA_1_TEXT, self::CTA_1_LINK, self::CTA_2_TEXT, self::CTA_2_LINK => Section::HOME,
 
-            self::MISSION_TITLE, self::MISSION_TEXT, self::VALUES_TITLE,
             self::VALUE_1_TITLE, self::VALUE_1_TEXT, self::VALUE_2_TITLE, self::VALUE_2_TEXT,
             self::VALUE_3_TITLE, self::VALUE_3_TEXT, self::VALUE_4_TITLE, self::VALUE_4_TEXT,
             self::VALUE_5_TITLE, self::VALUE_5_TEXT, self::VALUE_6_TITLE, self::VALUE_6_TEXT => Section::ABOUT,
@@ -78,7 +110,7 @@ enum ContentKey: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::HERO_TITLE => __('admin.content_keys.hero_title'),
             self::HERO_SUBTITLE => __('admin.content_keys.hero_subtitle'),
             self::HERO_BACKGROUND => __('admin.content_keys.hero_background'),
@@ -88,7 +120,6 @@ enum ContentKey: string
             self::CTA_2_LINK => __('admin.content_keys.cta_2_link'),
             self::MISSION_TITLE => __('admin.content_keys.mission_title'),
             self::MISSION_TEXT => __('admin.content_keys.mission_text'),
-            self::VALUES_TITLE => __('admin.content_keys.values_title'),
             self::ADDRESS => __('admin.content_keys.address'),
             self::PHONE => __('admin.content_keys.phone'),
             self::EMAIL => __('admin.content_keys.email'),
@@ -97,7 +128,7 @@ enum ContentKey: string
             self::FOOTER_ADDRESS => __('admin.content_keys.footer_address'),
             self::FOOTER_PHONE => __('admin.content_keys.footer_phone'),
             self::FOOTER_EMAIL => __('admin.content_keys.footer_email'),
-            self::FACEBOOK_LINK =>  __('admin.content_keys.facebook_link'),
+            self::FACEBOOK_LINK => __('admin.content_keys.facebook_link'),
             self::LINKEDIN_LINK => __('admin.content_keys.linkedin_link'),
             self::INSTAGRAM_LINK => __('admin.content_keys.instagram_link'),
             default => $this->value,

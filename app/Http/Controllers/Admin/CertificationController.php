@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Certification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Services\ImageUploadService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -110,7 +111,7 @@ class CertificationController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ImageUploadService $imageService): RedirectResponse
     {
         if (!$request->hasFile('image') && $request->hasFile('file')) {
             $request->files->set('image', $request->file('file'));
@@ -125,7 +126,7 @@ class CertificationController extends Controller
         ]);
 
         $slug = $this->buildUniqueSlug($data['name_fr']);
-        $imagePath = $request->file('image')->store('certifications', 'public');
+        $imagePath = $imageService->store($request->file('image'), 'certifications');
 
         Certification::create([
             'name' => $data['name_fr'],
@@ -145,7 +146,7 @@ class CertificationController extends Controller
         return redirect()->route('admin.certifications.index')->with('status', 'Certification created successfully.');
     }
 
-    public function update(Request $request, Certification $certification): RedirectResponse
+    public function update(Request $request, Certification $certification, ImageUploadService $imageService): RedirectResponse
     {
         if (!$request->hasFile('image') && $request->hasFile('file')) {
             $request->files->set('image', $request->file('file'));
@@ -177,7 +178,7 @@ class CertificationController extends Controller
                 Storage::disk('public')->delete($imagePath);
             }
 
-            $imagePath = $request->file('image')->store('certifications', 'public');
+            $imagePath = $imageService->store($request->file('image'), 'certifications');
         }
 
         $fr->fill([

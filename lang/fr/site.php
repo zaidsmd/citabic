@@ -94,6 +94,8 @@ return [
         'client' => 'Client',
         'surface' => 'Surface',
         'budget' => 'Budget',
+        'project_info' => 'Informations du projet',
+        'highlights' => 'Points clés',
     ],
     'contact' => [
         'address' => 'Adresse',
@@ -119,4 +121,5 @@ return [
         'fr_name' => 'Francais',
         'en_name' => 'English',
     ],
+    'about'=>'A propos de nous'
 ];

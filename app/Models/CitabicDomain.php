@@ -9,6 +9,7 @@ class CitabicDomain extends Model
     protected $fillable = [
         'citabic_profile_id',
         'title',
+        'icon',
         'items',
         'sort_order',
         'translations',

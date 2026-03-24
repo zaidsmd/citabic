@@ -211,12 +211,18 @@ class CmsController extends Controller
             'budget' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['required', 'integer', 'min:0'],
             'items' => ['nullable', 'string'],
+            'blocks' => ['nullable', 'string'],
             'en' => ['nullable', 'array'],
         ]);
 
         $en_data = $validated['en'] ?? [];
         if (isset($en_data['items'])) {
             $en_data['items'] = $this->parseLines($en_data['items']);
+        }
+
+        $blocks = json_decode($validated['blocks'] ?? '[]', true);
+        if (! is_array($blocks)) {
+            $blocks = [];
         }
 
         return [
@@ -230,6 +236,7 @@ class CmsController extends Controller
             'budget' => $validated['budget'] ?: null,
             'sort_order' => $validated['sort_order'],
             'items' => $this->parseLines($validated['items'] ?? null),
+            'blocks' => $blocks,
             'translations' => ['en' => $en_data],
         ];
     }
@@ -306,6 +313,7 @@ class CmsController extends Controller
             'budget' => $reference?->budget ?? '',
             'sort_order' => $reference?->sort_order ?? (CitabicReference::query()->max('sort_order') + 1),
             'items' => $this->joinLines($reference?->items ?? []),
+            'blocks' => $reference?->blocks ?? [],
             'en' => $en,
         ];
     }

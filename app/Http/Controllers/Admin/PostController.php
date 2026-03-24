@@ -9,6 +9,7 @@ use App\Models\Tag;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Services\ImageUploadService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -141,13 +142,13 @@ class PostController extends Controller
         return redirect()->route('admin.posts.index')->with('success', 'Post deleted successfully.');
     }
 
-    public function uploadFeaturedImage(Request $request): JsonResponse
+    public function uploadFeaturedImage(Request $request, ImageUploadService $imageService): JsonResponse
     {
         $request->validate([
             'file' => 'required|image|max:5120',
         ]);
 
-        $path = $request->file('file')->store('posts/featured', 'public');
+        $path = $imageService->store($request->file('file'), 'posts/featured');
 
         return response()->json([
             'path' => $path,

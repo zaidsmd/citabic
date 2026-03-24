@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CitabicDomain;
 use App\Models\CitabicProfile;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Services\ImageUploadService;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class DomainController extends Controller
@@ -31,17 +34,18 @@ class DomainController extends Controller
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'items_raw' => 'required|string',
+            'icon' => 'nullable|string|max:2048',
+            'items' => 'nullable|array',
+            'items.*' => 'nullable|string|max:255',
             'sort_order' => 'required|integer',
             'en' => 'nullable|array',
         ]);
 
-        $data['items'] = $this->parseLines($data['items_raw']);
+        $data['items'] = collect($data['items'] ?? [])->map(fn($v) => trim($v))->filter()->values()->all();
 
         $en_data = $data['en'] ?? [];
-        if (isset($en_data['items_raw'])) {
-            $en_data['items'] = $this->parseLines($en_data['items_raw']);
-            unset($en_data['items_raw']);
+        if (isset($en_data['items'])) {
+            $en_data['items'] = collect($en_data['items'])->map(fn($v) => trim($v))->filter()->values()->all();
         }
         $data['translations'] = ['en' => $en_data];
         unset($data['en']);
@@ -63,17 +67,18 @@ class DomainController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'items_raw' => 'required|string',
+            'icon' => 'nullable|string|max:2048',
+            'items' => 'nullable|array',
+            'items.*' => 'nullable|string|max:255',
             'sort_order' => 'required|integer',
             'en' => 'nullable|array',
         ]);
 
-        $data['items'] = $this->parseLines($data['items_raw']);
+        $data['items'] = collect($data['items'] ?? [])->map(fn($v) => trim($v))->filter()->values()->all();
 
         $en_data = $data['en'] ?? [];
-        if (isset($en_data['items_raw'])) {
-            $en_data['items'] = $this->parseLines($en_data['items_raw']);
-            unset($en_data['items_raw']);
+        if (isset($en_data['items'])) {
+            $en_data['items'] = collect($en_data['items'])->map(fn($v) => trim($v))->filter()->values()->all();
         }
         $data['translations'] = ['en' => $en_data];
         unset($data['en']);
@@ -81,6 +86,13 @@ class DomainController extends Controller
         $domain->update($data);
 
         return redirect()->route('admin.domains.index')->with('status', 'Domain updated successfully.');
+    }
+
+    public function uploadImage(Request $request, ImageUploadService $imageService): JsonResponse
+    {
+        $request->validate(['image' => 'required|image|max:10240']);
+        $path = $imageService->store($request->file('image'), 'domains');
+        return response()->json(['path' => $path, 'url' => Storage::disk('public')->url($path)]);
     }
 
     public function destroy(CitabicDomain $domain): RedirectResponse
@@ -92,30 +104,14 @@ class DomainController extends Controller
     private function formData(?CitabicDomain $domain): array
     {
         $en = $domain?->translations['en'] ?? [];
-        if (isset($en['items']) && is_array($en['items'])) {
-            $en['items_raw'] = implode(PHP_EOL, $en['items']);
-        } else {
-            $en['items_raw'] = '';
-        }
 
         return [
             'title' => old('title', $domain?->title),
+            'icon' => old('icon', $domain?->icon),
             'items' => old('items', $domain?->items ?? []),
             'sort_order' => old('sort_order', $domain?->sort_order ?? 0),
             'en' => old('en', $en),
         ];
     }
 
-    private function parseLines(?string $value): array
-    {
-        if ($value === null || trim($value) === '') {
-            return [];
-        }
-
-        return collect(preg_split('/\r\n|\r|\n/', $value))
-            ->map(fn (string $line) => trim($line))
-            ->filter()
-            ->values()
-            ->all();
-    }
 }

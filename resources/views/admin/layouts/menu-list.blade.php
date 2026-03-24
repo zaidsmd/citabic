@@ -30,16 +30,6 @@
   </a>
 </li>
 <li class="pc-item">
-    <a href="{{ route('admin.sections.index') }}" class="pc-link">
-    <span class="pc-micon">
-      <svg class="pc-icon">
-        <use xlink:href="#custom-user"></use>
-      </svg>
-    </span>
-        <span class="pc-mtext">Sections</span>
-    </a>
-</li>
-<li class="pc-item">
   <a href="{{ route('admin.references.index') }}" class="pc-link">
     <span class="pc-micon">
       <svg class="pc-icon">
@@ -108,6 +98,37 @@
     </span>
     <span class="pc-mtext">Blog</span>
   </a>
+</li>
+<li class="pc-item">
+  <a href="{{ route('admin.missions.index') }}" class="pc-link">
+    <span class="pc-micon">
+      <i class="fa fa-bullseye"></i>
+    </span>
+    <span class="pc-mtext">{{ __('admin.missions.title') }}</span>
+  </a>
+</li>
+<li class="pc-item pc-caption">
+    <label>Pages</label>
+</li>
+<li class="pc-item">
+    <a href="{{ route('admin.sections.index') }}" class="pc-link">
+    <span class="pc-micon">
+      <svg class="pc-icon">
+        <use xlink:href="#custom-home"></use>
+      </svg>
+    </span>
+        <span class="pc-mtext">{{__('site.nav.home')}}</span>
+    </a>
+</li>
+<li class="pc-item">
+    <a href="{{ route('admin.pages.about-us') }}" class="pc-link">
+    <span class="pc-micon">
+      <svg class="pc-icon">
+        <use xlink:href="#custom-building"></use>
+      </svg>
+    </span>
+        <span class="pc-mtext">{{__('site.nav.company')}}</span>
+    </a>
 </li>
 <li class="pc-item pc-caption">
   <label data-i18n="Navigation">Navigation</label>

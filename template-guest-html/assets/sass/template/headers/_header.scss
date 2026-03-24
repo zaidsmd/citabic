@@ -352,6 +352,7 @@
     }
 }
 .header-logo {
+    height: 70px;
     padding-top: 15px;
     padding-bottom: 15px;
 }
@@ -626,7 +627,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;    
+    top: 0;
     background: $black-color2;
     .sticky-wrapper.sticky {
         background: $black-color2;
@@ -734,7 +735,7 @@
     position: absolute;
     left: 80px;
     right: 0;
-    top: 0;  
+    top: 0;
     border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.2);
     .menu-area {
         position: relative;
@@ -793,7 +794,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;  
+    top: 0;
     .menu-area {
         background: $black-color2;
         border-radius: 50px;
@@ -836,7 +837,7 @@
         &.onepage-nav {
             .main-menu ul.mega-menu {
                 left: -25rem !important;
-            }   
+            }
         }
     }
     @include xl {
@@ -860,7 +861,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 20px;  
+    top: 20px;
     .menu-area {
         position: relative;
         .sidebar-btn.style3 {
@@ -968,9 +969,9 @@
         background: $black-color2;
         padding: 17.5px 0;
         .header-links {
-            li, 
-            span, 
-            p, 
+            li,
+            span,
+            p,
             a {
                 color: $white-color;
                 font-weight: 400;
@@ -1068,7 +1069,7 @@
         &.onepage-nav {
             .main-menu ul.mega-menu {
                 left: -25rem !important;
-            }   
+            }
         }
     }
     @include md {

@@ -2,10 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use App\Enums\ContentKey;
+use App\Enums\Section;
+use App\Models\Certification;
+use App\Models\CitabicDomain;
 use App\Models\CitabicProfile;
 use App\Models\CitabicReference;
+use App\Models\Mission;
+use App\Models\Post;
+use App\Models\SectionContent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -18,7 +25,46 @@ class CitabicController extends Controller
 
     public function company(): View
     {
-        return view('guest.pages.company', $this->sharedData());
+        $locale = app()->getLocale();
+        $cacheKey = "company_page_{$locale}";
+
+        $companyData = Cache::remember($cacheKey, now()->addHours(6), function () use ($locale) {
+            $sc = fn (Section $section, ContentKey $key) => SectionContent::where('section', $section)
+                ->where('key', $key)
+                ->where('language', $locale)
+                ->first()?->value;
+
+            $scAny = fn (Section $section, ContentKey $key) => SectionContent::where('section', $section)
+                ->where('key', $key)
+                ->first()?->value;
+
+            return [
+                'about_header_bg'       => $scAny(Section::ABOUT_PAGE, ContentKey::ABOUT_HEADER_BG_IMG),
+                'about_title'           => $sc(Section::ABOUT_PAGE, ContentKey::ABOUT_TITLE),
+                'about_text'            => $sc(Section::ABOUT_PAGE, ContentKey::ABOUT_TEXT),
+                'rounded_text'          => $sc(Section::ABOUT_PAGE, ContentKey::ROUNDED_TEXT),
+                'section_image'         => $scAny(Section::ABOUT_PAGE, ContentKey::SECTION_IMAGE),
+                'mission_title'         => $sc(Section::ABOUT_PAGE, ContentKey::MISSION_TITLE),
+                'mission_text'          => $sc(Section::ABOUT_PAGE, ContentKey::MISSION_TEXT),
+                'why_us_title'          => $sc(Section::ABOUT_PAGE, ContentKey::WHY_US_TITLE),
+                'why_us_text'           => $sc(Section::ABOUT_PAGE, ContentKey::WHY_US_TEXT),
+                'why_us_cards'          => explode(';', $sc(Section::ABOUT_PAGE, ContentKey::WHY_US_CARDS) ?? ''),
+                'organigrame_title'     => $sc(Section::ABOUT_PAGE, ContentKey::ORGANIGRAME_TITLE),
+                'organigrame'           => $scAny(Section::ABOUT_PAGE, ContentKey::ORGANIGRAME),
+                'cartographie_title'    => $sc(Section::ABOUT_PAGE, ContentKey::CARTOGRAPHIE_TITLE),
+                'cartographie'          => $scAny(Section::ABOUT_PAGE, ContentKey::CARTOGRAPHIE),
+                'contact_form_text'     => $sc(Section::CONTACT, ContentKey::CONTACT_FORM_TEXT),
+                'contact_image'         => $scAny(Section::CONTACT, ContentKey::CONTACT_IMAGE),
+                'map_embed'             => SectionContent::where('section', Section::CONTACT)
+                                            ->where('key', ContentKey::MAP_EMBED)
+                                            ->first()?->value,
+                'domains'               => CitabicDomain::all(),
+                'missions'              => Mission::with('translations')->get(),
+                'certifications'        => Certification::where('language', $locale)->get(),
+            ];
+        });
+
+        return view('guest.pages.company', array_merge($this->sharedData(), ['cp' => $companyData]));
     }
 
     public function expertise(): View
@@ -105,18 +151,29 @@ class CitabicController extends Controller
         $profile = CitabicProfile::query()->first();
         $references = CitabicReference::query()->orderBy('sort_order')->get();
 
+        $heroVideoPath = SectionContent::where('section', Section::HERO)
+            ->where('key', ContentKey::HERO_VIDEO->value)
+            ->value('value');
+        $whyFeaturesRaw = SectionContent::where('section', Section::WHY_CHOOSE_US->value)
+            ->where('key', ContentKey::WHY_FEATURES->value)
+            ->where('language', $locale)
+            ->value('value');
+        $whyFeatures = json_decode($whyFeaturesRaw ?? '[]', true) ?: [];
+
         if (! $profile) {
             $site = config('citabic');
-            $site['hero_video_path'] = null;
-            $site['hero_video_url'] = null;
+            $site['hero_video_path'] = $heroVideoPath;
+            $site['hero_video_url'] = $this->resolveMediaUrl($heroVideoPath);
             $site['references'] = collect($site['references'])
                 ->map(fn (array $reference) => $this->hydrateReferenceArray($reference))
                 ->all();
 
+            $site['why_features'] = $whyFeatures;
             return [
                 'site' => $site,
                 'references' => $site['references'],
                 'company' => $site['company'],
+                'why_features' => $whyFeatures,
             ];
         }
 
@@ -138,8 +195,8 @@ class CitabicController extends Controller
                 'phone' => $translatedSite['phone'],
                 'email' => $translatedSite['email'],
             ],
-            'hero_video_path' => $translatedSite['hero_video_path'],
-            'hero_video_url' => $this->resolveMediaUrl($translatedSite['hero_video_path']),
+            'hero_video_path' => $heroVideoPath,
+            'hero_video_url' => $this->resolveMediaUrl($heroVideoPath),
             'intro' => $translatedSite['intro'],
             'market_context' => $translatedSite['market_context'],
             'mission' => $translatedSite['mission'],
@@ -155,6 +212,7 @@ class CitabicController extends Controller
             'processes' => $translatedSite['processes'],
             'mission' => $translatedSite['mission'],
             'why_choose_us' => $translatedSite['why_choose_us'],
+            'why_features' => $whyFeatures,
             'references' => $references->map(fn (CitabicReference $reference) => $this->transformReference($reference, $locale))->all(),
         ];
 
@@ -162,9 +220,9 @@ class CitabicController extends Controller
             'site' => $site,
             'references' => $site['references'],
             'company' => $site['company'],
+            'why_features' => $whyFeatures,
         ];
     }
-
     private function transformProfile(CitabicProfile $profile, string $locale): array
     {
         $infoFields = [

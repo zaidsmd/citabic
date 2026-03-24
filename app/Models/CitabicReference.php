@@ -16,6 +16,7 @@ class CitabicReference extends Model
         'surface',
         'budget',
         'items',
+        'blocks',
         'translations',
         'sort_order',
     ];
@@ -24,6 +25,7 @@ class CitabicReference extends Model
     {
         return [
             'items' => 'array',
+            'blocks' => 'array',
             'translations' => 'array',
         ];
     }

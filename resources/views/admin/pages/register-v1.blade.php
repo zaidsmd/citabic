@@ -33,7 +33,7 @@
               <div class="row">
                 <div class="col-sm-12">
                   <div class="mb-3">
-                    <input type="text" class="form-control@error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
                     @error('name')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -59,7 +59,7 @@
                 @enderror
               </div>
               <div class="mb-3">
-                <input type="password" class="form-control" placeholder="Confirm Password" name="password_confirmation" required autocomplete="new-password">/>
+                <input type="password" class="form-control" placeholder="Confirm Password" name="password_confirmation" required autocomplete="new-password" />
               </div>
               <div class="d-flex mt-1 justify-content-between">
                 <div class="form-check">
