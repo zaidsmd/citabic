@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\PostStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,15 +19,25 @@ class Post extends Model
         'title', 'slug', 'excerpt', 'content', 'featured_image',
         'status', 'published_at', 'reading_time', 'views', 'featured',
         'allow_comments', 'meta_title', 'meta_description', 'canonical_url',
-        'author_id', 'translations'
+        'meta_keywords', 'focus_keyword', 'og_title', 'og_description', 'og_image',
+        'twitter_title', 'twitter_description', 'twitter_image', 'twitter_card',
+        'robots_index', 'robots_follow', 'schema_type', 'schema_json',
+        'author_id', 'translations', 'blocks',
     ];
 
-    protected $casts = [
-        'published_at' => 'datetime',
-        'featured' => 'boolean',
-        'allow_comments' => 'boolean',
-        'translations' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => PostStatus::class,
+            'published_at' => 'datetime',
+            'featured' => 'boolean',
+            'allow_comments' => 'boolean',
+            'robots_index' => 'boolean',
+            'robots_follow' => 'boolean',
+            'translations' => 'array',
+            'blocks' => 'array',
+        ];
+    }
 
     protected static function boot()
     {
@@ -57,22 +69,37 @@ class Post extends Model
         return $this->belongsToMany(Tag::class);
     }
 
-    public function scopePublished($query)
+    public function scopePublished(Builder $query): Builder
     {
-        return $query->where('status', 'published')
-                     ->whereNotNull('published_at')
-                     ->where('published_at', '<=', now());
+        return $query->where('status', PostStatus::Published->value)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now());
     }
 
-    public function incrementViews()
+    public function incrementViews(): void
     {
         $this->increment('views');
     }
 
-    protected function calculateReadingTime($content)
+    public function publish(): void
+    {
+        $this->status = PostStatus::Published;
+        $this->published_at = $this->published_at ?? now();
+        $this->save();
+    }
+
+    public function unpublish(): void
+    {
+        $this->status = PostStatus::Draft;
+        $this->published_at = null;
+        $this->save();
+    }
+
+    protected function calculateReadingTime(string $content): int
     {
         $wordCount = str_word_count(strip_tags($content));
         $minutes = ceil($wordCount / 200); // Average reading speed: 200 words per minute
-        return $minutes;
+
+        return (int) $minutes;
     }
 }

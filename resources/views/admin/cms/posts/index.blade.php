@@ -1,5 +1,9 @@
 @extends('admin.layouts.master')
 
+@php
+    use App\Enums\PostStatus;
+@endphp
+
 @section('title', 'Posts')
 
 @section('content')
@@ -44,17 +48,21 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <strong>{{ $post->title }}</strong><br>
-                                            <small class="text-muted">{{ $post->slug }}</small>
+                                            <strong>{{ $post->title }}</strong>
                                         </td>
                                         <td>
-                                            @if($post->status == 'published')
-                                                <span class="badge bg-light-success">Published</span>
-                                            @elseif($post->status == 'draft')
-                                                <span class="badge bg-light-warning">Draft</span>
-                                            @else
-                                                <span class="badge bg-light-secondary">{{ ucfirst($post->status) }}</span>
-                                            @endif
+                                            @php
+                                                $status = $post->status instanceof PostStatus ? $post->status : PostStatus::tryFrom((string) $post->status);
+                                                $statusClass = match ($status) {
+                                                    PostStatus::Published => 'bg-light-success',
+                                                    PostStatus::Draft => 'bg-light-warning',
+                                                    PostStatus::Archived => 'bg-light-secondary',
+                                                    default => 'bg-light-secondary',
+                                                };
+                                            @endphp
+                                            <span class="badge {{ $statusClass }}">
+                                                {{ $status?->label() ?? (string) $post->status }}
+                                            </span>
                                         </td>
                                         <td>
                                             @foreach($post->categories as $category)
@@ -65,11 +73,31 @@
                                         <td>{{ $post->views }}</td>
                                         <td class="text-end">
                                             <a href="{{ route('admin.posts.edit', $post) }}" class="btn btn-sm btn-light-primary me-1">Edit</a>
-                                            <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-light-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                                            </form>
+                                            @if($post->status === PostStatus::Published)
+                                                <form action="{{ route('admin.posts.unpublish', $post) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" class="btn btn-sm btn-light-warning me-1">
+                                                        {{ __('admin.posts.actions.unpublish') }}
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('admin.posts.publish', $post) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" class="btn btn-sm btn-light-success me-1">
+                                                        {{ __('admin.posts.actions.publish') }}
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-light-danger"
+                                                data-table-action="delete"
+                                                data-url="{{ route('admin.posts.destroy', $post) }}"
+                                            >
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach

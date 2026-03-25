@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'google_translate' => [
+        'project_id' => env('GOOGLE_CLOUD_PROJECT_ID'),
+        'key_file_path' => env('GOOGLE_CLOUD_KEY_FILE_PATH'),
+    ],
+
 ];

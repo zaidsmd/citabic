@@ -1,8 +1,10 @@
 @php use App\Helpers\NumberWrapper; @endphp
-@extends('guest.layouts.app-template')
+@extends('guest.layouts.app-template-floating-footer')
 
 @section('title', 'CITABIC | ' . __('site.nav.home'))
+@push('styles')
 
+@endpush
 @section('content')
     <style>
         .hero-video-bg-wrap {
@@ -228,41 +230,271 @@
             </div>
         </div>
     </section>
-
-    <section class="space bg-smoke3">
+    <section class="space overflow-hidden bg-black2" id="property-sec">
+        <div class="sec-bg-shape2-1 spin shape-mockup d-xl-block d-none" data-top="10%" data-left="-2%">
+            <img src="/guest/assets/img/shape/section_shape_2_1.jpg" alt="img">
+        </div>
+        <div class="sec-bg-shape2-3 jump shape-mockup d-xl-block d-none" data-bottom="35%" data-right="2%">
+            <img src="/guest/assets/img/shape/section_shape_2_3.jpg" alt="img">
+        </div>
         <div class="container">
-            <div class="row justify-content-between align-items-center">
-                <div class="col-xl-6 col-lg-8">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="title-area text-center">
+                        <span class="sub-title">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::PROJECTS->value)->where('key',\App\Enums\ContentKey::PROJECTS_SUBTITLE->value)->where('language',config('app.locale'))->first()?->value }}</span>
+                        <h2 class="sec-title text-white">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::PROJECTS->value)->where('key',\App\Enums\ContentKey::PROJECTS_TITLE->value)->where('language',config('app.locale'))->first()?->value }}</h2>
+                        <p class="sec-text text-white">{!! \App\Models\SectionContent::where('section',\App\Enums\Section::PROJECTS->value)->where('key',\App\Enums\ContentKey::PROJECTS_TEXT->value)->where('language',config('app.locale'))->first()?->value !!}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container th-container2">
+            <div class="slider-area property-slider2 slider-drag-wrap">
+                <div class="swiper th-slider" data-slider-options='{"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":"1"},"768":{"slidesPerView":"2"},"992":{"slidesPerView":"2"},"1200":{"slidesPerView":"3"},"1500":{"slidesPerView":"4"}},"spaceBetween":"32","grabCursor":"true","slideToClickedSlide":"true"}'>
+                    <div class="swiper-wrapper">
+                        @foreach(\App\Models\CitabicReference::all() as $reference)
+                            <div class="swiper-slide">
+                                <div class="property-card7">
+                                    <div class="property-card-thumb img-shine">
+
+                                        <img src="{{Storage::disk('public')->url(str_replace('storage/','',array_filter($reference->blocks,fn($item)=>$item['type']=== 'coverImage')[0]['content']))}}" alt="img">
+                                    </div>
+                                    <div class="property-card-details">
+                                        <div class="media-left">
+                                            <h4 class="property-card-title"><a href="{{route('references.show',$reference->slug)}}">{{$reference->title}}</a></h4>
+                                            <p class="property-card-subtitle">{{$reference->client}}</p>
+                                        </div>
+                                        <div class="btn-wrap">
+                                            <a href="{{route('references.show',$reference->slug)}}" class="icon-btn"><img src="/guest/assets/img/icon/arrow-right.svg" alt=""></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="overflow-hidden  contact-area-4-2 z-index-common" id="contact-sec">
+        <div class="sec-bg-shape2-1 spin shape-mockup d-xl-block d-none" data-top="10%" data-left="-2%">
+            <img src="/guest/assets/img/shape/section_shape_2_1.jpg" alt="img">
+        </div>
+        <div class="sec-bg-shape2-3 jump shape-mockup d-xl-block d-none" data-bottom="35%" data-right="2%">
+            <img src="/guest/assets/img/shape/section_shape_2_3.jpg" alt="img">
+        </div>
+        <div class="bg-black2 position-absolute w-100" style="height: 100%;margin-top:-164px; z-index: -99;"></div>
+        <div class="container th-container2">
+            <div class="contact-wrap4 bg-smoke4">
+                <div class="row g-0">
+                    <div class="col-lg-6">
+                        <div class="appointment-wrap2">
+                            <span class="sub-title3">Contact Us</span>
+                            <h2 class="form-title">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::CONTACT)->where('key',\App\Enums\ContentKey::CONTACT_FORM_TEXT)->where('language',config('app.locale'))->first()?->value }}</h2>
+                            <form action="mail.php" method="POST" class="appointment-form ajax-contact">
+                                <div class="row">
+                                    <div class="form-group style-border2 style-radius col-12">
+                                        <input type="text" class="form-control" name="name" id="name" placeholder="{{ __('site.contact.name_placeholder') }}">
+                                        <i class="fal fa-user"></i>
+                                    </div>
+                                    <div class="form-group style-border2 style-radius col-12">
+                                        <input type="email" class="form-control" name="email" id="email" placeholder="{{ __('site.contact.email_placeholder') }}">
+                                        <i class="fal fa-envelope"></i>
+                                    </div>
+                                    <div class="form-group style-border2 style-radius col-md-12">
+                                        <select name="subject" id="subject" class="form-select">
+                                            <option value="" disabled selected hidden>{{ __('site.contact.subject_placeholder') }}</option>
+                                            <option value="{{ __('site.contact.subjects.civil') }}">{{ __('site.contact.subjects.civil') }}</option>
+                                            <option value="{{ __('site.contact.subjects.building') }}">{{ __('site.contact.subjects.building') }}</option>
+                                            <option value="{{ __('site.contact.subjects.real_estate') }}">{{ __('site.contact.subjects.real_estate') }}</option>
+                                            <option value="{{ __('site.contact.subjects.general') }}">{{ __('site.contact.subjects.general') }}</option>
+                                        </select>
+                                        <i class="fal fa-angle-down"></i>
+                                    </div>
+                                    <div class="col-12 form-group style-border2 style-radius">
+                                        <i class="far fa-comments"></i>
+                                        <textarea placeholder="Type Your Message" class="form-control"></textarea>
+                                    </div>
+                                    <div class="col-12 form-btn mt-4">
+                                        <button class="th-btn style3">Submit Message <span class="btn-icon"><img src="/guest/assets/img/icon/paper-plane.svg" alt="img"></span></button>
+                                    </div>
+                                </div>
+                                <p class="form-messages mb-0 mt-3"></p>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="contact-thumb4-1">
+                            <img class="w-100" src="{{ Storage::disk('public')->url(\App\Models\SectionContent::where('section',\App\Enums\Section::CONTACT)->where('key',\App\Enums\ContentKey::CONTACT_IMAGE)->where('language',config('app.locale'))->first()?->value) }}" alt="img" loading="lazy" decoding="async">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-map-area overflow-hidden">
+        <div class="contact-map">
+            {!! \App\Models\SectionContent::where('section',\App\Enums\Section::CONTACT)->where('key',\App\Enums\ContentKey::MAP_EMBED)->first()?->value !!}
+        </div>
+    </div>
+    <section class="overflow-hidden space" id="blog-sec">
+        <div class="sec-bg-shape2-3 jump shape-mockup d-xl-block d-none" data-bottom="0%" data-right="4%">
+            <img src="/guest/assets/img/shape/section_shape_2_3.jpg" alt="img">
+        </div>
+        <div class="container th-container2">
+            <div class="row justify-content-lg-between align-items-center">
+                <div class="col-xxl-5 col-xl-6 col-lg-7">
                     <div class="title-area">
-                        <span class="sub-title">{{ __('site.home.references_eyebrow') }}</span>
-                        <h2 class="sec-title">{{ __('site.home.references_title') }}</h2>
+                        <span class="sub-title3 ">News & Blog</span>
+                        <h2 class="sec-title">Read Our Insights</h2>
+                        <p class="sec-text">Architects and engineers collaborate to create detailed design plans that translate concepts into feasible structures. </p>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="sec-btn">
-                        <a href="{{ route('references.index') }}"
-                           class="th-btn style4 th-btn-icon">{{ __('site.actions.all_references') }}</a>
+                        <a href="blog.html" class="th-btn style4 th-btn-icon">Browse All Blog</a>
                     </div>
                 </div>
             </div>
-            <div class="row gy-4">
-                @foreach (array_slice($references, 0, 4) as $reference)
-                    <div class="col-xl-3 col-md-6">
-                        <div class="team-card style9">
-                            <div class="team-card-thumb img-shine">
-                                <img src="{{ $reference['image_url'] ?? asset($reference['image']) }}"
-                                     alt="{{ $reference['title'] }}">
-                            </div>
-                            <div class="team-card-content">
-                                <h3 class="box-title"><a
-                                        href="{{ route('references.show', $reference['slug']) }}">{{ $reference['title'] }}</a>
-                                </h3>
-                                <span class="team-desig">{{ $reference['client'] }}</span>
+            <div class="slider-area">
+                <div class="swiper th-slider has-shadow slider-drag-wrap" id="blogSlider3" data-slider-options='{"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":"1"},"768":{"slidesPerView":"2"},"992":{"slidesPerView":"2"},"1200":{"slidesPerView":"3"},"1500":{"slidesPerView":"4"}},"autoHeight":true}'>
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="blog-card style3">
+                                <div class="blog-img">
+                                    <img src="/guest/assets/img/blog/blog_3_1.jpg" alt="blog image">
+                                </div>
+                                <div class="blog-content">
+                                    <div class="blog-meta">
+                                        <a href="blog.html">April 22, 2025</a>
+                                        <a href="blog.html">08 min read</a>
+                                    </div>
+                                    <h3 class="box-title"><a href="blog-details.html">Innovative structures rise, blending Construction and project</a></h3>
+                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                </div>
                             </div>
                         </div>
+
+                        <div class="swiper-slide">
+                            <div class="blog-card style3">
+                                <div class="blog-img">
+                                    <img src="/guest/assets/img/blog/blog_3_2.jpg" alt="blog image">
+                                </div>
+                                <div class="blog-content">
+                                    <div class="blog-meta">
+                                        <a href="blog.html">June 16, 2025</a>
+                                        <a href="blog.html">10 min read</a>
+                                    </div>
+                                    <h3 class="box-title"><a href="blog-details.html">What trends do we expect to start growing in the coming future?</a></h3>
+                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="blog-card style3">
+                                <div class="blog-img">
+                                    <img src="/guest/assets/img/blog/blog_3_3.jpg" alt="blog image">
+                                </div>
+                                <div class="blog-content">
+                                    <div class="blog-meta">
+                                        <a href="blog.html">April 22, 2025</a>
+                                        <a href="blog.html">08 min read</a>
+                                    </div>
+                                    <h3 class="box-title"><a href="blog-details.html">Living sustainability: A day in the life at builda residence</a></h3>
+                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="blog-card style3">
+                                <div class="blog-img">
+                                    <img src="/guest/assets/img/blog/blog_3_4.jpg" alt="blog image">
+                                </div>
+                                <div class="blog-content">
+                                    <div class="blog-meta">
+                                        <a href="blog.html">June 16, 2025</a>
+                                        <a href="blog.html">08 min read</a>
+                                    </div>
+                                    <h3 class="box-title"><a href="blog-details.html">The workplace tells and screams for more top story bloggers.</a></h3>
+                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="blog-card style3">
+                                <div class="blog-img">
+                                    <img src="/guest/assets/img/blog/blog_3_1.jpg" alt="blog image">
+                                </div>
+                                <div class="blog-content">
+                                    <div class="blog-meta">
+                                        <a href="blog.html">April 22, 2025</a>
+                                        <a href="blog.html">08 min read</a>
+                                    </div>
+                                    <h3 class="box-title"><a href="blog-details.html">Innovative structures rise, blending Construction and project</a></h3>
+                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="blog-card style3">
+                                <div class="blog-img">
+                                    <img src="/guest/assets/img/blog/blog_3_2.jpg" alt="blog image">
+                                </div>
+                                <div class="blog-content">
+                                    <div class="blog-meta">
+                                        <a href="blog.html">June 16, 2025</a>
+                                        <a href="blog.html">10 min read</a>
+                                    </div>
+                                    <h3 class="box-title"><a href="blog-details.html">What trends do we expect to start growing in the coming future?</a></h3>
+                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="blog-card style3">
+                                <div class="blog-img">
+                                    <img src="/guest/assets/img/blog/blog_3_3.jpg" alt="blog image">
+                                </div>
+                                <div class="blog-content">
+                                    <div class="blog-meta">
+                                        <a href="blog.html">April 22, 2025</a>
+                                        <a href="blog.html">08 min read</a>
+                                    </div>
+                                    <h3 class="box-title"><a href="blog-details.html">Living sustainability: A day in the life at builda residence</a></h3>
+                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="blog-card style3">
+                                <div class="blog-img">
+                                    <img src="/guest/assets/img/blog/blog_3_4.jpg" alt="blog image">
+                                </div>
+                                <div class="blog-content">
+                                    <div class="blog-meta">
+                                        <a href="blog.html">June 16, 2025</a>
+                                        <a href="blog.html">08 min read</a>
+                                    </div>
+                                    <h3 class="box-title"><a href="blog-details.html">The workplace tells and screams for more top story bloggers.</a></h3>
+                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                @endforeach
+                </div>
             </div>
         </div>
     </section>
+
 @endsection

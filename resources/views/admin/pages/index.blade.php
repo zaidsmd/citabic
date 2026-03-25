@@ -224,6 +224,78 @@
                                         </div>
                                     </div>
 
+                                    {{-- Projects --}}
+                                    <div class="section-title mb-4 mt-5">
+                                        <h6 class="fw-bold text-primary">
+                                            <i class="fa fa-diagram-project me-2"></i>
+                                            {{ __('admin.section.'.Section::PROJECTS->value) }}
+                                        </h6>
+                                        <hr class="mt-1">
+                                    </div>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label fw-semibold">
+                                                    {{ __('admin.section.contents.labels.'.ContentKey::PROJECTS_SUBTITLE->value) }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <input type="text"
+                                                       name="{{ ContentKey::PROJECTS_SUBTITLE->value }}[{{ $locale }}]"
+                                                       class="form-control @error(ContentKey::PROJECTS_SUBTITLE->value.'.'.$locale) is-invalid @enderror"
+                                                       value="{{ old(ContentKey::PROJECTS_SUBTITLE->value.'.'.$locale, $contents->where('section',Section::PROJECTS->value)->where('key',ContentKey::PROJECTS_SUBTITLE->value)->where('language',$locale)->first()?->value) }}"
+                                                       placeholder="{{ __('admin.section.placeholders.'.ContentKey::PROJECTS_SUBTITLE->value) }}"
+                                                       required>
+                                                @error(ContentKey::PROJECTS_SUBTITLE->value.'.'.$locale)
+                                                <div class="invalid-feedback">
+                                                    <i class="fa fa-exclamation-circle me-1"></i>
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label class="form-label fw-semibold">
+                                                    {{ __('admin.section.contents.labels.'.ContentKey::PROJECTS_TITLE->value) }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <input type="text"
+                                                       name="{{ ContentKey::PROJECTS_TITLE->value }}[{{ $locale }}]"
+                                                       class="form-control @error(ContentKey::PROJECTS_TITLE->value.'.'.$locale) is-invalid @enderror"
+                                                       value="{{ old(ContentKey::PROJECTS_TITLE->value.'.'.$locale, $contents->where('section',Section::PROJECTS->value)->where('key',ContentKey::PROJECTS_TITLE->value)->where('language',$locale)->first()?->value) }}"
+                                                       placeholder="{{ __('admin.section.placeholders.'.ContentKey::PROJECTS_TITLE->value) }}"
+                                                       required>
+                                                @error(ContentKey::PROJECTS_TITLE->value.'.'.$locale)
+                                                <div class="invalid-feedback">
+                                                    <i class="fa fa-exclamation-circle me-1"></i>
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="form-label fw-semibold">
+                                                    {{ __('admin.section.contents.labels.'.ContentKey::PROJECTS_TEXT->value) }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <textarea
+                                                    name="{{ ContentKey::PROJECTS_TEXT->value }}[{{ $locale }}]"
+                                                    class="form-control @error(ContentKey::PROJECTS_TEXT->value.'.'.$locale) is-invalid @enderror"
+                                                    rows="2"
+                                                    id="textarea-{{ContentKey::PROJECTS_TEXT->value}}-{{ $locale }}"
+                                                    placeholder="{{ __('admin.section.placeholders.'.ContentKey::PROJECTS_TEXT->value) }}"
+                                                >{!! old(ContentKey::PROJECTS_TEXT->value.'.'.$locale, $contents->where('section',Section::PROJECTS->value)->where('key',ContentKey::PROJECTS_TEXT->value)->where('language',$locale)->first()?->value) !!}</textarea>
+                                                @error(ContentKey::PROJECTS_TEXT->value.'.'.$locale)
+                                                <div class="invalid-feedback">
+                                                    <i class="fa fa-exclamation-circle me-1"></i>
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {{-- Why Choose Us --}}
                                     <div class="section-title mb-4 mt-5">
                                         <h6 class="fw-bold text-primary">
@@ -578,7 +650,7 @@
     <script src="/build/js/plugins/dropzone-amd-module.min.js"></script>
     <script>
         tinymce.init({
-            selector: '#textarea-{{ContentKey::ABOUT_TEXT->value}}-en, #textarea-{{ContentKey::ABOUT_TEXT->value}}-fr, #textarea-{{ContentKey::DOMAIN_TEXT->value}}-en, #textarea-{{ContentKey::DOMAIN_TEXT->value}}-fr',
+            selector: '#textarea-{{ContentKey::ABOUT_TEXT->value}}-en, #textarea-{{ContentKey::ABOUT_TEXT->value}}-fr, #textarea-{{ContentKey::DOMAIN_TEXT->value}}-en, #textarea-{{ContentKey::DOMAIN_TEXT->value}}-fr, #textarea-{{ContentKey::PROJECTS_TEXT->value}}-en, #textarea-{{ContentKey::PROJECTS_TEXT->value}}-fr',
             menubar: false,
             height: 200,
             branding: false,

@@ -30,7 +30,8 @@ export default defineConfig({
                 'resources/admin/scss/style-preset.scss',
                 'resources/admin/scss/style.scss',
                 'resources/admin/scss/uikit.scss',
-                'resources/admin/js/certifications/index.js'
+                'resources/admin/js/certifications/index.js',
+                'resources/admin/js/reference-form.js'
             ],
             refresh: true,
         }),

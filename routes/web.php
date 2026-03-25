@@ -1,11 +1,19 @@
 <?php
 
+use App\Http\Controllers\Admin\AboutUsController;
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\BlogPostController;
+use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\CmsController;
+use App\Http\Controllers\Admin\CompanyInfoController;
+use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DomainController;
 use App\Http\Controllers\Admin\FigureController;
+use App\Http\Controllers\Admin\GoogleTranslateSettingsController;
+use App\Http\Controllers\Admin\MissionController;
+use App\Http\Controllers\Admin\OurApproachController;
+use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProcessController;
+use App\Http\Controllers\Admin\SectionContentController;
 use App\Http\Controllers\Admin\ValueController;
 use App\Http\Controllers\CitabicController;
 use Illuminate\Http\Request;
@@ -44,32 +52,32 @@ Route::prefix('admins')->name('admin.')->middleware('admin.auth')->group(functio
     Route::put('/references/{reference}', [CmsController::class, 'updateReference'])->name('references.update');
     Route::delete('/references/{reference}', [CmsController::class, 'destroyReference'])->name('references.destroy');
 
-    Route::resource('certifications', \App\Http\Controllers\Admin\CertificationController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
-    Route::get('company-info', [\App\Http\Controllers\Admin\CompanyInfoController::class, 'index'])->name('company-info.index');
-    Route::put('company-info', [\App\Http\Controllers\Admin\CompanyInfoController::class, 'update'])->name('company-info.update');
+    Route::resource('certifications', CertificationController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    Route::get('company-info', [CompanyInfoController::class, 'index'])->name('company-info.index');
+    Route::put('company-info', [CompanyInfoController::class, 'update'])->name('company-info.update');
 
-    Route::get('sections',[\App\Http\Controllers\Admin\SectionContentController::class,'index'])->name('sections.index');
-    Route::put('sections',[\App\Http\Controllers\Admin\SectionContentController::class,'update'])->name('sections.update');
-    Route::post('sections/upload-image',[\App\Http\Controllers\Admin\SectionContentController::class,'uploadImage'])->name('sections.upload-image');
-    Route::post('sections/upload-video',[\App\Http\Controllers\Admin\SectionContentController::class,'uploadVideo'])->name('sections.upload-video');
+    Route::get('sections', [SectionContentController::class, 'index'])->name('sections.index');
+    Route::put('sections', [SectionContentController::class, 'update'])->name('sections.update');
+    Route::post('sections/upload-image', [SectionContentController::class, 'uploadImage'])->name('sections.upload-image');
+    Route::post('sections/upload-video', [SectionContentController::class, 'uploadVideo'])->name('sections.upload-video');
 
-    Route::get('our-approach', [\App\Http\Controllers\Admin\OurApproachController::class, 'index'])->name('our-approach.index');
-    Route::put('our-approach', [\App\Http\Controllers\Admin\OurApproachController::class, 'update'])->name('our-approach.update');
+    Route::get('our-approach', [OurApproachController::class, 'index'])->name('our-approach.index');
+    Route::put('our-approach', [OurApproachController::class, 'update'])->name('our-approach.update');
 
-    Route::get('pages/about-us', [\App\Http\Controllers\Admin\AboutUsController::class, 'index'])->name('pages.about-us');
-    Route::put('pages/about-us', [\App\Http\Controllers\Admin\AboutUsController::class, 'update'])->name('pages.about-us.update');
-    Route::post('pages/about-us/upload-image', [\App\Http\Controllers\Admin\AboutUsController::class, 'uploadImage'])->name('pages.about-us.upload-image');
-    Route::get('pages/contact', [\App\Http\Controllers\Admin\ContactController::class, 'index'])->name('pages.contact');
-    Route::put('pages/contact', [\App\Http\Controllers\Admin\ContactController::class, 'update'])->name('pages.contact.update');
-    Route::post('pages/contact/upload-image', [\App\Http\Controllers\Admin\ContactController::class, 'uploadImage'])->name('pages.contact.upload-image');
-    Route::get('missions', [\App\Http\Controllers\Admin\MissionController::class, 'index'])->name('missions.index');
-    Route::get('missions/create', [\App\Http\Controllers\Admin\MissionController::class, 'create'])->name('missions.create');
-    Route::post('missions', [\App\Http\Controllers\Admin\MissionController::class, 'store'])->name('missions.store');
-    Route::get('missions/{mission}/edit', [\App\Http\Controllers\Admin\MissionController::class, 'edit'])->name('missions.edit');
-    Route::put('missions/{mission}', [\App\Http\Controllers\Admin\MissionController::class, 'update'])->name('missions.update');
-    Route::delete('missions/{mission}', [\App\Http\Controllers\Admin\MissionController::class, 'destroy'])->name('missions.destroy');
-    Route::post('missions/upload-image', [\App\Http\Controllers\Admin\MissionController::class, 'uploadImage'])->name('missions.upload-image');
-    Route::get('php-info',function (){
+    Route::get('pages/about-us', [AboutUsController::class, 'index'])->name('pages.about-us');
+    Route::put('pages/about-us', [AboutUsController::class, 'update'])->name('pages.about-us.update');
+    Route::post('pages/about-us/upload-image', [AboutUsController::class, 'uploadImage'])->name('pages.about-us.upload-image');
+    Route::get('pages/contact', [ContactController::class, 'index'])->name('pages.contact');
+    Route::put('pages/contact', [ContactController::class, 'update'])->name('pages.contact.update');
+    Route::post('pages/contact/upload-image', [ContactController::class, 'uploadImage'])->name('pages.contact.upload-image');
+    Route::get('missions', [MissionController::class, 'index'])->name('missions.index');
+    Route::get('missions/create', [MissionController::class, 'create'])->name('missions.create');
+    Route::post('missions', [MissionController::class, 'store'])->name('missions.store');
+    Route::get('missions/{mission}/edit', [MissionController::class, 'edit'])->name('missions.edit');
+    Route::put('missions/{mission}', [MissionController::class, 'update'])->name('missions.update');
+    Route::delete('missions/{mission}', [MissionController::class, 'destroy'])->name('missions.destroy');
+    Route::post('missions/upload-image', [MissionController::class, 'uploadImage'])->name('missions.upload-image');
+    Route::get('php-info', function () {
         phpinfo();
     });
     Route::resource('processes', ProcessController::class);
@@ -77,8 +85,17 @@ Route::prefix('admins')->name('admin.')->middleware('admin.auth')->group(functio
     Route::post('domains/upload-image', [DomainController::class, 'uploadImage'])->name('domains.upload-image');
     Route::resource('domains', DomainController::class);
     Route::resource('figures', FigureController::class);
-    Route::resource('posts', \App\Http\Controllers\Admin\PostController::class);
-    Route::post('posts/upload-featured-image', [\App\Http\Controllers\Admin\PostController::class, 'uploadFeaturedImage'])
+    Route::resource('posts', PostController::class);
+    Route::patch('posts/{post}/publish', [PostController::class, 'publish'])->name('posts.publish');
+    Route::patch('posts/{post}/unpublish', [PostController::class, 'unpublish'])->name('posts.unpublish');
+    Route::post('posts/translate-fr-en', [PostController::class, 'translateFrToEn'])->name('posts.translate-fr-en');
+    Route::get('settings/google-translate', [GoogleTranslateSettingsController::class, 'index'])
+        ->name('settings.google-translate.index');
+    Route::put('settings/google-translate', [GoogleTranslateSettingsController::class, 'update'])
+        ->name('settings.google-translate.update');
+    Route::post('posts/upload-image', [PostController::class, 'uploadFeaturedImage'])
+        ->name('posts.upload-image');
+    Route::post('posts/upload-featured-image', [PostController::class, 'uploadFeaturedImage'])
         ->name('posts.upload-featured-image');
 });
 

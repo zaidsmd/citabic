@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Enums\ContentKey;
 use App\Enums\Section;
+use App\Http\Controllers\Controller;
 use App\Models\SectionContent;
 use App\Services\ImageUploadService;
 use App\Services\VideoUploadService;
@@ -35,45 +35,50 @@ class SectionContentController extends Controller
         $whyImage = SectionContent::where('section', Section::WHY_CHOOSE_US->value)
             ->where('key', ContentKey::WHY_IMAGE->value)
             ->first()?->value;
+
         return view('admin.pages.index', compact('contents', 'images', 'heroVideo', 'whyImage'));
     }
-
 
     public function uploadImage(Request $request, ImageUploadService $imageService): JsonResponse
     {
         $request->validate(['image' => 'required|image|max:10240', 'key' => 'required|string']);
         $path = $imageService->store($request->file('image'), 'about');
+
         return response()->json(['path' => $path, 'url' => Storage::disk('public')->url($path)]);
     }
-
 
     public function uploadVideo(Request $request, VideoUploadService $videoService): JsonResponse
     {
         $request->validate(['video' => 'required|file|mimetypes:video/mp4,video/webm,video/ogg|max:102400']);
         $path = $videoService->store($request->file('video'), 'hero');
+
         return response()->json(['path' => $path, 'url' => Storage::disk('public')->url($path)]);
     }
-
 
     public function update(Request $request)
     {
         $locales = ['en', 'fr'];
         $textFields = [
-            ContentKey::HERO_TITLE->value    => Section::HERO->value,
+            ContentKey::HERO_TITLE->value => Section::HERO->value,
             ContentKey::HERO_SUBTITLE->value => Section::HERO->value,
-            ContentKey::ABOUT_TITLE->value   => Section::ABOUT->value,
-            ContentKey::ABOUT_TEXT->value    => Section::ABOUT->value,
-            ContentKey::DOMAIN_TITLE->value        => Section::DOMAIN->value,
-            ContentKey::DOMAIN_TEXT->value         => Section::DOMAIN->value,
-            ContentKey::WHY_TITLE->value           => Section::WHY_CHOOSE_US->value,
-            ContentKey::WHY_SUBTITLE->value        => Section::WHY_CHOOSE_US->value,
-            ContentKey::WHY_TEXT->value            => Section::WHY_CHOOSE_US->value,
+            ContentKey::ABOUT_TITLE->value => Section::ABOUT->value,
+            ContentKey::ABOUT_TEXT->value => Section::ABOUT->value,
+            ContentKey::DOMAIN_TITLE->value => Section::DOMAIN->value,
+            ContentKey::DOMAIN_TEXT->value => Section::DOMAIN->value,
+            ContentKey::PROJECTS_SUBTITLE->value => Section::PROJECTS->value,
+            ContentKey::PROJECTS_TITLE->value => Section::PROJECTS->value,
+            ContentKey::PROJECTS_TEXT->value => Section::PROJECTS->value,
+            ContentKey::WHY_TITLE->value => Section::WHY_CHOOSE_US->value,
+            ContentKey::WHY_SUBTITLE->value => Section::WHY_CHOOSE_US->value,
+            ContentKey::WHY_TEXT->value => Section::WHY_CHOOSE_US->value,
         ];
 
         foreach ($textFields as $key => $section) {
             foreach ($locales as $locale) {
                 $value = $request->input($key.'.'.$locale);
-                if ($value === null) continue;
+                if ($value === null) {
+                    continue;
+                }
                 SectionContent::updateOrCreate(
                     ['section' => $section, 'key' => $key, 'language' => $locale],
                     ['value' => $value]
@@ -85,7 +90,7 @@ class SectionContentController extends Controller
             ContentKey::ABOUT_IMAGE_1->value => Section::ABOUT->value,
             ContentKey::ABOUT_IMAGE_2->value => Section::ABOUT->value,
             ContentKey::ABOUT_IMAGE_3->value => Section::ABOUT->value,
-            ContentKey::WHY_IMAGE->value     => Section::WHY_CHOOSE_US->value,
+            ContentKey::WHY_IMAGE->value => Section::WHY_CHOOSE_US->value,
         ];
         foreach ($imageFields as $key => $section) {
             $path = $request->input($key);
@@ -101,7 +106,7 @@ class SectionContentController extends Controller
         foreach ($locales as $locale) {
             $features = $request->input('why_features.'.$locale, []);
             if (is_array($features)) {
-                $filtered = array_values(array_filter($features, fn($f) => !empty($f['title']) || !empty($f['text'])));
+                $filtered = array_values(array_filter($features, fn ($f) => ! empty($f['title']) || ! empty($f['text'])));
                 SectionContent::updateOrCreate(
                     ['section' => Section::WHY_CHOOSE_US->value, 'key' => ContentKey::WHY_FEATURES->value, 'language' => $locale],
                     ['value' => json_encode($filtered, JSON_UNESCAPED_UNICODE)]

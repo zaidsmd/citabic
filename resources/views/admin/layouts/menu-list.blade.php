@@ -100,6 +100,14 @@
   </a>
 </li>
 <li class="pc-item">
+  <a href="{{ route('admin.settings.google-translate.index') }}" class="pc-link">
+    <span class="pc-micon">
+      <i class="fa fa-language"></i>
+    </span>
+    <span class="pc-mtext">{{ __('admin.google_translate_settings.nav') }}</span>
+  </a>
+</li>
+<li class="pc-item">
   <a href="{{ route('admin.missions.index') }}" class="pc-link">
     <span class="pc-micon">
       <i class="fa fa-bullseye"></i>

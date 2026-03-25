@@ -6,6 +6,18 @@
     <title>@yield('title', 'CITABIC')</title>
     <meta name="author" content="CITABIC">
     <meta name="description" content="@yield('meta_description', __('site.meta_description'))">
+    <meta name="keywords" content="@yield('meta_keywords', '')">
+    <meta name="robots" content="@yield('meta_robots', 'index,follow')">
+    <link rel="canonical" href="@yield('canonical_url', url()->current())">
+    <meta property="og:type" content="@yield('og_type', 'article')">
+    <meta property="og:title" content="@yield('og_title', trim($__env->yieldContent('title', 'CITABIC')))">
+    <meta property="og:description" content="@yield('og_description', trim($__env->yieldContent('meta_description', __('site.meta_description'))))">
+    <meta property="og:url" content="@yield('og_url', url()->current())">
+    <meta property="og:image" content="@yield('og_image', '')">
+    <meta name="twitter:card" content="@yield('twitter_card', 'summary_large_image')">
+    <meta name="twitter:title" content="@yield('twitter_title', trim($__env->yieldContent('og_title', $__env->yieldContent('title', 'CITABIC'))))">
+    <meta name="twitter:description" content="@yield('twitter_description', trim($__env->yieldContent('og_description', $__env->yieldContent('meta_description', __('site.meta_description')))))">
+    <meta name="twitter:image" content="@yield('twitter_image', trim($__env->yieldContent('og_image', '')))">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('guest/assets/img/favicons/favicon-32x32.png') }}">
@@ -109,6 +121,7 @@
             letter-spacing: 0.06em;
         }
     </style>
+    @yield('structured_data')
     @stack('styles')
 </head>
 <body>
@@ -210,7 +223,6 @@
     </header>
 
     @yield('content')
-
     <footer class="footer-wrapper footer-default bg-black2">
         <div class="container">
             <div class="footer-wrap ">

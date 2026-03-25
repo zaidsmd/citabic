@@ -22,7 +22,6 @@ enum ContentKey: string
     case ABOUT_IMAGE_2 = 'about_image_2';
     case ABOUT_IMAGE_3 = 'about_image_3';
 
-
     case ROUNDED_TEXT = 'rounded_text';
     case SECTION_IMAGE = 'section_image';
     case ORGANIGRAME = 'organigrame';
@@ -36,8 +35,6 @@ enum ContentKey: string
     case WHY_US_TITLE = 'why_us_title';
     case WHY_US_TEXT = 'why_us_text';
     case WHY_US_CARDS = 'why_us_cards';
-
-
 
     case OUR_APPROACH_TITLE = 'our_approach_title';
 
@@ -64,6 +61,10 @@ enum ContentKey: string
     // DOMAIN SECTION
     case DOMAIN_TITLE = 'domain_title';
     case DOMAIN_TEXT = 'domain_text';
+    // PROJECTS SECTION
+    case PROJECTS_TITLE = 'projects_title';
+    case PROJECTS_SUBTITLE = 'projects_subtitle';
+    case PROJECTS_TEXT = 'projects_text';
     // CONTACT SECTION
     case ADDRESS = 'address';
     case PHONE = 'phone';
@@ -96,6 +97,8 @@ enum ContentKey: string
             self::VALUE_1_TITLE, self::VALUE_1_TEXT, self::VALUE_2_TITLE, self::VALUE_2_TEXT,
             self::VALUE_3_TITLE, self::VALUE_3_TEXT, self::VALUE_4_TITLE, self::VALUE_4_TEXT,
             self::VALUE_5_TITLE, self::VALUE_5_TEXT, self::VALUE_6_TITLE, self::VALUE_6_TEXT => Section::ABOUT,
+
+            self::PROJECTS_TITLE, self::PROJECTS_SUBTITLE, self::PROJECTS_TEXT => Section::PROJECTS,
 
             self::ADDRESS, self::PHONE, self::EMAIL, self::MAP_EMBED,
             self::CONTACT_FORM_TEXT => Section::CONTACT,
