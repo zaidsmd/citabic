@@ -2,9 +2,9 @@
 <nav class="pc-sidebar">
   <div class="navbar-wrapper">
     <div class="m-header">
-      <a href="/dashboard/index" class="b-brand text-primary">
+      <a href="{{route('admin.dashboard')}}" class="b-brand text-primary">
         <!-- ========   Change your logo from here   ============ -->
-        <img src="/build/images/logo-dark.svg" class="img-fluid logo-lg" alt="logo" />
+        <img src="{{asset('guest/assets/img/logo.svg')}}" class="img-fluid logo-lg" alt="logo" />
         <span class="badge bg-light-success rounded-pill ms-2 theme-version">{{ config('app.APP_VERSION') }}</span>
       </a>
     </div>
@@ -16,8 +16,8 @@
               <img src="/build/images/user/avatar-1.jpg" alt="user-image" class="user-avtar wid-45 rounded-circle" />
             </div>
             <div class="flex-grow-1 ms-3 me-2">
-              <h6 class="mb-0" data-i18n="Jonh Smith">Jonh Smith</h6>
-              <small data-i18n="Administrator">Administrator</small>
+              <h6 class="mb-0" >{{auth()->user()->name}}</h6>
+              <small >{{auth()->user()->email}}</small>
             </div>
             <a class="btn btn-icon btn-link-secondary avtar" data-bs-toggle="collapse" href="#pc_sidebar_userlink">
               <svg class="pc-icon">
@@ -30,14 +30,6 @@
               <a href="#!">
                 <i class="ti ti-user"></i>
                 <span data-i18n="My Account">My Account</span>
-              </a>
-              <a href="#!">
-                <i class="ti ti-settings"></i>
-                <span data-i18n="Settings">Settings</span>
-              </a>
-              <a href="#!">
-                <i class="ti ti-lock"></i>
-                <span data-i18n="Lock Screen">Lock Screen</span>
               </a>
               <a href="#!">
                 <i class="ti ti-power"></i>

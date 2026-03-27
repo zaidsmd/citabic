@@ -141,7 +141,6 @@
                 <ul>
                     <li><a href="{{ route('home') }}">{{ __('site.nav.home') }}</a></li>
                     <li><a href="{{ route('company') }}">{{ __('site.nav.company') }}</a></li>
-                    <li><a href="{{ route('expertise') }}">{{ __('site.nav.expertise') }}</a></li>
                     <li><a href="{{ route('references.index') }}">{{ __('site.nav.references') }}</a></li>
                     <li><a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a></li>
                     <li><a href="{{ route('contact') }}">{{ __('site.nav.contact') }}</a></li>
@@ -183,7 +182,6 @@
                                 <ul>
                                     <li><a href="{{ route('home') }}">{{ __('site.nav.home') }}</a></li>
                                     <li><a href="{{ route('company') }}">{{ __('site.nav.company') }}</a></li>
-                                    <li><a href="{{ route('expertise') }}">{{ __('site.nav.expertise') }}</a></li>
                                     <li><a href="{{ route('references.index') }}">{{ __('site.nav.references') }}</a></li>
                                     <li><a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a></li>
                                     <li><a href="{{ route('contact') }}">{{ __('site.nav.contact') }}</a></li>
@@ -269,7 +267,6 @@
                                 <div class="menu-all-pages-container">
                                     <ul class="menu">
                                         <li><a href="{{ route('company') }}">{{ __('site.footer.company_profile') }}</a></li>
-                                        <li><a href="{{ route('expertise') }}">{{ __('site.footer.activity_domains') }}</a></li>
                                         <li><a href="{{ route('references.index') }}">{{ __('site.nav.references') }}</a></li>
                                         <li><a href="{{ route('contact') }}">{{ __('site.footer.get_in_touch') }}</a></li>
                                     </ul>
@@ -282,7 +279,6 @@
                                 <div class="menu-all-pages-container">
                                     <ul class="menu">
                                         <li><a href="{{ route('company') }}">{{ __('site.footer.mission_values') }}</a></li>
-                                        <li><a href="{{ route('expertise') }}">{{ __('site.footer.certifications') }}</a></li>
                                         <li><a href="{{ route('references.index') }}">{{ __('site.footer.projects') }}</a></li>
                                         <li><a href="{{ route('contact') }}">{{ __('site.footer.coordinates') }}</a></li>
                                     </ul>

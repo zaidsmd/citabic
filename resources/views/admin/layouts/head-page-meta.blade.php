@@ -4,13 +4,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta
   name="description"
-  content="Able Pro is trending dashboard template made using Bootstrap 5 design framework. Able Pro is available in Bootstrap, React, CodeIgniter, Angular,  and .net Technologies."
+  content="Admin panel of the CITABIC website made by Zaid Samadi"
 />
 <meta
   name="keywords"
-  content="Bootstrap admin template, Dashboard UI Kit, Dashboard Template, Backend Panel, react dashboard, angular dashboard"
+  content="Custom CMS made for CITABIC"
 />
-<meta name="author" content="Phoenixcoded" />
+<meta name="author" content="Zaid Samadi" />
 
 <!-- [Favicon] icon -->
-<link rel="icon" href="/build/images/favicon.svg" type="image/x-icon" />
+<link rel="icon" href="{{asset('/guest/assets/img/logo.svg')}}" type="image/x-icon" />

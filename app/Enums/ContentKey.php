@@ -17,6 +17,7 @@ enum ContentKey: string
     // ABOUT
     case ABOUT_TITLE = 'about_title';
     case ABOUT_TEXT = 'about_text';
+    case ABOUT_SUBTITLE = 'about_subtitle';
     case ABOUT_HEADER_BG_IMG = 'about_header_bg_img';
     case ABOUT_IMAGE_1 = 'about_image_1';
     case ABOUT_IMAGE_2 = 'about_image_2';
@@ -60,11 +61,20 @@ enum ContentKey: string
     case WHY_FEATURES = 'why_features';
     // DOMAIN SECTION
     case DOMAIN_TITLE = 'domain_title';
+    case DOMAIN_SUBTITLE = 'domain_subtitle';
     case DOMAIN_TEXT = 'domain_text';
     // PROJECTS SECTION
     case PROJECTS_TITLE = 'projects_title';
     case PROJECTS_SUBTITLE = 'projects_subtitle';
     case PROJECTS_TEXT = 'projects_text';
+    // BLOG SECTION
+    case BLOG_SUBTITLE = 'blog_subtitle';
+    case BLOG_TITLE = 'blog_title';
+    case BLOG_TEXT = 'blog_text';
+    // VALUES SECTION
+    case VALUES_SUBTITLE = 'values_subtitle';
+    case VALUES_TITLE = 'values_title';
+    case VALUES_TEXT = 'values_text';
     // CONTACT SECTION
     case ADDRESS = 'address';
     case PHONE = 'phone';

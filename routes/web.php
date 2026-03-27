@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AboutUsController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\CmsController;
 use App\Http\Controllers\Admin\CompanyInfoController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Admin\OurApproachController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProcessController;
 use App\Http\Controllers\Admin\SectionContentController;
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\ValueController;
 use App\Http\Controllers\CitabicController;
 use Illuminate\Http\Request;
@@ -29,7 +31,6 @@ Route::get('/locale/{locale}', function (Request $request, string $locale) {
 
 Route::get('/', [CitabicController::class, 'home'])->name('home');
 Route::get('/societe', [CitabicController::class, 'company'])->name('company');
-Route::get('/expertises', [CitabicController::class, 'expertise'])->name('expertise');
 Route::get('/references', [CitabicController::class, 'references'])->name('references.index');
 Route::get('/references/{slug}', [CitabicController::class, 'reference'])->name('references.show');
 Route::get('/contact', [CitabicController::class, 'contact'])->name('contact');
@@ -81,10 +82,13 @@ Route::prefix('admins')->name('admin.')->middleware('admin.auth')->group(functio
         phpinfo();
     });
     Route::resource('processes', ProcessController::class);
+    Route::post('values/upload-image', [ValueController::class, 'uploadImage'])->name('values.upload-image');
     Route::resource('values', ValueController::class);
     Route::post('domains/upload-image', [DomainController::class, 'uploadImage'])->name('domains.upload-image');
     Route::resource('domains', DomainController::class);
     Route::resource('figures', FigureController::class);
+    Route::resource('categories', CategoryController::class)->except(['show']);
+    Route::resource('tags', TagController::class)->except(['show']);
     Route::resource('posts', PostController::class);
     Route::patch('posts/{post}/publish', [PostController::class, 'publish'])->name('posts.publish');
     Route::patch('posts/{post}/unpublish', [PostController::class, 'unpublish'])->name('posts.unpublish');
@@ -100,15 +104,15 @@ Route::prefix('admins')->name('admin.')->middleware('admin.auth')->group(functio
 });
 
 Route::get('/blog', [CitabicController::class, 'blog'])->name('blog.index');
+Route::get('/blog/category/{slug}', [CitabicController::class, 'blogByCategory'])->name('blog.category');
+Route::get('/blog/tag/{slug}', [CitabicController::class, 'blogByTag'])->name('blog.tag');
 Route::get('/blog/{slug}', [CitabicController::class, 'blogPost'])->name('blog.show');
+Route::post('/blog/{slug}/comments', [CitabicController::class, 'storeBlogComment'])->name('blog.comments.store');
 
 Route::redirect('/about', '/societe')->name('about');
-Route::redirect('/service', '/expertises')->name('service');
-Route::redirect('/service-details', '/expertises')->name('service-details');
 Route::redirect('/project', '/references')->name('project');
 Route::redirect('/team', '/societe')->name('team');
 Route::redirect('/team-details', '/societe')->name('team-details');
-Route::redirect('/pricing', '/expertises')->name('pricing');
 Route::redirect('/appointment', '/contact')->name('appointment');
 Route::redirect('/faq', '/societe')->name('faq');
 Route::redirect('/testimonial', '/references')->name('testimonial');

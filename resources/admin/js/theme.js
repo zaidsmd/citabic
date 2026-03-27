@@ -214,10 +214,10 @@ function layout_change(layout) {
     dark_flag = true;
 
     // Update logo to white version for dark theme
-    updateLogo('.pc-sidebar .m-header .logo-lg', '/build/images/logo-white.svg');
-    updateLogo('.navbar-brand .logo-lg', '/build/images/logo-white.svg');
-    updateLogo('.auth-main.v1 .auth-sidefooter img', '/build/images/logo-white.svg');
-    updateLogo('.footer-top .footer-logo', '/build/images/logo-white.svg');
+    updateLogo('.pc-sidebar .m-header .logo-lg', '/guest/assets/img/logo.svg');
+    updateLogo('.navbar-brand .logo-lg', '/guest/assets/img/logo.svg');
+    updateLogo('.auth-main.v1 .auth-sidefooter img', '/guest/assets/img/logo.svg');
+    updateLogo('.footer-top .footer-logo', '/guest/assets/img/logo.svg');
 
     // Update active button state for dark theme
     updateActiveButton('.theme-layout .btn[data-value="false"]');
@@ -225,10 +225,10 @@ function layout_change(layout) {
     dark_flag = false;
 
     // Update logo to dark version for light theme
-    updateLogo('.pc-sidebar .m-header .logo-lg', '/build/images/logo-dark.svg');
-    updateLogo('.navbar-brand .logo-lg', '/build/images/logo-dark.svg');
-    updateLogo('.auth-main.v1 .auth-sidefooter img', '/build/images/logo-dark.svg');
-    updateLogo('.footer-top .footer-logo', '/build/images/logo-dark.svg');
+    updateLogo('.pc-sidebar .m-header .logo-lg', '/guest/assets/img/logo.svg');
+    updateLogo('.navbar-brand .logo-lg', '/guest/assets/img/logo.svg');
+    updateLogo('.auth-main.v1 .auth-sidefooter img', '/guest/assets/img/logo.svg');
+    updateLogo('.footer-top .footer-logo', '/guest/assets/img/logo.svg');
 
     // Update active button state for light theme
     updateActiveButton('.theme-layout .btn[data-value="true"]');

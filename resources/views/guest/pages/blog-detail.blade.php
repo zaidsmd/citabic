@@ -97,6 +97,9 @@
         $postModel = null;
         $categories = collect();
         $tags = collect();
+        $postComments = isset($comments) && $comments instanceof \Illuminate\Support\Collection
+            ? $comments
+            : collect($comments ?? []);
 
         if (! empty($post['id'] ?? null)) {
             $postModel = \App\Models\Post::query()
@@ -138,7 +141,12 @@
                                     <a href="#"><i class="far fa-clock"></i>{{ $publishedAt->format('d M, Y') }}</a>
                                 @endif
                                 @if($categories->isNotEmpty())
-                                    <a href="#"><i class="far fa-house-building"></i>{{ $categories->pluck('name')->join(', ') }}</a>
+                                    @php
+                                        $primaryCategory = $categories->first();
+                                    @endphp
+                                    <a href="{{ $primaryCategory ? route('blog.category', $primaryCategory->slug) : '#' }}">
+                                        <i class="far fa-house-building"></i>{{ $categories->pluck('name')->join(', ') }}
+                                    </a>
                                 @endif
                             </div>
                             <h2 class="blog-title">{{ $post['title'] }}</h2>
@@ -338,13 +346,76 @@
                                     <span class="share-links-title">Tags:</span>
                                     <div class="tagcloud">
                                         @foreach($tags as $tag)
-                                            <a href="#">{{ $tag->name }}</a>
+                                            <a href="{{ route('blog.tag', $tag->slug) }}">{{ $tag->name }}</a>
                                         @endforeach
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @endif
+
+                    <div class="th-comments-wrap">
+                        <h3 class="blog-inner-title">{{ __('site.blog.comments.title', ['count' => $postComments->count()]) }}</h3>
+
+                        @if($postComments->isEmpty())
+                            <p class="mb-0">{{ __('site.blog.comments.empty') }}</p>
+                        @else
+                            <ul class="comment-list" id="comments-list">
+                                @foreach($postComments as $comment)
+                                    <li class="th-comment-item">
+                                        <div class="th-post-comment">
+                                            <div class="comment-avater">
+                                                <img src="{{ asset('guest/assets/img/blog/comment-author-1.jpg') }}" alt="Comment Author">
+                                            </div>
+                                            <div class="comment-content">
+                                                <span class="commented-on">{{ $comment->created_at?->format('d M, Y') }}</span>
+                                                <h3 class="name">{{ $comment->name }}</h3>
+                                                <p class="text">{{ $comment->content }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+
+                    <div class="th-comment-form">
+                        <div class="form-title">
+                            <h3 class="blog-inner-title mb-0">{{ __('site.blog.comments.leave_reply') }}</h3>
+                            <p class="form-text">{{ __('site.blog.comments.note') }}</p>
+                        </div>
+
+                        <div id="comment-success-box" class="alert alert-success mb-3 {{ session('comment_success') ? '' : 'd-none' }}">
+                            @if(session('comment_success'))
+                                {{ session('comment_success') }}
+                            @endif
+                        </div>
+                        <div id="comment-error-box" class="alert alert-danger mb-3 d-none"></div>
+
+                        <form method="post" action="{{ route('blog.comments.store', $post['slug']) }}" id="blog-comment-form">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-6 form-group style-radius style-white">
+                                    <i class="far fa-user"></i>
+                                    <input type="text" name="name" value="{{ old('name') }}" placeholder="{{ __('site.blog.comments.name') }}" class="form-control @error('name') is-invalid @enderror" id="comment-name">
+                                    <div class="invalid-feedback" id="error-name">@error('name'){{ $message }}@enderror</div>
+                                </div>
+                                <div class="col-md-6 form-group style-radius style-white">
+                                    <i class="far fa-envelope"></i>
+                                    <input type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('site.blog.comments.email') }}" class="form-control @error('email') is-invalid @enderror" id="comment-email">
+                                    <div class="invalid-feedback" id="error-email">@error('email'){{ $message }}@enderror</div>
+                                </div>
+                                <div class="col-12 form-group style-radius style-white">
+                                    <i class="far fa-pencil"></i>
+                                    <textarea name="content" placeholder="{{ __('site.blog.comments.content') }}" class="form-control @error('content') is-invalid @enderror" id="comment-content">{{ old('content') }}</textarea>
+                                    <div class="invalid-feedback" id="error-content">@error('content'){{ $message }}@enderror</div>
+                                </div>
+                                <div class="col-12 form-group mb-0">
+                                    <button class="th-btn style-border2 th-btn-icon" type="submit" id="comment-submit-btn">{{ __('site.blog.comments.submit') }}</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <div class="col-xxl-4 col-lg-5">
                     <aside class="sidebar-area">
@@ -390,7 +461,11 @@
                                             </div>
                                             <div>
                                                 <span class="text">Category:</span>
-                                                <strong class="title">{{ $categories->pluck('name')->join(', ') }}</strong>
+                                                <strong class="title">
+                                                    @foreach($categories as $index => $category)
+                                                        <a href="{{ route('blog.category', $category->slug) }}">{{ $category->name }}</a>{{ $index < $categories->count() - 1 ? ', ' : '' }}
+                                                    @endforeach
+                                                </strong>
                                             </div>
                                         </li>
                                     @endif
@@ -447,3 +522,104 @@
         </div>
     </section>
 @endsection
+
+@push('scripts')
+    <script>
+        (() => {
+            const form = document.getElementById('blog-comment-form');
+            if (!form) {
+                return;
+            }
+
+            const successBox = document.getElementById('comment-success-box');
+            const errorBox = document.getElementById('comment-error-box');
+            const submitButton = document.getElementById('comment-submit-btn');
+            const commentsList = document.getElementById('comments-list');
+
+            const fields = ['name', 'email', 'content'];
+
+            const clearErrors = () => {
+                fields.forEach((field) => {
+                    const input = document.getElementById(`comment-${field}`);
+                    const error = document.getElementById(`error-${field}`);
+                    if (input) {
+                        input.classList.remove('is-invalid');
+                    }
+                    if (error) {
+                        error.textContent = '';
+                    }
+                });
+                errorBox.classList.add('d-none');
+                errorBox.textContent = '';
+            };
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                clearErrors();
+                successBox.classList.add('d-none');
+
+                submitButton.disabled = true;
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        },
+                        body: new FormData(form),
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        if (response.status === 422 && data.errors) {
+                            Object.entries(data.errors).forEach(([field, messages]) => {
+                                const input = document.getElementById(`comment-${field}`);
+                                const error = document.getElementById(`error-${field}`);
+                                if (input) {
+                                    input.classList.add('is-invalid');
+                                }
+                                if (error) {
+                                    error.textContent = Array.isArray(messages) ? messages[0] : messages;
+                                }
+                            });
+                        } else {
+                            errorBox.textContent = 'Unable to submit your comment right now.';
+                            errorBox.classList.remove('d-none');
+                        }
+
+                        return;
+                    }
+
+                    successBox.textContent = data.message || 'Comment submitted.';
+                    successBox.classList.remove('d-none');
+                    form.reset();
+
+                    if (commentsList && data.comment) {
+                        const commentItem = document.createElement('li');
+                        commentItem.className = 'th-comment-item';
+                        commentItem.innerHTML = `
+                            <div class="th-post-comment">
+                                <div class="comment-avater">
+                                    <img src="{{ asset('guest/assets/img/blog/comment-author-1.jpg') }}" alt="Comment Author">
+                                </div>
+                                <div class="comment-content">
+                                    <span class="commented-on">${data.comment.created_at || ''}</span>
+                                    <h3 class="name">${data.comment.name || ''}</h3>
+                                    <p class="text">${data.comment.content || ''}</p>
+                                </div>
+                            </div>
+                        `;
+                        commentsList.prepend(commentItem);
+                    }
+                } catch (error) {
+                    errorBox.textContent = 'Unable to submit your comment right now.';
+                    errorBox.classList.remove('d-none');
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+        })();
+    </script>
+@endpush

@@ -702,11 +702,25 @@
 .team-card.style6 {
     border-radius: 30px;
     overflow: hidden;
+    .box-title{
+        color: $theme-color ;
+    }
+    p {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: rgba($color: #fff, $alpha: 0.5);
+        margin-top:1.2rem ;
+        margin-bottom: 0;
+    }
     .team-card-content {
+
         mask-image: none;
         border-radius: 16px;
         align-content: end;
-        top: 320px;
+        top: 280px;
         .media {
             margin-bottom: -25px;
             align-self: self-end;
@@ -727,7 +741,12 @@
             .media {
                 margin-bottom: 0;
             }
+            p{
+                display: block;
+                color:#fff;
+            }
         }
+
         .th-social {
             margin-top: 30px;
         }

@@ -26,7 +26,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Order</th>
+                                    <th>Image</th>
                                     <th>Title</th>
                                     <th>Text</th>
                                     <th class="text-end">Actions</th>
@@ -35,7 +35,13 @@
                             <tbody>
                                 @forelse($values as $item)
                                     <tr>
-                                        <td>{{ $item->sort_order }}</td>
+                                        <td>
+                                            @if(!empty($item->image))
+                                                <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($item->image) }}" alt="{{ $item->title }}" style="width: 72px; height: 72px; object-fit: cover;" class="rounded border">
+                                            @else
+                                                <span class="text-muted small">No image</span>
+                                            @endif
+                                        </td>
                                         <td>{{ $item->title }}</td>
                                         <td>{{ Str::limit($item->text, 100) }}</td>
                                         <td class="text-end">

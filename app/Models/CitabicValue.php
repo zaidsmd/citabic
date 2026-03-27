@@ -11,7 +11,7 @@ class CitabicValue extends Model
         'type',
         'title',
         'text',
-        'sort_order',
+        'image',
         'translations',
     ];
 

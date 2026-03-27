@@ -1,0 +1,135 @@
+@use 'base/variable' as *;
+@use 'base/mixin' as *;
+
+/* Aminities 1 ---------------------------------- */
+.aminities-slider {
+    text-align: center;
+    @include md {
+        margin-bottom: 0;
+    }
+    .slider-pagination.swiper-pagination-progressbar {
+        bottom: 8px;
+        margin: 70px 40px 0;
+        @include md {
+            margin: 50px 0 0;
+        }
+    }
+    .slider-arrow {
+        top: auto;
+        bottom: 0px;
+        left: 0;
+        background: transparent;
+        width: auto;
+        height: auto;
+        line-height: normal;
+        &.slider-next {
+            right: 0;
+            left: auto;
+        }
+    }
+}
+.aminities-card {
+    position: relative;
+    text-align: center;
+    padding: 44px 19px;
+    display: block;
+    position: relative;
+    @include xs {
+        padding: 34px 20px;
+    }
+    &:after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        transition: 0.4s;
+        background: $black-color2;
+        z-index: -1;
+    }
+    .aminities-card-img {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+    }
+    .aminities-card-icon {
+        margin-bottom: 8px;
+        position: relative;
+        &:after {
+            content: '';
+            position: relative;
+            height: 68px;
+            width: 1px;
+            background: rgba($color: #ffffff, $alpha: 0.2);
+            display: block;
+            margin: 8px auto 0;
+        }
+        img {
+            transition: 0.4s;
+        }
+    }
+    .box-title {
+        font-size: 16px;
+        font-weight: 400;
+        color: $white-color;
+        margin-bottom: 0;
+        font-family: $body-font;
+    }
+    &:hover {
+        &:after {
+            opacity: 0.7;
+        }
+        .aminities-card-icon {
+            img {
+                transform: rotateY(180deg);
+            }
+        }
+    }
+}
+
+/*aminities-card2********************/
+.aminities-card.style2 {
+    border-radius: 50%;
+    overflow: hidden;
+    max-width: 240px;
+    margin-left: auto;
+    margin-right: auto;
+    &:after {
+        background: $smoke-color4;
+    }
+    .aminities-card-img {
+        border-radius: 50%;
+    }
+    .aminities-card-icon {
+        &:after {
+            transition: 0.4s;
+            background: $theme-color;
+            opacity: 0.2;
+        }
+    }
+    .box-title {
+        color: $title-color;
+        transition: 0.4s;
+    }
+    &:hover {
+        &:after {
+            background: $black-color2;
+            opacity: 0.8;
+        }
+        .aminities-card-icon {
+            img {
+                filter: brightness(99) invert(0) grayscale(9);
+            }
+            &:after {
+                background: $theme-color;
+                opacity: 1;
+            }
+        }
+        .box-title {
+            color: $white-color;
+        }
+    }
+}

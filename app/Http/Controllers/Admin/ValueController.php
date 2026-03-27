@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CitabicProfile;
 use App\Models\CitabicValue;
+use App\Services\ImageUploadService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ValueController extends Controller
@@ -14,17 +17,19 @@ class ValueController extends Controller
     public function index(Request $request): View
     {
         $type = $request->query('type', 'values');
-        $values = CitabicValue::where('type', $type)->orderBy('sort_order')->get();
+        $values = CitabicValue::where('type', $type)->latest('id')->get();
+
         return view('admin.cms.values.index', compact('values', 'type'));
     }
 
     public function create(Request $request): View
     {
         $type = $request->query('type', 'values');
+
         return view('admin.cms.values.form', [
             'value' => new CitabicValue(['type' => $type]),
             'type' => $type,
-            'form' => $this->formData(null, $type)
+            'form' => $this->formData(null, $type),
         ]);
     }
 
@@ -36,7 +41,7 @@ class ValueController extends Controller
             'type' => 'required|in:values,human_values',
             'title' => 'required|string|max:255',
             'text' => 'required|string',
-            'sort_order' => 'required|integer',
+            'image' => 'nullable|string|max:2048',
             'en' => 'nullable|array',
         ]);
 
@@ -54,7 +59,7 @@ class ValueController extends Controller
         return view('admin.cms.values.form', [
             'value' => $value,
             'type' => $value->type,
-            'form' => $this->formData($value, $value->type)
+            'form' => $this->formData($value, $value->type),
         ]);
     }
 
@@ -63,7 +68,7 @@ class ValueController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'text' => 'required|string',
-            'sort_order' => 'required|integer',
+            'image' => 'nullable|string|max:2048',
             'en' => 'nullable|array',
         ]);
 
@@ -80,8 +85,23 @@ class ValueController extends Controller
     {
         $type = $value->type;
         $value->delete();
+
         return redirect()->route('admin.values.index', ['type' => $type])
             ->with('status', 'Value deleted successfully.');
+    }
+
+    public function uploadImage(Request $request, ImageUploadService $imageUploadService): JsonResponse
+    {
+        $request->validate([
+            'image' => 'required|image|max:10240',
+        ]);
+
+        $path = $imageUploadService->store($request->file('image'), 'values');
+
+        return response()->json([
+            'path' => $path,
+            'url' => Storage::disk('public')->url($path),
+        ]);
     }
 
     private function formData(?CitabicValue $value, string $type): array
@@ -90,7 +110,7 @@ class ValueController extends Controller
             'type' => old('type', $value?->type ?? $type),
             'title' => old('title', $value?->title),
             'text' => old('text', $value?->text),
-            'sort_order' => old('sort_order', $value?->sort_order ?? 0),
+            'image' => old('image', $value?->image),
             'en' => old('en', $value?->translations['en'] ?? []),
         ];
     }

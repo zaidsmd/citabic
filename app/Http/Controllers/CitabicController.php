@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\ContentKey;
 use App\Enums\Section;
+use App\Http\Requests\StorePostCommentRequest;
+use App\Models\Category;
 use App\Models\Certification;
 use App\Models\CitabicDomain;
 use App\Models\CitabicProfile;
@@ -11,7 +13,13 @@ use App\Models\CitabicReference;
 use App\Models\Mission;
 use App\Models\Post;
 use App\Models\SectionContent;
+use App\Models\Tag;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -39,42 +47,71 @@ class CitabicController extends Controller
                 ->first()?->value;
 
             return [
-                'about_header_bg'       => $scAny(Section::ABOUT_PAGE, ContentKey::ABOUT_HEADER_BG_IMG),
-                'about_title'           => $sc(Section::ABOUT_PAGE, ContentKey::ABOUT_TITLE),
-                'about_text'            => $sc(Section::ABOUT_PAGE, ContentKey::ABOUT_TEXT),
-                'rounded_text'          => $sc(Section::ABOUT_PAGE, ContentKey::ROUNDED_TEXT),
-                'section_image'         => $scAny(Section::ABOUT_PAGE, ContentKey::SECTION_IMAGE),
-                'mission_title'         => $sc(Section::ABOUT_PAGE, ContentKey::MISSION_TITLE),
-                'mission_text'          => $sc(Section::ABOUT_PAGE, ContentKey::MISSION_TEXT),
-                'why_us_title'          => $sc(Section::ABOUT_PAGE, ContentKey::WHY_US_TITLE),
-                'why_us_text'           => $sc(Section::ABOUT_PAGE, ContentKey::WHY_US_TEXT),
-                'why_us_cards'          => explode(';', $sc(Section::ABOUT_PAGE, ContentKey::WHY_US_CARDS) ?? ''),
-                'organigrame_title'     => $sc(Section::ABOUT_PAGE, ContentKey::ORGANIGRAME_TITLE),
-                'organigrame'           => $scAny(Section::ABOUT_PAGE, ContentKey::ORGANIGRAME),
-                'cartographie_title'    => $sc(Section::ABOUT_PAGE, ContentKey::CARTOGRAPHIE_TITLE),
-                'cartographie'          => $scAny(Section::ABOUT_PAGE, ContentKey::CARTOGRAPHIE),
-                'contact_form_text'     => $sc(Section::CONTACT, ContentKey::CONTACT_FORM_TEXT),
-                'contact_image'         => $scAny(Section::CONTACT, ContentKey::CONTACT_IMAGE),
-                'map_embed'             => SectionContent::where('section', Section::CONTACT)
-                                            ->where('key', ContentKey::MAP_EMBED)
-                                            ->first()?->value,
-                'domains'               => CitabicDomain::all(),
-                'missions'              => Mission::with('translations')->get(),
-                'certifications'        => Certification::where('language', $locale)->get(),
+                'about_header_bg' => $scAny(Section::ABOUT_PAGE, ContentKey::ABOUT_HEADER_BG_IMG),
+                'about_title' => $sc(Section::ABOUT_PAGE, ContentKey::ABOUT_TITLE),
+                'about_text' => $sc(Section::ABOUT_PAGE, ContentKey::ABOUT_TEXT),
+                'rounded_text' => $sc(Section::ABOUT_PAGE, ContentKey::ROUNDED_TEXT),
+                'section_image' => $scAny(Section::ABOUT_PAGE, ContentKey::SECTION_IMAGE),
+                'mission_title' => $sc(Section::ABOUT_PAGE, ContentKey::MISSION_TITLE),
+                'mission_text' => $sc(Section::ABOUT_PAGE, ContentKey::MISSION_TEXT),
+                'why_us_title' => $sc(Section::ABOUT_PAGE, ContentKey::WHY_US_TITLE),
+                'why_us_text' => $sc(Section::ABOUT_PAGE, ContentKey::WHY_US_TEXT),
+                'why_us_cards' => explode(';', $sc(Section::ABOUT_PAGE, ContentKey::WHY_US_CARDS) ?? ''),
+                'organigrame_title' => $sc(Section::ABOUT_PAGE, ContentKey::ORGANIGRAME_TITLE),
+                'organigrame' => $scAny(Section::ABOUT_PAGE, ContentKey::ORGANIGRAME),
+                'cartographie_title' => $sc(Section::ABOUT_PAGE, ContentKey::CARTOGRAPHIE_TITLE),
+                'cartographie' => $scAny(Section::ABOUT_PAGE, ContentKey::CARTOGRAPHIE),
+                'contact_form_text' => $sc(Section::CONTACT, ContentKey::CONTACT_FORM_TEXT),
+                'contact_image' => $scAny(Section::CONTACT, ContentKey::CONTACT_IMAGE),
+                'map_embed' => SectionContent::where('section', Section::CONTACT)
+                    ->where('key', ContentKey::MAP_EMBED)
+                    ->first()?->value,
+                'domains' => CitabicDomain::all(),
+                'missions' => Mission::with('translations')->get(),
+                'certifications' => Certification::where('language', $locale)->get(),
             ];
         });
 
         return view('guest.pages.company', array_merge($this->sharedData(), ['cp' => $companyData]));
     }
 
-    public function expertise(): View
-    {
-        return view('guest.pages.expertise', $this->sharedData());
-    }
+
 
     public function references(): View
     {
-        return view('guest.pages.references', $this->sharedData());
+        $locale = app()->getLocale();
+        $perPage = 9;
+        $currentPage = max(1, (int) request('page', 1));
+
+        if (CitabicReference::query()->exists()) {
+            $referencePaginator = CitabicReference::query()
+                ->orderBy('sort_order')
+                ->paginate($perPage)
+                ->withQueryString();
+
+            $referencePaginator->setCollection(
+                $referencePaginator->getCollection()->map(
+                    fn (CitabicReference $reference): array => $this->transformReference($reference, $locale)
+                )->values()
+            );
+        } else {
+            $referenceCollection = collect(config('citabic.references'))
+                ->map(fn (array $reference): array => $this->hydrateReferenceArray($reference))
+                ->values();
+
+            $referencePaginator = new LengthAwarePaginator(
+                $referenceCollection->forPage($currentPage, $perPage)->values(),
+                $referenceCollection->count(),
+                $perPage,
+                $currentPage,
+                ['path' => url()->current(), 'query' => request()->query()]
+            );
+        }
+
+        return view('guest.pages.references', array_merge(
+            $this->sharedData(),
+            ['references' => $referencePaginator]
+        ));
     }
 
     public function reference(string $slug): View
@@ -100,30 +137,115 @@ class CitabicController extends Controller
     public function blog(): View
     {
         $locale = app()->getLocale();
-        $posts = Post::published()
-            ->orderByDesc('published_at')
-            ->get()
-            ->map(fn($post) => $this->transformBlogPost($post, $locale));
+        $search = trim((string) request('q', ''));
+        $blogData = $this->getBlogListingData($locale, null, null, $search);
 
         return view('guest.pages.blog', array_merge(
             $this->sharedData(),
-            ['posts' => $posts]
+            [
+                'posts' => $blogData['posts'],
+                'postMeta' => $blogData['postMeta'],
+                'recentPosts' => $blogData['recentPosts'],
+                'popularCategories' => $blogData['popularCategories'],
+                'popularTags' => $blogData['popularTags'],
+                'search' => $search,
+            ]
+        ));
+    }
+
+    public function blogByCategory(string $slug): View
+    {
+        $category = Category::query()->where('slug', $slug)->firstOrFail();
+        $locale = app()->getLocale();
+        $search = trim((string) request('q', ''));
+        $blogData = $this->getBlogListingData($locale, $category, null, $search);
+
+        return view('guest.pages.blog-category', array_merge(
+            $this->sharedData(),
+            [
+                'posts' => $blogData['posts'],
+                'postMeta' => $blogData['postMeta'],
+                'recentPosts' => $blogData['recentPosts'],
+                'popularCategories' => $blogData['popularCategories'],
+                'popularTags' => $blogData['popularTags'],
+                'filterType' => 'category',
+                'filterName' => $category->name,
+                'category' => $category,
+                'search' => $search,
+            ]
+        ));
+    }
+
+    public function blogByTag(string $slug): View
+    {
+        $tag = Tag::query()->where('slug', $slug)->firstOrFail();
+        $locale = app()->getLocale();
+        $search = trim((string) request('q', ''));
+        $blogData = $this->getBlogListingData($locale, null, $tag, $search);
+
+        return view('guest.pages.blog-tag', array_merge(
+            $this->sharedData(),
+            [
+                'posts' => $blogData['posts'],
+                'postMeta' => $blogData['postMeta'],
+                'recentPosts' => $blogData['recentPosts'],
+                'popularCategories' => $blogData['popularCategories'],
+                'popularTags' => $blogData['popularTags'],
+                'filterType' => 'tag',
+                'filterName' => $tag->name,
+                'tag' => $tag,
+                'search' => $search,
+            ]
         ));
     }
 
     public function blogPost(string $slug): View
     {
         $locale = app()->getLocale();
-        $post = Post::where('slug', $slug)
+        $postModel = Post::query()
+            ->with([
+                'comments' => fn ($query) => $query
+                    ->where('is_approved', true)
+                    ->latest(),
+            ])
+            ->where('slug', $slug)
             ->published()
             ->firstOrFail();
 
-        $post = $this->transformBlogPost($post, $locale);
+        $post = $this->transformBlogPost($postModel, $locale);
 
         return view('guest.pages.blog-detail', array_merge(
             $this->sharedData(),
-            ['post' => $post]
+            [
+                'post' => $post,
+                'comments' => $postModel->comments,
+            ]
         ));
+    }
+
+    public function storeBlogComment(StorePostCommentRequest $request, string $slug): RedirectResponse|JsonResponse
+    {
+        $post = Post::query()
+            ->where('slug', $slug)
+            ->published()
+            ->firstOrFail();
+
+        $comment = $post->comments()->create($request->validated());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => __('site.blog.comments.success'),
+                'comment' => [
+                    'name' => $comment->name,
+                    'content' => $comment->content,
+                    'created_at' => $comment->created_at?->format('d M, Y'),
+                ],
+            ]);
+        }
+
+        return redirect()
+            ->route('blog.show', $slug)
+            ->with('comment_success', __('site.blog.comments.success'));
     }
 
     public function contact(): View
@@ -169,6 +291,7 @@ class CitabicController extends Controller
                 ->all();
 
             $site['why_features'] = $whyFeatures;
+
             return [
                 'site' => $site,
                 'references' => $site['references'],
@@ -223,11 +346,12 @@ class CitabicController extends Controller
             'why_features' => $whyFeatures,
         ];
     }
+
     private function transformProfile(CitabicProfile $profile, string $locale): array
     {
         $infoFields = [
             'intro', 'market_context', 'mission', 'certifications',
-            'partnerships', 'compliance', 'organization', 'why_choose_us'
+            'partnerships', 'compliance', 'organization', 'why_choose_us',
         ];
 
         $infos = [];
@@ -236,6 +360,7 @@ class CitabicController extends Controller
                 if ($locale === 'fr') {
                     return $info->content;
                 }
+
                 return $info->translations[$locale] ?? $info->content;
             })->all();
         }
@@ -263,12 +388,17 @@ class CitabicController extends Controller
                     return [
                         'title' => $value->title,
                         'text' => $value->text,
+                        'image' => $value->image,
+                        'image_url' => $this->resolveMediaUrl($value->image),
                     ];
                 }
                 $translations = $value->translations[$locale] ?? [];
+
                 return [
                     'title' => $translations['title'] ?? $value->title,
                     'text' => $translations['text'] ?? $value->text,
+                    'image' => $value->image,
+                    'image_url' => $this->resolveMediaUrl($value->image),
                 ];
             })->all(),
             'human_values' => $profile->human_values()->get()->map(function ($value) use ($locale) {
@@ -276,12 +406,17 @@ class CitabicController extends Controller
                     return [
                         'title' => $value->title,
                         'text' => $value->text,
+                        'image' => $value->image,
+                        'image_url' => $this->resolveMediaUrl($value->image),
                     ];
                 }
                 $translations = $value->translations[$locale] ?? [];
+
                 return [
                     'title' => $translations['title'] ?? $value->title,
                     'text' => $translations['text'] ?? $value->text,
+                    'image' => $value->image,
+                    'image_url' => $this->resolveMediaUrl($value->image),
                 ];
             })->all(),
             'domains' => $profile->domains()->get()->map(function ($domain) use ($locale) {
@@ -292,6 +427,7 @@ class CitabicController extends Controller
                     ];
                 }
                 $translations = $domain->translations[$locale] ?? [];
+
                 return [
                     'title' => $translations['title'] ?? $domain->title,
                     'items' => $translations['items'] ?? $domain->items,
@@ -307,6 +443,7 @@ class CitabicController extends Controller
                     ];
                 }
                 $translations = $figure->translations[$locale] ?? [];
+
                 return [
                     'label' => $translations['label'] ?? $figure->label,
                     'value' => $translations['value'] ?? $figure->value,
@@ -323,6 +460,7 @@ class CitabicController extends Controller
                     ];
                 }
                 $translations = $process->translations[$locale] ?? [];
+
                 return [
                     'title' => $translations['title'] ?? $process->title,
                     'description' => $translations['description'] ?? $process->description,
@@ -372,6 +510,85 @@ class CitabicController extends Controller
         return $base;
     }
 
+    private function applyBlogSearch(Builder|BelongsToMany $query, string $search): void
+    {
+        if ($search === '') {
+            return;
+        }
+
+        $likeTerm = '%'.$search.'%';
+
+        $query->where(function (Builder $builder) use ($likeTerm): void {
+            $builder
+                ->where('title', 'like', $likeTerm)
+                ->orWhere('excerpt', 'like', $likeTerm)
+                ->orWhere('content', 'like', $likeTerm);
+        });
+    }
+
+    private function getBlogListingData(string $locale, ?Category $category = null, ?Tag $tag = null, string $search = ''): array
+    {
+        $scope = 'index';
+        if ($category) {
+            $scope = 'category:'.$category->slug;
+        } elseif ($tag) {
+            $scope = 'tag:'.$tag->slug;
+        }
+
+        $perPage = 6;
+        $page = max(1, (int) request('page', 1));
+        $cacheKey = 'blog_listing:'.$locale.':'.$scope.':'.md5(mb_strtolower($search)).':p'.$page.':pp'.$perPage;
+
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($category, $tag, $locale, $search, $perPage): array {
+            $query = Post::query()->published();
+
+            if ($category) {
+                $query = $category->posts()->published();
+            } elseif ($tag) {
+                $query = $tag->posts()->published();
+            }
+
+            $this->applyBlogSearch($query, $search);
+
+            $postModels = $query
+                ->with(['author:id,name', 'categories:id,name,slug', 'tags:id,name,slug'])
+                ->orderByDesc('published_at')
+                ->paginate($perPage)
+                ->withQueryString();
+
+            $postMeta = $postModels->getCollection()->keyBy('id');
+            $postModels->setCollection(
+                $postModels->getCollection()->map(
+                    fn (Post $post): array => $this->transformBlogPost($post, $locale)
+                )->values()
+            );
+
+            $recentPosts = Post::query()
+                ->published()
+                ->with('author:id,name')
+                ->orderByDesc('published_at')
+                ->limit(3)
+                ->get()
+                ->map(fn (Post $post): array => $this->transformBlogPost($post, $locale));
+
+            return [
+                'posts' => $postModels,
+                'postMeta' => $postMeta,
+                'recentPosts' => $recentPosts,
+                'popularCategories' => Category::query()
+                    ->withCount('posts')
+                    ->orderByDesc('posts_count')
+                    ->limit(6)
+                    ->get(),
+                'popularTags' => Tag::query()
+                    ->withCount('posts')
+                    ->orderByDesc('posts_count')
+                    ->limit(8)
+                    ->get(),
+            ];
+        });
+    }
+
     private function hydrateReferenceArray(array $reference): array
     {
         $imagePath = $this->normalizeAssetPath($reference['image'] ?? null);
@@ -412,7 +629,7 @@ class CitabicController extends Controller
         }
 
         if (str_starts_with($path, 'assets/')) {
-            return 'guest/' . $path;
+            return 'guest/'.$path;
         }
 
         return $path;

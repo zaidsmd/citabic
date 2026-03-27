@@ -141,7 +141,6 @@
             <ul>
                 <li><a href="{{ route('home') }}">{{ __('site.nav.home') }}</a></li>
                 <li><a href="{{ route('company') }}">{{ __('site.nav.company') }}</a></li>
-                <li><a href="{{ route('expertise') }}">{{ __('site.nav.expertise') }}</a></li>
                 <li><a href="{{ route('references.index') }}">{{ __('site.nav.references') }}</a></li>
                 <li><a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a></li>
                 <li><a href="{{ route('contact') }}">{{ __('site.nav.contact') }}</a></li>
@@ -183,7 +182,6 @@
                             <ul>
                                 <li><a href="{{ route('home') }}">{{ __('site.nav.home') }}</a></li>
                                 <li><a href="{{ route('company') }}">{{ __('site.nav.company') }}</a></li>
-                                <li><a href="{{ route('expertise') }}">{{ __('site.nav.expertise') }}</a></li>
                                 <li><a href="{{ route('references.index') }}">{{ __('site.nav.references') }}</a></li>
                                 <li><a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a></li>
                                 <li><a href="{{ route('contact') }}">{{ __('site.nav.contact') }}</a></li>
@@ -232,9 +230,9 @@
                         <div class="widget footer-widget">
                             <div class="th-widget-about">
                                 <div class="about-logo">
-                                    <a href="index.html"><img src="/guest/assets/img/logo-white.svg" alt="Builda"></a>
+                                    <a href="{{ route('home') }}"><img src="/guest/assets/img/logo-white.svg" alt="CITABIC"></a>
                                 </div>
-                                <p class="about-text"> Rapidiously myocardinate cross-platform intellectual capital model. Appropriately create interactive infrastructures</p>
+                                <p class="about-text">{{ __('site.footer.about') }}</p>
                                 <div class="th-social style5">
                                     <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
                                     <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
@@ -245,13 +243,12 @@
                     </div>
                     <div class="col-md-6 col-xl-auto">
                         <div class="widget footer-widget">
-                            <h3 class="widget_title">Get In Touch</h3>
+                            <h3 class="widget_title">{{ __('site.footer.coordinates') }}</h3>
                             <div class="th-widget-contact">
                                 <div class="info-box_text">
                                     <div class="icon"><img src="/guest/assets/img/icon/location-dot.svg" alt="img"></div>
                                     <div class="details">
-                                        <p>789 Inner Lane, Holy park,</p>
-                                        <p>California, USA</p>
+                                        <p>{{ $company['head_office'] ?? '' }}</p>
                                     </div>
                                 </div>
                                 <div class="info-box_text">
@@ -259,8 +256,9 @@
                                         <img src="/guest/assets/img/icon/phone.svg" alt="img">
                                     </div>
                                     <div class="details">
-                                        <p><a href="tel:+0123456789" class="info-box_link">+01 234 567 890</a></p>
-                                        <p><a href="tel:+09876543210" class="info-box_link">+09 876 543 210</a></p>
+                                        @if(!empty($company['phone'] ?? null))
+                                            <p><a href="tel:{{ preg_replace('/\s+/', '', $company['phone']) }}" class="info-box_link">{{ $company['phone'] }}</a></p>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="info-box_text">
@@ -268,8 +266,9 @@
                                         <img src="/guest/assets/img/icon/envelope.svg" alt="img">
                                     </div>
                                     <div class="details">
-                                        <p><a href="mailto:mailinfo00@builda.com" class="info-box_link">mailinfo00@builda.com</a></p>
-                                        <p><a href="mailto:support24@builda.com" class="info-box_link">support24@builda.com</a></p>
+                                        @if(!empty($company['email'] ?? null))
+                                            <p><a href="mailto:{{ $company['email'] }}" class="info-box_link">{{ $company['email'] }}</a></p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -277,28 +276,25 @@
                     </div>
                     <div class="col-md-6 col-xl-auto">
                         <div class="widget widget_nav_menu footer-widget">
-                            <h3 class="widget_title">Useful Link</h3>
+                            <h3 class="widget_title">{{ __('site.footer.navigation') }}</h3>
                             <div class="menu-all-pages-container">
                                 <ul class="menu">
-                                    <li><a href="about.html">About us</a></li>
-                                    <li><a href="service.html">Featured Properties</a></li>
-                                    <li><a href="service.html">Our Best Services</a></li>
-                                    <li><a href="contact.html">Request Visit</a></li>
-                                    <li><a href="contact.html">FAQ</a></li>
+                                    <li><a href="{{ route('company') }}">{{ __('site.footer.company_profile') }}</a></li>
+                                    <li><a href="{{ route('references.index') }}">{{ __('site.nav.references') }}</a></li>
+                                    <li><a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a></li>
+                                    <li><a href="{{ route('contact') }}">{{ __('site.footer.get_in_touch') }}</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 col-xl-auto">
                         <div class="widget widget_nav_menu footer-widget">
-                            <h3 class="widget_title">Explore</h3>
+                            <h3 class="widget_title">{{ __('site.footer.information') }}</h3>
                             <div class="menu-all-pages-container">
                                 <ul class="menu">
-                                    <li><a href="service.html">All Properties</a></li>
-                                    <li><a href="team.html">Our Agents</a></li>
-                                    <li><a href="service.html">All Projects</a></li>
-                                    <li><a href="about.html">Our Process</a></li>
-                                    <li><a href="contact.html">Neighborhood</a></li>
+                                    <li><a href="{{ route('company') }}">{{ __('site.footer.mission_values') }}</a></li>
+                                    <li><a href="{{ route('references.index') }}">{{ __('site.footer.projects') }}</a></li>
+                                    <li><a href="{{ route('contact') }}">{{ __('site.footer.coordinates') }}</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -307,21 +303,21 @@
             </div>
         </div>
     </div>
-    <div class="copyright-area" data-bg-src="{{\App\Models\SectionContent::where('section',\App\Enums\Section::FOOTER)->where('key',\App\Enums\ContentKey::SECTION_IMAGE)->first()?->value}}">
+    <div class="copyright-area" data-bg-src="{{Storage::disk('public')->url(\App\Models\SectionContent::where('section',\App\Enums\Section::FOOTER)->where('key',\App\Enums\ContentKey::SECTION_IMAGE)->first()?->value)}}">
         <div class="container th-container2">
             <div class="copyright-wrap bg-white">
                 <div class="footer-container">
                     <div class="row gy-2 align-items-center">
                         <div class="col-lg-6">
                             <p class="copyright-text">
-                                Copyright <i class="fal fa-copyright"></i> 2025 <a href="index.html">Builda</a>, All rights reserved.</p>
+                                Copyright <i class="fal fa-copyright"></i> 2026 <a href="{{ route('home') }}">CITABIC</a>, {{ __('site.footer.rights') }}</p>
                         </div>
                         <div class="col-lg-6 text-center text-lg-end">
                             <div class="footer-links">
                                 <ul>
-                                    <li><a href="contact.html">Terms of service</a></li>
-                                    <li><a href="contact.html">Privacy policy</a></li>
-                                    <li><a href="contact.html">Cookies</a></li>
+                                    <li><a href="{{ route('contact') }}">{{ __('site.nav.contact') }}</a></li>
+                                    <li><a href="{{ route('company') }}">{{ __('site.nav.company') }}</a></li>
+                                    <li><a href="{{ route('references.index') }}">{{ __('site.nav.references') }}</a></li>
                                 </ul>
                             </div>
                         </div>

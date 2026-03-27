@@ -3,9 +3,6 @@
 
 @section('title', 'CITABIC | ' . __('site.nav.home'))
 @push('styles')
-
-@endpush
-@section('content')
     <style>
         .hero-video-bg-wrap {
             position: absolute;
@@ -49,7 +46,26 @@
             color: var(--title-color);
         }
 
+        .team-area-9 .team-card.style6 .team-img {
+            position: relative;
+        }
+
+        .team-area-9 .team-card.style6 .team-img::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.28);
+            pointer-events: none;
+        }
+
+        .team-area-9 .team-card.style6 .team-img img {
+            display: block;
+            width: 100%;
+        }
+
     </style>
+@endpush
+@section('content')
     <div class="th-hero-wrapper hero-10 bg-smoke2" id="hero">
         <div class="swiper th-slider hero-slider10" id="heroSlide10"
              data-slider-options='{"effect":"fade","loop":false,"autoHeight": true}'>
@@ -79,7 +95,7 @@
                                         </h1>
                                         <div class="btn-wrap justify-content-center" data-ani="slideinup"
                                              data-ani-delay="0.7s">
-                                            <a href="contact.html" class="th-btn style4 th-btn-icon">Discover More</a>
+                                            <a href="{{route('contact')}}" class="th-btn style4 th-btn-icon">Discover More</a>
                                         </div>
                                     </div>
                                 </div>
@@ -149,7 +165,7 @@
                 </div>
                 <div class="col-xl-6">
                     <div class="title-area mb-32">
-                        <span class="sub-title">{{ __('site.sections.about') }}</span>
+                        <span class="sub-title">{{\App\Models\SectionContent::where('section',\App\Enums\Section::ABOUT)->where('key',\App\Enums\ContentKey::ABOUT_SUBTITLE)->where('language',config('app.locale'))->first()?->value }}</span>
                         <h2 class="sec-title">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::ABOUT->value)->where('key',\App\Enums\ContentKey::ABOUT_TITLE)->where('language',config('app.locale'))->first()?->value }}</h2>
                         <p class="sec-text">{!!  \App\Models\SectionContent::where('section',\App\Enums\Section::ABOUT->value)->where('key',\App\Enums\ContentKey::ABOUT_TEXT)->where('language',config('app.locale'))->first()?->value !!}</p>
                     </div>
@@ -160,13 +176,13 @@
 
     <section class="service-area-3 space overflow-hidden bg-gray3">
         <div class="sec-bg-shape2-3 jump shape-mockup d-xl-block d-none" style="top: -2%; right: 30%;">
-            <img src="/guest/assets/img/shape/section_shape_2_3.jpg" alt="img">
+            <img src="{{asset('/guest/assets/img/shape/section_shape_2_3.jpg')}}" alt="img">
         </div>
         <div class="container">
             <div class="row justify-content-between align-items-center">
                 <div class="col-xl-6 col-lg-8">
                     <div class="title-area">
-                        <span class="sub-title">{{ __('site.home.domains_eyebrow') }}</span>
+                        <span class="sub-title">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::DOMAIN)->where('key',\App\Enums\ContentKey::DOMAIN_SUBTITLE)->where('language',config('app.locale'))->first()?->value  }}</span>
                         <h2 class="sec-title">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::DOMAIN->value)->where('key',\App\Enums\ContentKey::DOMAIN_TITLE)->where('language',config('app.locale'))->first()?->value}}</h2>
                         {!!  \App\Models\SectionContent::where('section',\App\Enums\Section::DOMAIN->value)->where('key',\App\Enums\ContentKey::DOMAIN_TEXT)->where('language',config('app.locale'))->first()?->value!!}
                     </div>
@@ -230,6 +246,67 @@
             </div>
         </div>
     </section>
+    <section class="team-area-9 overflow-hidden bg-smoke2 space" id="team-sec">
+        @php
+            $valueItems = collect($site['values'] ?? []);
+            if ($valueItems->isEmpty()) {
+                $valueItems = collect($site['human_values'] ?? []);
+            }
+        @endphp
+        <div class="sec-bg-shape9-1 spin shape-mockup d-xxl-block d-none" data-top="4%" data-right="-2%">
+            <img src="/guest/assets/img/shape/section_shape_2_1.jpg" alt="img">
+        </div>
+        <div class="sec-bg-shape9-2 jump shape-mockup d-xxl-block d-none" data-bottom="7%" data-left="2%">
+            <img src="/guest/assets/img/shape/section_shape_2_3.jpg" alt="img">
+        </div>
+        <div class="container z-index-common">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-7">
+                    <div class="title-area text-center">
+                        <span class="sub-title">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::HOME->value)->where('key',\App\Enums\ContentKey::VALUES_SUBTITLE->value)->where('language',config('app.locale'))->first()?->value ?? __('site.company.block_label') }}</span>
+                        <h2 class="sec-title">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::HOME->value)->where('key',\App\Enums\ContentKey::VALUES_TITLE->value)->where('language',config('app.locale'))->first()?->value ?? 'Our Values' }}</h2>
+                        <p class="sec-text">{!! \App\Models\SectionContent::where('section',\App\Enums\Section::HOME->value)->where('key',\App\Enums\ContentKey::VALUES_TEXT->value)->where('language',config('app.locale'))->first()?->value ?? '' !!}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper th-slider team-slider9" id="teamSlider9" data-slider-options='{"paginationType":"progressbar","breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":"1"},"768":{"slidesPerView":"2"},"992":{"slidesPerView":"2"},"1200":{"slidesPerView":"3"}}}'>
+                <div class="swiper-wrapper">
+                    @forelse($valueItems as $valueItem)
+                        <div class="swiper-slide">
+                            <div class="th-team team-card style6">
+                                <div class="img-wrap">
+                                    <div class="team-img">
+                                        <img src="{{ $valueItem['image_url'] ?? asset('guest/assets/img/team/team_8_1.png') }}" alt="{{ $valueItem['title'] ?? 'Value' }}">
+                                    </div>
+                                </div>
+                                <div class="team-card-content">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <h3 class="box-title">{{ $valueItem['title'] ?? '' }}</h3>
+                                        </div>
+                                    </div>
+                                    <p class="text-white-50 mb-0 mt-2">{!! $valueItem['text']  !!}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="swiper-slide">
+                            <div class="th-team team-card style6">
+                                <div class="team-card-content">
+                                    <h3 class="box-title">No values configured.</h3>
+                                </div>
+                            </div>
+                        </div>
+                    @endforelse
+
+                </div>
+                <div class="slider-pagination"></div>
+                <button data-slider-prev="#teamSlider9" class="slider-arrow slider-prev"><img src="/guest/assets/img/icon/arrow-left.svg" alt="icon"></button>
+                <button data-slider-next="#teamSlider9" class="slider-arrow slider-next"><img src="/guest/assets/img/icon/arrow-right.svg" alt="icon"></button>
+            </div>
+        </div>
+    </section>
+
     <section class="space overflow-hidden bg-black2" id="property-sec">
         <div class="sec-bg-shape2-1 spin shape-mockup d-xl-block d-none" data-top="10%" data-left="-2%">
             <img src="/guest/assets/img/shape/section_shape_2_1.jpg" alt="img">
@@ -342,6 +419,43 @@
         </div>
     </div>
     <section class="overflow-hidden space" id="blog-sec">
+        @php
+            $homeRecentPosts = \App\Models\Post::query()
+                ->published()
+                ->orderByDesc('published_at')
+                ->limit(8)
+                ->get()
+                ->map(function (\App\Models\Post $post): array {
+                    $locale = app()->getLocale();
+                    $translations = is_array($post->translations ?? null) ? $post->translations : [];
+                    $localized = $locale === 'fr' ? [] : ($translations[$locale] ?? []);
+
+                    $title = $localized['title'] ?? $post->title;
+                    $excerpt = $localized['excerpt'] ?? $post->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($post->content ?? ''), 150);
+                    $featuredImage = $post->featured_image;
+
+                    if (! empty($featuredImage) && str_starts_with($featuredImage, 'http')) {
+                        $imageUrl = $featuredImage;
+                    } elseif (! empty($featuredImage) && str_starts_with($featuredImage, '/')) {
+                        $imageUrl = $featuredImage;
+                    } elseif (! empty($featuredImage) && str_starts_with($featuredImage, 'storage/')) {
+                        $imageUrl = asset($featuredImage);
+                    } elseif (! empty($featuredImage)) {
+                        $imageUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($featuredImage);
+                    } else {
+                        $imageUrl = asset('guest/assets/img/blog/blog_3_1.jpg');
+                    }
+
+                    return [
+                        'slug' => $post->slug,
+                        'title' => $title,
+                        'excerpt' => $excerpt,
+                        'image_url' => $imageUrl,
+                        'published_at' => $post->published_at ?? $post->created_at,
+                        'reading_time' => (int) ($post->reading_time ?? 0),
+                    ];
+                });
+        @endphp
         <div class="sec-bg-shape2-3 jump shape-mockup d-xl-block d-none" data-bottom="0%" data-right="4%">
             <img src="/guest/assets/img/shape/section_shape_2_3.jpg" alt="img">
         </div>
@@ -349,148 +463,47 @@
             <div class="row justify-content-lg-between align-items-center">
                 <div class="col-xxl-5 col-xl-6 col-lg-7">
                     <div class="title-area">
-                        <span class="sub-title3 ">News & Blog</span>
-                        <h2 class="sec-title">Read Our Insights</h2>
-                        <p class="sec-text">Architects and engineers collaborate to create detailed design plans that translate concepts into feasible structures. </p>
+                        <span class="sub-title3 ">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::HOME->value)->where('key',\App\Enums\ContentKey::BLOG_SUBTITLE->value)->where('language',config('app.locale'))->first()?->value ?? 'News & Blog' }}</span>
+                        <h2 class="sec-title">{{ \App\Models\SectionContent::where('section',\App\Enums\Section::HOME->value)->where('key',\App\Enums\ContentKey::BLOG_TITLE->value)->where('language',config('app.locale'))->first()?->value ?? 'Read Our Insights' }}</h2>
+                        <p class="sec-text">{!! \App\Models\SectionContent::where('section',\App\Enums\Section::HOME->value)->where('key',\App\Enums\ContentKey::BLOG_TEXT->value)->where('language',config('app.locale'))->first()?->value ?? 'Architects and engineers collaborate to create detailed design plans that translate concepts into feasible structures.' !!}</p>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="sec-btn">
-                        <a href="blog.html" class="th-btn style4 th-btn-icon">Browse All Blog</a>
+                        <a href="{{ route('blog.index') }}" class="th-btn style4 th-btn-icon">Browse All Blog</a>
                     </div>
                 </div>
             </div>
             <div class="slider-area">
                 <div class="swiper th-slider has-shadow slider-drag-wrap" id="blogSlider3" data-slider-options='{"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":"1"},"768":{"slidesPerView":"2"},"992":{"slidesPerView":"2"},"1200":{"slidesPerView":"3"},"1500":{"slidesPerView":"4"}},"autoHeight":true}'>
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="blog-card style3">
-                                <div class="blog-img">
-                                    <img src="/guest/assets/img/blog/blog_3_1.jpg" alt="blog image">
-                                </div>
-                                <div class="blog-content">
-                                    <div class="blog-meta">
-                                        <a href="blog.html">April 22, 2025</a>
-                                        <a href="blog.html">08 min read</a>
+                        @forelse($homeRecentPosts as $blogPost)
+                            <div class="swiper-slide">
+                                <div class="blog-card style3">
+                                    <div class="blog-img">
+                                        <a href="{{ route('blog.show', $blogPost['slug']) }}">
+                                            <img src="{{ $blogPost['image_url'] }}" alt="blog image">
+                                        </a>
                                     </div>
-                                    <h3 class="box-title"><a href="blog-details.html">Innovative structures rise, blending Construction and project</a></h3>
-                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                    <div class="blog-content">
+                                        <div class="blog-meta">
+                                            <a href="{{ route('blog.show', $blogPost['slug']) }}">{{ optional($blogPost['published_at'])->format('F d, Y') }}</a>
+                                            <a href="{{ route('blog.show', $blogPost['slug']) }}">{{ $blogPost['reading_time'] > 0 ? str_pad((string) $blogPost['reading_time'], 2, '0', STR_PAD_LEFT) : '01' }} min read</a>
+                                        </div>
+                                        <h3 class="box-title"><a href="{{ route('blog.show', $blogPost['slug']) }}">{{ $blogPost['title'] }}</a></h3>
+                                        <a href="{{ route('blog.show', $blogPost['slug']) }}" class="th-btn style-border2 th-btn-icon">Read More</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="blog-card style3">
-                                <div class="blog-img">
-                                    <img src="/guest/assets/img/blog/blog_3_2.jpg" alt="blog image">
-                                </div>
-                                <div class="blog-content">
-                                    <div class="blog-meta">
-                                        <a href="blog.html">June 16, 2025</a>
-                                        <a href="blog.html">10 min read</a>
+                        @empty
+                            <div class="swiper-slide">
+                                <div class="blog-card style3">
+                                    <div class="blog-content">
+                                        <h3 class="box-title">No published posts yet.</h3>
                                     </div>
-                                    <h3 class="box-title"><a href="blog-details.html">What trends do we expect to start growing in the coming future?</a></h3>
-                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="blog-card style3">
-                                <div class="blog-img">
-                                    <img src="/guest/assets/img/blog/blog_3_3.jpg" alt="blog image">
-                                </div>
-                                <div class="blog-content">
-                                    <div class="blog-meta">
-                                        <a href="blog.html">April 22, 2025</a>
-                                        <a href="blog.html">08 min read</a>
-                                    </div>
-                                    <h3 class="box-title"><a href="blog-details.html">Living sustainability: A day in the life at builda residence</a></h3>
-                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="blog-card style3">
-                                <div class="blog-img">
-                                    <img src="/guest/assets/img/blog/blog_3_4.jpg" alt="blog image">
-                                </div>
-                                <div class="blog-content">
-                                    <div class="blog-meta">
-                                        <a href="blog.html">June 16, 2025</a>
-                                        <a href="blog.html">08 min read</a>
-                                    </div>
-                                    <h3 class="box-title"><a href="blog-details.html">The workplace tells and screams for more top story bloggers.</a></h3>
-                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="blog-card style3">
-                                <div class="blog-img">
-                                    <img src="/guest/assets/img/blog/blog_3_1.jpg" alt="blog image">
-                                </div>
-                                <div class="blog-content">
-                                    <div class="blog-meta">
-                                        <a href="blog.html">April 22, 2025</a>
-                                        <a href="blog.html">08 min read</a>
-                                    </div>
-                                    <h3 class="box-title"><a href="blog-details.html">Innovative structures rise, blending Construction and project</a></h3>
-                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="blog-card style3">
-                                <div class="blog-img">
-                                    <img src="/guest/assets/img/blog/blog_3_2.jpg" alt="blog image">
-                                </div>
-                                <div class="blog-content">
-                                    <div class="blog-meta">
-                                        <a href="blog.html">June 16, 2025</a>
-                                        <a href="blog.html">10 min read</a>
-                                    </div>
-                                    <h3 class="box-title"><a href="blog-details.html">What trends do we expect to start growing in the coming future?</a></h3>
-                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="blog-card style3">
-                                <div class="blog-img">
-                                    <img src="/guest/assets/img/blog/blog_3_3.jpg" alt="blog image">
-                                </div>
-                                <div class="blog-content">
-                                    <div class="blog-meta">
-                                        <a href="blog.html">April 22, 2025</a>
-                                        <a href="blog.html">08 min read</a>
-                                    </div>
-                                    <h3 class="box-title"><a href="blog-details.html">Living sustainability: A day in the life at builda residence</a></h3>
-                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="blog-card style3">
-                                <div class="blog-img">
-                                    <img src="/guest/assets/img/blog/blog_3_4.jpg" alt="blog image">
-                                </div>
-                                <div class="blog-content">
-                                    <div class="blog-meta">
-                                        <a href="blog.html">June 16, 2025</a>
-                                        <a href="blog.html">08 min read</a>
-                                    </div>
-                                    <h3 class="box-title"><a href="blog-details.html">The workplace tells and screams for more top story bloggers.</a></h3>
-                                    <a href="blog-details.html" class="th-btn style-border2 th-btn-icon">Read More</a>
-                                </div>
-                            </div>
-                        </div>
-
+                        @endforelse
                     </div>
                 </div>
             </div>

@@ -20,10 +20,17 @@
         <div class="container">
             <div class="row gy-40">
                 @foreach ($references as $reference)
+                    @php
+                        $coverImageBlock = collect($reference['blocks'] ?? [])->first(fn ($item) => ($item['type'] ?? null) === 'coverImage');
+                        $coverImage = $reference['image_url'] ?? null;
+                        if (empty($coverImage) && ! empty($coverImageBlock['content'] ?? null)) {
+                            $coverImage = Storage::disk('public')->url(str_replace('storage/', '', $coverImageBlock['content']));
+                        }
+                    @endphp
                     <div class="col-md-6 col-xl-4">
                         <div class="property-card7 style2">
                             <div class="property-card-thumb img-shine">
-                                <img src="{{ $reference['image_url'] ?? asset($reference['image']) }}" alt="{{ $reference['title'] }}">
+                                <img src="{{ $coverImage ?? asset('guest/assets/img/project/project_1_1.jpg') }}" alt="{{ $reference['title'] }}">
                             </div>
                             <div class="property-card-details">
                                 <div class="media-left">
@@ -34,13 +41,16 @@
                                     <a href="{{ route('references.show', $reference['slug']) }}" class="icon-btn"><img src="{{ asset('guest/assets/img/icon/arrow-right.svg') }}" alt=""></a>
                                 </div>
                             </div>
-                            <div class="property-card-details pt-0">
-                                <p class="property-card-text">{{ $reference['summary'] }}</p>
-                            </div>
                         </div>
                     </div>
                 @endforeach
             </div>
+
+            @if($references instanceof \Illuminate\Contracts\Pagination\Paginator)
+                <div class="th-pagination text-center mt-40">
+                    {{ $references->onEachSide(1)->links('pagination::bootstrap-5') }}
+                </div>
+            @endif
         </div>
     </section>
 @endsection

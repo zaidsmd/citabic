@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <div class="overflow-hidden space-top bg-smoke3" id="about-sec">
+    <div class="overflow-hidden space-top " id="about-sec">
         <div class="container">
             <div class="row justify-content-between align-items-center">
                 <div class="col-md-8">
@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <section class="service-area-1 overflow-hidden space-bottom bg-smoke3 pt-80">
+    <section class="service-area-1 overflow-hidden space-bottom  pt-80">
         <div class="container">
             <div class="row gy-40">
                 @foreach($cp['domains'] as $domain)
@@ -69,7 +69,7 @@
         </div>
     </section>
 
-    <div class="space">
+    <div class="space bg-smoke2">
         <div class="container">
             <div class="counter-card-wrap">
                 @foreach ($site['figures'] as $figure)
@@ -113,7 +113,7 @@
         </div>
     </section>
 
-    <div class="bg-smoke3">
+    <div class="bg-smoke2">
         <div class="container">
             <div class="video-area-1-1 space-bottom position-relative" data-sec-pos="top-half"
                  data-pos-for="#process-area2">
@@ -144,7 +144,7 @@
         </div>
     </div>
 
-    <section class="bg-smoke3 space-bottom shape-mockup-wrap">
+    <section class="bg-smoke2 space-bottom shape-mockup-wrap">
         <div class="container">
             <div class="title-area">
                 <h2 class="sec-title pb-2">{!! $cp['organigrame_title'] !!}</h2>
