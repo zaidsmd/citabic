@@ -13,30 +13,11 @@
                     @csrf
                     @if($isEdit) @method('PUT') @endif
 
-                    <!-- Header Card -->
-                    <div class="card shadow-sm border-0 mb-4">
-                        <div class="card-body p-4">
-                            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-3">
-                                <div>
-                                    <h4 class="fw-bold mb-1">
-                                        <i class="fa fa-flag me-2 text-primary"></i>
-                                        {{ $isEdit ? 'Edit Mission' : 'Add New Mission' }}
-                                    </h4>
-                                    <p class="text-secondary-emphasis mb-0 small">
-                                        {{ $isEdit ? 'Update mission information below' : 'Create a new mission with its content' }}
-                                    </p>
-                                </div>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('admin.missions.index') }}" class="btn btn-outline-secondary">
-                                        <i class="fa fa-arrow-left me-2"></i>Back to List
-                                    </a>
-                                    <button type="submit" class="btn btn-primary px-4">
-                                        <i class="fa fa-save me-2"></i>{{ $isEdit ? 'Update Mission' : 'Save Mission' }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <x-admin.page-header
+                        :title="$isEdit ? 'Edit Mission' : 'Add New Mission'"
+                        :subtitle="$isEdit ? 'Update mission information below' : 'Create a new mission with its content'"
+                        :back-url="route('admin.missions.index')"
+                        back-label="Back to List"/>
 
                     @if ($errors->any())
                         <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
@@ -55,24 +36,11 @@
                             <div class="card shadow-sm border-0">
                                 <div class="card-body p-4">
                                     <!-- Language Tabs -->
-                                    <ul class="nav nav-tabs border-bottom mb-4" id="missionTabs" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link active fw-semibold" id="fr-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#fr-content" type="button" role="tab">
-                                                <i class="fa fa-language me-2"></i>French (Default)
-                                            </button>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link fw-semibold" id="en-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#en-content" type="button" role="tab">
-                                                <i class="fa fa-language me-2"></i>English
-                                            </button>
-                                        </li>
-                                    </ul>
+                                    <x-admin.language-tabs :locales="['fr', 'en']" id-prefix="mission" class="mb-4"/>
 
                                     <div class="tab-content" id="missionTabsContent">
                                         <!-- French -->
-                                        <div class="tab-pane fade show active" id="fr-content" role="tabpanel">
+                                        <div class="tab-pane fade show active" id="mission-fr-content" role="tabpanel" aria-labelledby="mission-fr-tab">
                                             <div class="mb-3">
                                                 <label for="titleFr" class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
                                                 <input type="text" name="fr[title]" id="titleFr"
@@ -94,7 +62,7 @@
                                         </div>
 
                                         <!-- English -->
-                                        <div class="tab-pane fade" id="en-content" role="tabpanel">
+                                        <div class="tab-pane fade" id="mission-en-content" role="tabpanel" aria-labelledby="mission-en-tab">
                                             <div class="mb-3">
                                                 <label for="titleEn" class="form-label fw-semibold">Title</label>
                                                 <input type="text" name="en[title]" id="titleEn"

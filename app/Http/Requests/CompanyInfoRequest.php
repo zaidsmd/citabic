@@ -22,6 +22,9 @@ class CompanyInfoRequest extends FormRequest
             CompanyInfoKey::EMAIL->value => 'required|email|max:255',
             CompanyInfoKey::RC->value => 'required|string|max:255',
             CompanyInfoKey::ICE->value => 'required|string|max:255',
+            CompanyInfoKey::LINKEDIN->value => 'nullable|url|max:255',
+            CompanyInfoKey::INSTAGRAM->value => 'nullable|url|max:255',
+            CompanyInfoKey::FACEBOOK->value => 'nullable|url|max:255',
         ];
     }
 

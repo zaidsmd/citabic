@@ -4,7 +4,8 @@
     'backUrl' => null,
     'backLabel' => null,
     'actionUrl' => null,
-    'actionLabel' => null
+    'actionLabel' => null,
+    'submitButton' => false,
 ])
 
 <div class="card shadow-sm border-0 mb-4">
@@ -18,12 +19,17 @@
             </div>
             <div class="d-flex gap-2">
                 @if($backUrl)
-                    <a href="{{ $backUrl }}" class="btn btn-outline-secondary">
+                    <a href="{{ $backUrl }}" class="btn btn-light">
                         <i class="fa fa-arrow-left me-2"></i>
                         {{ $backLabel }}
                     </a>
                 @endif
-
+                @if($submitButton)
+                    <button class="btn btn-primary px-4" >
+                        <i class="fa fa-save me-2"></i>
+                        @lang('admin.common.save')
+                    </button>
+                @endif
                 @if($actionUrl)
                     <a href="{{ $actionUrl }}" class="btn btn-primary px-4">
                         <i class="fa fa-plus me-2"></i>

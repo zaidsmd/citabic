@@ -22,12 +22,16 @@ return [
         'add' => 'Ajouter',
         'back' => 'Retour',
         'reset' => 'Réinitialiser',
+        'language' => [
+            'fr' => 'Francais',
+            'en' => 'Anglais',
+        ],
     ],
     'language' => [
         'fr' => 'Francais',
         'en' => 'Anglais',
     ],
-    'certifications' => [
+    'certification' => [
         'title' => 'Certifications',
         'list' => 'Liste des certifications',
         'add' => 'Ajouter une certification',
@@ -75,6 +79,7 @@ return [
             'basic_info' => 'Informations de base',
             'contact_info' => 'Informations de contact',
             'legal_info' => 'Informations legales',
+            'social_media' => 'Réseaux sociaux',
         ],
         'status' => [
             'active' => 'Actif',
@@ -93,12 +98,18 @@ return [
             'status' => 'Statut',
             'creation_date' => 'Date de creation',
             'full_name' => 'Nom complet',
+            'linkedin' => 'LinkedIn',
+            'instagram' => 'Instagram',
+            'facebook' => 'Facebook',
         ],
         'placeholders' => [
             'full_name' => 'Groupe CITABIC',
             'legal_name' => 'CITABIC SARL',
             'legal_form' => 'SARL',
             'address' => 'Adresse complete de l entreprise',
+            'linkedin' => 'https://www.linkedin.com/company/votre-entreprise',
+            'instagram' => 'https://www.instagram.com/votre-entreprise',
+            'facebook' => 'https://www.facebook.com/votre-entreprise',
         ],
         'help' => [
             'full_name' => 'Nom public affiche sur le site.',
@@ -180,7 +191,7 @@ return [
         'home' => [
             'title' => 'Page Accueil',
             'subtitle' => 'Gerez les informations de la page Accueil',
-        ]
+        ],
     ],
     'contact' => [
         'title' => 'Page Contact',
@@ -370,8 +381,19 @@ return [
         ],
     ],
     'references' => [
+        'add' => 'Créer une référence',
         'create_title' => 'Créer une référence',
         'edit_title' => 'Modifier la référence',
+        'create_subtitle' => 'Ajouter une nouvelle référence',
+        'edit_subtitle' => 'Modifier les informations de la référence',
+        'list'=>'Manager les références',
+        'table'=>[
+            'image'=>'Image',
+            'title'=>'Titre',
+            'client'=>'Client',
+            'slug'=>'Slug',
+            'actions'=>'Actions',
+        ],
         'add_block' => 'Ajouter un bloc',
         'project_settings' => 'Paramètres du projet',
         'client' => 'Client',

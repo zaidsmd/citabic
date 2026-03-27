@@ -35,12 +35,13 @@
                     <x-admin.page-header
                         :title="__('admin.pages.home.title')"
                         :subtitle="__('admin.pages.home.subtitle')"
+                        :submit-button="1"
                         :back-url="route('admin.dashboard')"/>
 
                     <div class="card shadow-sm border-0">
                         <div class="card-body p-4">
                             <div class="mb-4">
-                                <x-admin.language-tabs id-prefix="home"/>
+                                <x-admin.language-tabs id-prefix="home" />
                             </div>
 
                             <div class="tab-content" id="homeLangTabsContent">

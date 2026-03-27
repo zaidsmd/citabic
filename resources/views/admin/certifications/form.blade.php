@@ -7,8 +7,6 @@
 @endpush
 
 @section('content')
-    <x-breadcrumb item="{{ __('admin.common.cms') }}" active="{{ $mode === 'edit' ? __('admin.certification.form.title_edit') : __('admin.certification.form.title_create') }}"/>
-
     <div class="row">
         <div class="col-sm-12">
             @if ($errors->any())
@@ -23,11 +21,13 @@
                 </div>
             @endif
 
+            <x-admin.page-header
+                :title="$mode === 'edit' ? __('admin.certification.form.title_edit') : __('admin.certification.form.title_create')"
+                :subtitle="$mode === 'edit' ? __('admin.certification.form.title_edit') : __('admin.certification.form.title_create')"
+                :back-url="route('admin.certifications.index')"
+                :back-label="__('admin.common.back_to_list')"/>
+
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>{{ $mode === 'edit' ? __('admin.certification.form.title_edit') : __('admin.certification.form.title_create') }}</h5>
-                    <a href="{{ route('admin.certifications.index') }}" class="btn btn-light btn-sm">{{ __('admin.common.back_to_list') }}</a>
-                </div>
                 <div class="card-body">
                     <form method="POST" action="{{ $mode === 'edit' ? route('admin.certifications.update', $certification) : route('admin.certifications.store') }}" enctype="multipart/form-data">
                         @csrf
@@ -37,34 +37,46 @@
 
                         <div class="row g-3">
                             <div class="col-12">
-                                <ul class="nav nav-tabs" id="certification-language-tabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="certification-fr-tab" data-bs-toggle="tab" data-bs-target="#certification-fr-pane" type="button" role="tab" aria-controls="certification-fr-pane" aria-selected="true">{{ __('admin.certification.form.tabs.french') }}</button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="certification-en-tab" data-bs-toggle="tab" data-bs-target="#certification-en-pane" type="button" role="tab" aria-controls="certification-en-pane" aria-selected="false">{{ __('admin.certification.form.tabs.english') }}</button>
-                                    </li>
-                                </ul>
-                                <div class="tab-content border border-top-0 rounded-bottom p-3" id="certification-language-tabs-content">
-                                    <div class="tab-pane fade show active" id="certification-fr-pane" role="tabpanel" aria-labelledby="certification-fr-tab" tabindex="0">
-                                        <div class="mb-3">
-                                            <label for="certification-name-fr" class="form-label">{{ __('admin.certification.form.fields.name_fr') }}</label>
-                                            <input type="text" class="form-control" id="certification-name-fr" name="name_fr" value="{{ $form['name_fr'] }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="certification-description-fr" class="form-label">{{ __('admin.certification.form.fields.description_fr') }}</label>
-                                            <textarea class="form-control" id="certification-description-fr" name="description_fr" rows="4" required>{{ $form['description_fr'] }}</textarea>
-                                        </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <x-admin.section-title
+                                            class="mb-3"
+                                            icon="fa fa-language"
+                                            :title="__('admin.certification.form.tabs.french')"/>
+                                        <x-admin.text-input
+                                            name="name_fr"
+                                            id="certification-name-fr"
+                                            :label="__('admin.certification.form.fields.name_fr')"
+                                            :value="$form['name_fr']"
+                                            :required="true"/>
+                                        <x-admin.textarea
+                                            name="description_fr"
+                                            id="certification-description-fr"
+                                            :label="__('admin.certification.form.fields.description_fr')"
+                                            :value="$form['description_fr']"
+                                            :rows="4"
+                                            :floating="true"
+                                            :required="true"/>
                                     </div>
-                                    <div class="tab-pane fade" id="certification-en-pane" role="tabpanel" aria-labelledby="certification-en-tab" tabindex="0">
-                                        <div class="mb-3">
-                                            <label for="certification-name-en" class="form-label">{{ __('admin.certification.form.fields.name_en') }}</label>
-                                            <input type="text" class="form-control" id="certification-name-en" name="name_en" value="{{ $form['name_en'] }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="certification-description-en" class="form-label">{{ __('admin.certification.form.fields.description_en') }}</label>
-                                            <textarea class="form-control" id="certification-description-en" name="description_en" rows="4" required>{{ $form['description_en'] }}</textarea>
-                                        </div>
+                                    <div class="col-md-6">
+                                        <x-admin.section-title
+                                            class="mb-3"
+                                            icon="fa fa-language"
+                                            :title="__('admin.certification.form.tabs.english')"/>
+                                        <x-admin.text-input
+                                            name="name_en"
+                                            id="certification-name-en"
+                                            :label="__('admin.certification.form.fields.name_en')"
+                                            :value="$form['name_en']"
+                                            :required="true"/>
+                                        <x-admin.textarea
+                                            name="description_en"
+                                            id="certification-description-en"
+                                            :label="__('admin.certification.form.fields.description_en')"
+                                            :value="$form['description_en']"
+                                            :rows="4"
+                                            :floating="true"
+                                            :required="true"/>
                                     </div>
                                 </div>
                             </div>
@@ -124,7 +136,7 @@
 @endsection
 
 @push('scripts')
-    <script src="/build/js/plugins/dropzone-amd-module.min.js"></script>
+    <script src="{{asset('/build/js/plugins/dropzone-amd-module.min.js')}}"></script>
     <script>
         (() => {
             const imageInput = document.getElementById('certification-image');

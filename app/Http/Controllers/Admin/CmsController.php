@@ -9,8 +9,10 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Yajra\DataTables\DataTables;
 
 class CmsController extends Controller
 {
@@ -24,7 +26,7 @@ class CmsController extends Controller
             'references' => $references,
             'stats' => [
                 'references' => $references->count(),
-                'translated_references' => $references->filter(fn (CitabicReference $reference) => ! empty($reference->translations))->count(),
+                'translated_references' => $references->filter(fn(CitabicReference $reference) => !empty($reference->translations))->count(),
                 'profile_sections' => 9,
             ],
         ]);
@@ -54,7 +56,7 @@ class CmsController extends Controller
             'partnerships',
             'compliance',
             'organization',
-            'why_choose_us'
+            'why_choose_us',
         ];
 
         $en_data = $request->input('en', []);
@@ -94,16 +96,67 @@ class CmsController extends Controller
             ->with('status', 'Profile content updated successfully.');
     }
 
-    public function references(): View
+    public function references(Request $request)
     {
-        return view('admin.cms.references-index', [
+        if ($request->ajax()) {
+            $query = CitabicReference::query();
+
+            $table = datatables()->of($query)
+                ->addColumn('image_preview', function (CitabicReference $row) {
+                    $data = collect($row->blocks);
+                    $heroImage = $data->where('type', 'heroImage')->first() ? $data->where('type', 'heroImage')->first()['content'] : null;
+                    if (!$heroImage) {
+                        return '<span class="text-muted">No image</span>';
+                    }
+
+                    $url = Storage::disk('public')->url(str_replace('storage', '', $heroImage));
+
+                    return '<img src="' . e($url) . '" alt="' . e($row->title) . '" class="rounded" style="height:50px; width:50px; object-fit:cover;">';
+                })
+                ->addColumn('actions', function ($row) {
+                    $editButton = sprintf(
+                        '<a href="%s"
+   class="btn btn-sm btn-light-primary me-1"
+   data-bs-toggle="tooltip"
+   data-bs-placement="top"
+   title="' . __('admin.common.edit') . '"
+   aria-label="' . __('admin.common.edit') . '">
+    <i class="fa fa-pen"></i>
+</a>',
+                        route('admin.references.edit', $row->id)
+                    );
+
+
+                    $deleteForm = sprintf(
+                        '<button data-table-action="delete"  data-href="%s"
+   class="btn btn-sm btn-light-danger"
+   data-bs-toggle="tooltip"
+   data-bs-placement="top"
+   title="' . __('admin.common.delete') . '"
+   aria-label="' . __('admin.common.delete') . '">
+    <i class="fa fa-trash-alt"></i>
+</button>',
+                        route('admin.references.destroy', $row->id)
+                    );
+                    $showButton = sprintf('<a href="%s" class="btn btn-sm btn-light-secondary me-1" target="_blank">
+<i class="fa fa-eye"></i>
+</a>', route('references.show', $row->slug));
+
+
+                    return $showButton . $editButton . $deleteForm;
+                })
+                ->rawColumns(['image_preview', 'actions']);
+
+            return $table->make(true);
+        }
+        return view('admin.references.references-index', [
             'references' => CitabicReference::query()->orderBy('sort_order')->get(),
         ]);
     }
 
     public function createReference(): View
     {
-        return view('admin.cms.reference-form', [
+        return view('admin.references.reference-form', [
             'reference' => null,
             'form' => $this->referenceFormData(),
         ]);
@@ -120,7 +173,7 @@ class CmsController extends Controller
 
     public function editReference(CitabicReference $reference): View
     {
-        return view('admin.cms.reference-form', [
+        return view('admin.references.reference-form', [
             'reference' => $reference,
             'form' => $this->referenceFormData($reference),
         ]);
@@ -221,7 +274,7 @@ class CmsController extends Controller
         }
 
         $blocks = json_decode($validated['blocks'] ?? '[]', true);
-        if (! is_array($blocks)) {
+        if (!is_array($blocks)) {
             $blocks = [];
         }
 
@@ -248,7 +301,7 @@ class CmsController extends Controller
         // For info fields, we need to join them into strings
         $infoFields = [
             'intro', 'market_context', 'mission', 'certifications',
-            'partnerships', 'compliance', 'organization', 'why_choose_us'
+            'partnerships', 'compliance', 'organization', 'why_choose_us',
         ];
 
         $formData = [
@@ -325,7 +378,7 @@ class CmsController extends Controller
         }
 
         return collect(preg_split('/\r\n|\r|\n/', $value))
-            ->map(fn (string $line) => trim($line))
+            ->map(fn(string $line) => trim($line))
             ->filter()
             ->values()
             ->all();
@@ -352,7 +405,7 @@ class CmsController extends Controller
             ]);
         }
 
-        if (! is_array($decoded)) {
+        if (!is_array($decoded)) {
             throw ValidationException::withMessages([
                 $field => "The {$field} field must decode to a JSON object or array.",
             ]);

@@ -13,27 +13,19 @@
                 @csrf
                 @if($isEdit) @method('PUT') @endif
 
+                <x-admin.page-header
+                    :title="$isEdit ? 'Edit Process' : 'Add New Process'"
+                    subtitle="Manage process content"
+                    :back-url="route('admin.processes.index')"
+                    back-label="Back to List"/>
+
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5>{{ $isEdit ? 'Edit Process' : 'Add New Process' }}</h5>
-                        <div>
-                            <a href="{{ route('admin.processes.index') }}" class="btn btn-sm btn-light-secondary me-1">Back to List</a>
-                            <button type="submit" class="btn btn-sm btn-primary">Save Process</button>
-                        </div>
-                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-8">
-                                <ul class="nav nav-tabs mb-3" id="processTabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="fr-tab" data-bs-toggle="tab" data-bs-target="#fr-content" type="button" role="tab" aria-controls="fr-content" aria-selected="true">French (Default)</button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="en-tab" data-bs-toggle="tab" data-bs-target="#en-content" type="button" role="tab" aria-controls="en-content" aria-selected="false">English</button>
-                                    </li>
-                                </ul>
+                                <x-admin.language-tabs :locales="['fr', 'en']" id-prefix="process" class="mb-3"/>
                                 <div class="tab-content" id="processTabsContent">
-                                    <div class="tab-pane fade show active" id="fr-content" role="tabpanel" aria-labelledby="fr-tab">
+                                    <div class="tab-pane fade show active" id="process-fr-content" role="tabpanel" aria-labelledby="process-fr-tab">
                                         <div class="mb-3">
                                             <label class="form-label">Title (FR)</label>
                                             <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $form['title']) }}" required>
@@ -45,7 +37,7 @@
                                             @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade" id="en-content" role="tabpanel" aria-labelledby="en-tab">
+                                    <div class="tab-pane fade" id="process-en-content" role="tabpanel" aria-labelledby="process-en-tab">
                                         <div class="mb-3">
                                             <label class="form-label">Title (EN)</label>
                                             <input type="text" name="en[title]" class="form-control" value="{{ old('en.title', $form['en']['title'] ?? '') }}">

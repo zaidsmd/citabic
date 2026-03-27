@@ -18,13 +18,16 @@ class PageHeader extends Component
 
     public ?string $actionLabel;
 
+    public ?bool $submitButton;
+
     public function __construct(
         string $title,
         ?string $subtitle = null,
         ?string $backUrl = null,
         ?string $backLabel = null,
         ?string $actionUrl = null,
-        ?string $actionLabel = null
+        ?string $actionLabel = null,
+        ?bool $submitButton = false
     ) {
         $this->title = $title;
         $this->subtitle = $subtitle;
@@ -32,6 +35,7 @@ class PageHeader extends Component
         $this->backLabel = $backLabel ?? __('admin.common.back');
         $this->actionUrl = $actionUrl;
         $this->actionLabel = $actionLabel ?? __('admin.common.save');
+        $this->submitButton = $submitButton;
     }
 
     public function render()

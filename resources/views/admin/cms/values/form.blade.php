@@ -21,14 +21,13 @@
                 @if($isEdit) @method('PUT') @endif
                 <input type="hidden" name="type" value="{{ $form['type'] }}">
 
+                <x-admin.page-header
+                    :title="$isEdit ? 'Edit ' . $titleLabel : 'Add New ' . $titleLabel"
+                    subtitle="Manage multilingual value content"
+                    :back-url="route('admin.values.index', ['type' => $type])"
+                    back-label="Back to List"/>
+
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5>{{ $isEdit ? 'Edit ' . $titleLabel : 'Add New ' . $titleLabel }}</h5>
-                        <div>
-                            <a href="{{ route('admin.values.index', ['type' => $type]) }}" class="btn btn-sm btn-light-secondary me-1">Back to List</a>
-                            <button type="submit" class="btn btn-sm btn-primary">Save {{ $titleLabel }}</button>
-                        </div>
-                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 mb-3">
@@ -74,45 +73,49 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    <h6 class="mb-3">French (Default)</h6>
-                                    <div class="mb-3">
-                                        <label class="form-label">Title (FR)</label>
-                                        <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $form['title']) }}" required>
-                                        @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                    </div>
-                                    <div class="mb-0">
-                                        <label class="form-label">Text (FR)</label>
-                                        <textarea
-                                            name="text"
-                                            class="form-control js-value-editor @error('text') is-invalid @enderror"
-                                            rows="5"
-                                            required
-                                        >{{ old('text', $form['text']) }}</textarea>
-                                        @error('text') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                    </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <x-admin.language-tabs :locales="['fr', 'en']" id-prefix="value"/>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    <h6 class="mb-3">English</h6>
-                                    <div class="mb-3">
-                                        <label class="form-label">Title (EN)</label>
-                                        <input type="text" name="en[title]" class="form-control" value="{{ old('en.title', $form['en']['title'] ?? '') }}">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="value-fr-content" role="tabpanel" aria-labelledby="value-fr-tab">
+                                        <div class="border rounded p-3 h-100">
+                                            <div class="mb-3">
+                                                <label class="form-label">Title (FR)</label>
+                                                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $form['title']) }}" required>
+                                                @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                            </div>
+                                            <div class="mb-0">
+                                                <label class="form-label">Text (FR)</label>
+                                                <textarea
+                                                    name="text"
+                                                    class="form-control js-value-editor @error('text') is-invalid @enderror"
+                                                    rows="5"
+                                                    required
+                                                >{{ old('text', $form['text']) }}</textarea>
+                                                @error('text') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="mb-0">
-                                        <label class="form-label">Text (EN)</label>
-                                        <textarea
-                                            name="en[text]"
-                                            class="form-control js-value-editor"
-                                            rows="5"
-                                        >{{ old('en.text', $form['en']['text'] ?? '') }}</textarea>
+                                    <div class="tab-pane fade" id="value-en-content" role="tabpanel" aria-labelledby="value-en-tab">
+                                        <div class="border rounded p-3 h-100">
+                                            <div class="mb-3">
+                                                <label class="form-label">Title (EN)</label>
+                                                <input type="text" name="en[title]" class="form-control" value="{{ old('en.title', $form['en']['title'] ?? '') }}">
+                                            </div>
+                                            <div class="mb-0">
+                                                <label class="form-label">Text (EN)</label>
+                                                <textarea
+                                                    name="en[text]"
+                                                    class="form-control js-value-editor"
+                                                    rows="5"
+                                                >{{ old('en.text', $form['en']['text'] ?? '') }}</textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     <div class="card-footer text-end">
                         <button type="submit" class="btn btn-primary">Save {{ $titleLabel }}</button>
                     </div>

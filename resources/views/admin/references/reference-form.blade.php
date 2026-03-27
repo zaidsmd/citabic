@@ -5,7 +5,7 @@
 @section('title', $isEdit ? __('admin.references.edit_title') : __('admin.references.create_title'))
 
 @push('css')
-    <link rel="stylesheet" href="/build/css/plugins/dropzone.min.css"/>
+    <link rel="stylesheet" href="{{asset('/build/css/plugins/dropzone.min.css')}}"/>
     <style>
         .block-dropzone {
             border: 2px dashed #dee2e6;
@@ -204,19 +204,12 @@
         <input type="hidden" name="items" id="hidden-items" value="{{ old('items', $form['items']) }}">
         <input type="hidden" name="image" id="hidden-image" value="{{ old('image', $form['image']) }}">
 
-        <div class="card mb-3">
-            <div class="card-body py-2 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-2">
-                    <a href="{{ route('admin.references.index') }}" class="btn btn-sm btn-light-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>{{ __('admin.common.back_to_list') }}
-                    </a>
-                    <h5 class="mb-0 ms-2">{{ $isEdit ? __('admin.references.edit_title') : __('admin.references.create_title') }}</h5>
-                </div>
-                <button type="submit" class="btn btn-sm btn-primary">
-                    <i class="ti ti-device-floppy me-1"></i>{{ __('admin.common.save') }}
-                </button>
-            </div>
-        </div>
+        <x-admin.page-header :title="$isEdit ? __('admin.references.edit_title') : __('admin.references.create_title')"
+                             :subtitle="$isEdit ? __('admin.references.edit_subtitle') : __('admin.references.create_subtitle')"
+                             :submit-button="true"
+
+                             :back-url="route('admin.references.index')"
+        />
 
         <div class="row">
             <div class="col-lg-8">

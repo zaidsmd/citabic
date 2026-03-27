@@ -18,32 +18,11 @@
                     @csrf
                     @if($isEdit) @method('PUT') @endif
 
-                    <!-- Header Card -->
-                    <div class="card shadow-sm border-0 mb-4">
-                        <div class="card-body p-4">
-                            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-3">
-                                <div>
-                                    <h4 class="fw-bold mb-1">
-                                        <i class="fa fa-sitemap me-2 text-primary"></i>
-                                        {{ $isEdit ? 'Edit Domain' : 'Add New Domain' }}
-                                    </h4>
-                                    <p class="text-secondary-emphasis mb-0 small">
-                                        {{ $isEdit ? 'Update domain information below' : 'Create a new domain with its content' }}
-                                    </p>
-                                </div>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('admin.domains.index') }}" class="btn btn-outline-secondary">
-                                        <i class="fa fa-arrow-left me-2"></i>
-                                        Back to List
-                                    </a>
-                                    <button type="submit" class="btn btn-primary px-4">
-                                        <i class="fa fa-save me-2"></i>
-                                        {{ $isEdit ? 'Update Domain' : 'Save Domain' }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <x-admin.page-header
+                        :title="$isEdit ? 'Edit Domain' : 'Add New Domain'"
+                        :subtitle="$isEdit ? 'Update domain information below' : 'Create a new domain with its content'"
+                        :back-url="route('admin.domains.index')"
+                        back-label="Back to List"/>
 
                     <!-- Main Content Card -->
                     <div class="card shadow-sm border-0">
@@ -53,24 +32,13 @@
                                 <div class="col-lg-8">
                                     <!-- Language Tabs -->
                                     <div class="mb-4">
-                                        <ul class="nav nav-tabs border-bottom" id="domainTabs" role="tablist">
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link active fw-semibold" id="fr-tab" data-bs-toggle="tab" data-bs-target="#fr-content" type="button" role="tab" aria-controls="fr-content" aria-selected="true">
-                                                    <i class="fa fa-language me-2"></i>French (Default)
-                                                </button>
-                                            </li>
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link fw-semibold" id="en-tab" data-bs-toggle="tab" data-bs-target="#en-content" type="button" role="tab" aria-controls="en-content" aria-selected="false">
-                                                    <i class="fa fa-language me-2"></i>English
-                                                </button>
-                                            </li>
-                                        </ul>
+                                        <x-admin.language-tabs :locales="['fr', 'en']" id-prefix="domain"/>
                                     </div>
 
                                     <!-- Tab Content -->
                                     <div class="tab-content" id="domainTabsContent">
                                         <!-- French Content -->
-                                        <div class="tab-pane fade show active" id="fr-content" role="tabpanel" aria-labelledby="fr-tab">
+                                        <div class="tab-pane fade show active" id="domain-fr-content" role="tabpanel" aria-labelledby="domain-fr-tab">
                                             <div class="mb-4">
                                                 <div class="form-floating">
                                                     <input type="text"
@@ -131,7 +99,7 @@
                                         </div>
 
                                         <!-- English Content -->
-                                        <div class="tab-pane fade" id="en-content" role="tabpanel" aria-labelledby="en-tab">
+                                        <div class="tab-pane fade" id="domain-en-content" role="tabpanel" aria-labelledby="domain-en-tab">
                                             <div class="mb-4">
                                                 <div class="form-floating">
                                                     <input type="text"
@@ -195,9 +163,7 @@
                                             </h6>
                                         </div>
                                         <div class="card-body">
-                                            @php $hasIcon = !empty($form['icon']); @endphp
-
-                                            <div id="icon-existing" style="{{ $hasIcon ? '' : 'display:none' }}">
+                                            <div id="icon-existing" style="{{ filled($form['icon'] ?? null) ? '' : 'display:none' }}">
                                                 <div class="d-flex align-items-center justify-content-between mb-2">
                                                     <p class="text-secondary-emphasis small mb-0">
                                                         <i class="fa fa-check-circle text-success me-1"></i>{{ __('admin.common.current') }}
@@ -207,11 +173,11 @@
                                                     </button>
                                                 </div>
                                                 <img id="icon-preview-img"
-                                                     src="{{ $hasIcon ? Storage::disk('public')->url($form['icon']) : '' }}"
+                                                     src="{{ filled($form['icon'] ?? null) ? Storage::disk('public')->url($form['icon']) : '' }}"
                                                      alt="current" class="img-thumbnail shadow-sm" style="max-height:120px;">
                                             </div>
 
-                                            <div id="icon-dropzone-wrapper" style="{{ $hasIcon ? 'display:none' : '' }}">
+                                            <div id="icon-dropzone-wrapper" style="{{ filled($form['icon'] ?? null) ? 'display:none' : '' }}">
                                                 <div id="icon-dropzone" class="dropzone border-2 border-dashed rounded-3 p-4 text-center">
                                                     <div class="dz-message needsclick">
                                                         <i class="fa fa-cloud-upload-alt fs-1 text-secondary mb-3"></i>
@@ -219,7 +185,7 @@
                                                         <small class="text-secondary-emphasis d-block mt-1">Click or drag to upload</small>
                                                     </div>
                                                 </div>
-                                                @if($hasIcon)
+                                                @if(filled($form['icon'] ?? null))
                                                 <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="icon-cancel-btn">
                                                     <i class="fa fa-times me-1"></i>Cancel
                                                 </button>
@@ -236,40 +202,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Sort Order Card -->
-                                    <div class="card border">
-                                        <div class="card-header bg-transparent border-bottom">
-                                            <h6 class="fw-semibold mb-0">
-                                                <i class="fa fa-sort-numeric-down me-2 text-primary"></i>
-                                                Display Settings
-                                            </h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="form-floating">
-                                                <input type="number"
-                                                       name="sort_order"
-                                                       class="form-control @error('sort_order') is-invalid @enderror"
-                                                       id="sortOrder"
-                                                       value="{{ old('sort_order', $form['sort_order']) }}"
-                                                       placeholder="Sort order"
-                                                       min="0"
-                                                       required>
-                                                <label for="sortOrder" class="fw-semibold">
-                                                    Sort Order <span class="text-danger">*</span>
-                                                </label>
-                                                @error('sort_order')
-                                                <div class="invalid-feedback">
-                                                    <i class="fa fa-exclamation-circle me-1"></i>
-                                                    {{ $message }}
-                                                </div>
-                                                @enderror
-                                                <div class="form-text text-secondary-emphasis small mt-2">
-                                                    <i class="fa fa-info-circle me-1"></i>
-                                                    Lower numbers appear first
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>

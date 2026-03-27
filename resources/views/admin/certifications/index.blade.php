@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/build/css/plugins/dataTables.bootstrap5.min.css" />
 @endpush
 @section('content')
-    <x-breadcrumb item="CMS" active="{{__('admin.certification.title')}}"/>
 
     <div class="row">
         <div class="col-sm-12">
@@ -34,12 +33,13 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>{{__('admin.certification.list')}}</h5>
                     <a href="{{ route('admin.certifications.create') }}" class="btn btn-primary btn-sm">
+                        <i class="fa fa-plus me-2"></i>
                         {{__('admin.certification.add')}}
                     </a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                    <table class="table table-striped table-bordered nowrap" id="certifications-table">
+                    <table class="table table-hover  nowrap" id="certifications-table">
                         <thead>
                         <tr>
                             <th>{{__('admin.certification.fields.image')}}</th>
@@ -60,9 +60,8 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="/build/js/plugins/dataTables.min.js"></script>
-    <script src="/build/js/plugins/dataTables.bootstrap5.min.js"></script>
-    <script type="module"  src="/build/js/certifications/index.js"></script>
-
+    <script src="{{asset('build/js/plugins/jquery.min.js')}}"></script>
+    <script src="{{asset('build/js/plugins/dataTables.min.js')}}"></script>
+    <script src="{{asset('build/js/plugins/dataTables.bootstrap5.min.js')}}"></script>
+    <script type="module"  src="{{asset('/build/js/certifications/index.js')}}"></script>
 @endpush

@@ -8,6 +8,7 @@
     'errorKey' => null,
     'id' => null,
     'placeholder' => null,
+    'floating' => false,
 ])
 
 @php
@@ -16,7 +17,27 @@
 @endphp
 
 <div class="mb-3">
-    <label class="fw-semibold mb-2">
+    @if($floating)
+    <div class="form-floating">
+        <textarea name="{{ $name }}"
+                  id="{{ $textareaId }}"
+                  class="form-control @error($validationKey) is-invalid @enderror"
+                  rows="{{ $rows }}"
+                  placeholder="{{ $placeholder }}"
+                  @if($required) required @endif>{{ old($name, $value) }}</textarea>
+        <label class="fw-semibold" for="{{ $textareaId }}">
+            {{ $label }}
+            @if($required)<span class="text-danger">*</span>@endif
+        </label>
+        @error($validationKey)
+        <div class="invalid-feedback">
+            <i class="fa fa-exclamation-circle me-1"></i>
+            {{ $message }}
+        </div>
+        @enderror
+    </div>
+    @else
+    <label class="fw-semibold mb-2" for="{{ $textareaId }}">
         {{ $label }}
         @if($required)<span class="text-danger">*</span>@endif
     </label>
@@ -32,4 +53,5 @@
         {{ $message }}
     </div>
     @enderror
+    @endif
 </div>

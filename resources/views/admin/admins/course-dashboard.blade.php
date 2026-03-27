@@ -3,7 +3,7 @@
 @section('title', 'Online Courses')
 
 @section('css')
-<link rel="stylesheet" href="/build/css/plugins/datepicker-bs5.min.css" />
+<link rel="stylesheet" href="{{asset('build/css/plugins/datepicker-bs5.min.css')}}" />
 @endsection
 
 @section('content')

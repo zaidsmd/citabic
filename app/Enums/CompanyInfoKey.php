@@ -12,11 +12,14 @@ enum CompanyInfoKey: string
     case LEGAL_NAME = 'legal_name';
     case CAPITAL = 'capital';
     case LEGAL_FORM = 'legal_form';
-    case  RC = 'rc';
+    case RC = 'rc';
     case ICE = 'ice';
     case STATUS = 'status';
     case CREATION_DATE = 'creation_date';
     case FULL_NAME = 'full_name';
+    case LINKEDIN = 'linkedin';
+    case INSTAGRAM = 'instagram';
+    case FACEBOOK = 'facebook';
 
     public static function values(): array
     {

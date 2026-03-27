@@ -13,34 +13,26 @@
                 @csrf
                 @if($isEdit) @method('PUT') @endif
 
+                <x-admin.page-header
+                    :title="$isEdit ? 'Edit Figure' : 'Add New Figure'"
+                    subtitle="Manage figure labels and value"
+                    :back-url="route('admin.figures.index')"
+                    back-label="Back to List"/>
+
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5>{{ $isEdit ? 'Edit Figure' : 'Add New Figure' }}</h5>
-                        <div>
-                            <a href="{{ route('admin.figures.index') }}" class="btn btn-sm btn-light-secondary me-1">Back to List</a>
-                            <button type="submit" class="btn btn-sm btn-primary">Save Figure</button>
-                        </div>
-                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-8">
-                                <ul class="nav nav-tabs mb-3" id="figureTabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="fr-tab" data-bs-toggle="tab" data-bs-target="#fr-content" type="button" role="tab" aria-controls="fr-content" aria-selected="true">French (Default)</button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="en-tab" data-bs-toggle="tab" data-bs-target="#en-content" type="button" role="tab" aria-controls="en-content" aria-selected="false">English</button>
-                                    </li>
-                                </ul>
+                                <x-admin.language-tabs :locales="['fr', 'en']" id-prefix="figure" class="mb-3"/>
                                 <div class="tab-content" id="figureTabsContent">
-                                    <div class="tab-pane fade show active" id="fr-content" role="tabpanel" aria-labelledby="fr-tab">
+                                    <div class="tab-pane fade show active" id="figure-fr-content" role="tabpanel" aria-labelledby="figure-fr-tab">
                                         <div class="mb-3">
                                             <label class="form-label">Label (FR)</label>
                                             <input type="text" name="label" class="form-control @error('label') is-invalid @enderror" value="{{ old('label', $form['label']) }}" required>
                                             @error('label') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade" id="en-content" role="tabpanel" aria-labelledby="en-tab">
+                                    <div class="tab-pane fade" id="figure-en-content" role="tabpanel" aria-labelledby="figure-en-tab">
                                         <div class="mb-3">
                                             <label class="form-label">Label (EN)</label>
                                             <input type="text" name="en[label]" class="form-control" value="{{ old('en.label', $form['en']['label'] ?? '') }}">

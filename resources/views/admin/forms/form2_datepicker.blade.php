@@ -3,7 +3,7 @@
 @section('title', 'Date Picker')
 @section('css')
 <!-- \[Page specific CSS\] start -->
-    <link rel="stylesheet" href="/build/css/plugins/datepicker-bs5.min.css" />
+    <link rel="stylesheet" href="{{asset('build/css/plugins/datepicker-bs5.min.css')}}" />
 <!-- [Page specific CSS] end -->
 @endsection
 
