@@ -1,15 +1,4 @@
-/**
-=========================================================================
-=========================================================================
-Template Name: Able Pro - Bootstrap  Admin Template
-Author: Phoenixcoded
-Support: https://phoenixcoded.authordesk.app
-File: multi-lang.js
-Description:  this file will contains snippet code
-              about handling language change of the page.
-=========================================================================
-=========================================================================
-*/
+
 'use strict';
 const DEFAULT_OPTIONS = {
   flagList: {

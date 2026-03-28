@@ -1,16 +1,4 @@
-/**
-=========================================================================
-=========================================================================
-Template Name: Able Pro - Bootstrap Admin Template
-Author: Phoenixcoded
-Support: https://phoenixcoded.authordesk.app
-File: themes.js
-Description:  this file will contains overall theme setup and handle
-              behavior of live custumizer like Dark/Light, LTR/RTL,
-              preset color, theme layout, theme contarast etc.
-=========================================================================
-=========================================================================
-*/
+
 
 'use strict';
 

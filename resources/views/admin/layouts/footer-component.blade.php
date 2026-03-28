@@ -5,7 +5,6 @@
       <div class="col-md-8">
         <h2 class="mb-3">Be the first to know</h2>
         <p class="mb-4 mb-md-0">
-          Simply submit your email, we share you the top news related to Able Pro feature updates, roadmap, and news.
         </p>
       </div>
       <div class="col-md-4">

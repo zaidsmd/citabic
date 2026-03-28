@@ -1,14 +1,4 @@
-/**
-=========================================================================
-=========================================================================
-Template Name: Able Pro - Bootstrap Admin Template
-Author: Phoenixcoded
-Support: https://phoenixcoded.authordesk.app
-File: script.js
-Description:  this file will contains code for handling Buynow link.
-=========================================================================
-=========================================================================
-*/
+
 function getQueryStringParameters() {
   var BuyNowLink = '';
   var isp = '';

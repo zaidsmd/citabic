@@ -1,16 +1,4 @@
-/**
-=========================================================================
-=========================================================================
-Template Name: Able Pro - Bootstrap Admin Template
-Author: Phoenixcoded
-Support: https://phoenixcoded.authordesk.app
-File: component.js
-Description:  this file will contains defining the behavior, properties, 
-              and interactions of a UI component or a 
-              modular piece of functionality in your application.
-=========================================================================
-=========================================================================
-*/
+
 'use strict';
 // =========================================================
 // ==================    ui kit model code   ===============

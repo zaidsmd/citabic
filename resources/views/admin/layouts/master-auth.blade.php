@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>@yield('title') | Able Pro Dashboard Template</title>
+    <title>@yield('title') </title>
     @include('admin.layouts/head-page-meta')
 
     @yield('css')

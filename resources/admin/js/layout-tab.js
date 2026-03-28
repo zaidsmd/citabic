@@ -1,15 +1,4 @@
-/**
-=========================================================================
-=========================================================================
-Template Name: Able Pro - Bootstrap Admin Template
-Author: Phoenixcoded
-Support: https://phoenixcoded.authordesk.app
-File: layout-tab.js
-Description:  this file will contains defining code for build tab layouts
-              and handle funcnality of a tab layout in theme.
-=========================================================================
-=========================================================================
-*/
+
 'use strict';
 (function () {
   document.getElementsByTagName('body')[0].setAttribute('data-pc-layout', 'tab');

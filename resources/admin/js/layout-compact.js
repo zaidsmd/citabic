@@ -1,15 +1,4 @@
-/**
-=========================================================================
-=========================================================================
-Template Name: Able Pro - Bootstrap Admin Template
-Author: Phoenixcoded
-Support: https://phoenixcoded.authordesk.app
-File: layout-compact.js
-Description:  this file will contains defining code for build compact layouts
-              and handle funcnality of a comapct layout in theme.
-=========================================================================
-=========================================================================
-*/
+
 'use strict';
 (function () {
   document.getElementsByTagName('body')[0].setAttribute('data-pc-layout', 'compact');
