@@ -1,6 +1,15 @@
 @extends('guest.layouts.app-template')
 
-@section('title', 'CITABIC | ' . __('site.nav.contact'))
+@section('title', $contactPage['seo']['title'])
+@section('meta_description', $contactPage['seo']['description'])
+@section('meta_keywords', $contactPage['seo']['keywords'])
+@section('og_title', $contactPage['seo']['og_title'])
+@section('og_description', $contactPage['seo']['og_description'])
+@section('og_image', $contactPage['seo']['og_image'])
+@section('twitter_title', $contactPage['seo']['og_title'])
+@section('twitter_description', $contactPage['seo']['og_description'])
+@section('twitter_image', $contactPage['seo']['og_image'])
+@section('twitter_card', $contactPage['seo']['twitter_card'])
 
 @section('content')
     <div class="breadcumb-wrapper" data-bg-src="{{ asset('guest/assets/img/bg/breadcumb-bg.jpg') }}">
@@ -15,50 +24,69 @@
             </div>
         </div>
     </div>
-
-    <div class="contact-info-area space">
+    <div class="space" id="contact-sec">
+        <div class="contact-bg-shape1-1 jump shape-mockup" data-bottom="30%" data-left="2%">
+            <img src="{{asset('guest/assets/img/shape/section_shape_2_3.jpg')}}" alt="img">
+        </div>
         <div class="container">
-            <div class="row gy-4">
-                <div class="col-md-6 col-xl-4">
-                    <div class="contact-feature">
-                        <div class="box-icon"><img src="{{ asset('guest/assets/img/icon/location-dot.svg') }}" alt="icon"></div>
-                        <div class="media-body">
-                            <h3 class="box-title">{{ __('site.contact.address') }}</h3>
-                            <p class="box-text">{{ $company['head_office'] }}</p>
+            <div class="row gx-35">
+                <div class="col-lg-5">
+                    <div class="about-contact-grid">
+                        <div class="about-contact-icon text-white">
+                            <img src="{{asset('guest/assets/img/icon/location-dot.svg')}}" alt="icon">
+                        </div>
+                        <div class="about-contact-details">
+                            <h6 class="about-contact-details-title">{{ __('site.contact.address') }}:</h6>
+                            <p class="about-contact-details-text">{{$company['head_office']}}</p>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6 col-xl-4">
-                    <div class="contact-feature">
-                        <div class="box-icon"><img src="{{ asset('guest/assets/img/icon/phone.svg') }}" alt="icon"></div>
-                        <div class="media-body">
-                            <h3 class="box-title">{{ __('site.contact.phone') }}</h3>
-                            <p class="box-text"><a href="tel:{{ preg_replace('/\s+/', '', $company['phone']) }}">{{ $company['phone'] }}</a></p>
+                    <div class="about-contact-grid">
+                        <div class="about-contact-icon text-white">
+                            <img src="{{asset('guest/assets/img/icon/phone.svg')}}" alt="icon">
+                        </div>
+                        <div class="about-contact-details">
+                            <h6 class="about-contact-details-title">{{ __('site.contact.phone') }}:</h6>
+                            <p class="about-contact-details-text"><a href="tel:{{ preg_replace('/\s+/', '', $company['phone']) }}">{{ $company['phone'] }}</a></p>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6 col-xl-4">
-                    <div class="contact-feature">
-                        <div class="box-icon"><img src="{{ asset('guest/assets/img/icon/envelope.svg') }}" alt="icon"></div>
-                        <div class="media-body">
-                            <h3 class="box-title">{{ __('site.contact.email') }}</h3>
-                            <p class="box-text"><a href="mailto:{{ $company['email'] }}">{{ $company['email'] }}</a></p>
+                    <div class="about-contact-grid">
+                        <div class="about-contact-icon text-white">
+                            <img src="{{asset('guest/assets/img/icon/envelope.svg')}}" alt="icon">
+                        </div>
+                        <div class="about-contact-details">
+                            <h6 class="about-contact-details-title">Email:</h6>
+                            <p class="about-contact-details-text"><a href="mailto:{{ $company['email'] }}">{{ $company['email'] }}</a></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="location-map contact-sec-map">
+            <div class="contact-map">
+                {!! $contactPage['map_embed'] !!}
+            </div>
+            <div class="location-map-address">
+                <div class="thumb">
+                    <img src="{{asset('guest/assets/img/logo.svg')}}" alt="img">
+                </div>
+                <div class="media-body">
+                    <h4 class="title">{{ __('site.contact.address') }}:</h4>
+                    <p class="text">{{$company['head_office']}}</p>
+                </div>
+            </div>
+        </div>
     </div>
+
 
     <div class="space contact-area-5 z-index-common" id="contact-sec">
         <div class="contact-thumb6-1">
-            <img src="{{ asset('guest/assets/img/normal/contact_thumb_6_1.png') }}" alt="img">
+            <img src="{{ $contactPage['contact_image_url'] }}" alt="img">
         </div>
         <div class="container">
             <div class="row gx-60 gy-60 justify-content-end">
                 <div class="col-lg-6">
                     <div class="appointment-wrap contact-wrap6">
-                        <h2 class="form-title fw-semibold mb-35">{{ __('site.contact.title') }}</h2>
+                        <h2 class="form-title fw-semibold mb-35">{!! $contactPage['form_title'] !!}</h2>
                         <form action="{{ route('contact.submit') }}" method="POST" class="appointment-form ajax-contact">
                             @csrf
                             <div class="row">

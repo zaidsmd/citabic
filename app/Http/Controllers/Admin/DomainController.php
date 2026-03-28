@@ -14,16 +14,48 @@ use Illuminate\View\View;
 
 class DomainController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View|JsonResponse
     {
-        $domains = CitabicDomain::query()->latest()->get();
+        if ($request->ajax()) {
+            $query = CitabicDomain::query();
 
-        return view('admin.cms.domains.index', compact('domains'));
+            $table = datatables()->of($query)
+                ->addColumn('items_count', function (CitabicDomain $domain): int {
+                    return is_array($domain->items) ? count($domain->items) : 0;
+                })
+                ->addColumn('actions', function (CitabicDomain $domain): View {
+                    $actions = [
+                        [
+                            'type' => 'link',
+                            'classNames' => 'btn-sm btn-light-primary',
+                            'icon' => 'fa fa-pen',
+                            'link' => route('admin.domains.edit', $domain),
+                            'attributes' => [
+                                'data-bs-toggle' => 'tooltip',
+                                'data-bs-placement' => 'top',
+                                'title' => __('admin.common.edit'),
+                                'aria-label' => __('admin.common.edit'),
+                            ],
+                        ],
+                        [
+                            'type' => 'destroy',
+                            'link' => route('admin.domains.destroy', $domain),
+                        ],
+                    ];
+
+                    return view('admin.layouts.data-table-actions', compact('actions'));
+                })
+                ->rawColumns(['actions']);
+
+            return $table->make(true);
+        }
+
+        return view('admin.domains.index');
     }
 
     public function create(): View
     {
-        return view('admin.cms.domains.form', [
+        return view('admin.domains.form', [
             'domain' => new CitabicDomain,
             'form' => $this->formData(null),
         ]);
@@ -57,7 +89,7 @@ class DomainController extends Controller
 
     public function edit(CitabicDomain $domain): View
     {
-        return view('admin.cms.domains.form', [
+        return view('admin.domains.form', [
             'domain' => $domain,
             'form' => $this->formData($domain),
         ]);

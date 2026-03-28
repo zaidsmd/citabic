@@ -3,8 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Certification;
+use App\Models\CitabicDomain;
 use App\Models\CitabicProfile;
 use App\Models\CitabicReference;
+use App\Models\CitabicValue;
+use App\Models\ContactSubmission;
+use App\Models\Mission;
+use App\Models\Post;
+use App\Models\PostComment;
+use App\Models\Tag;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,23 +21,39 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use Yajra\DataTables\DataTables;
 
 class CmsController extends Controller
 {
     public function dashboard(): View
     {
-        $profile = CitabicProfile::query()->first();
-        $references = CitabicReference::query()->orderBy('sort_order')->get();
-
         return view('admin.dashboard.index', [
-            'profile' => $profile,
-            'references' => $references,
             'stats' => [
-                'references' => $references->count(),
-                'translated_references' => $references->filter(fn(CitabicReference $reference) => !empty($reference->translations))->count(),
-                'profile_sections' => 9,
+                'posts_total' => Post::query()->count(),
+                'posts_published' => Post::query()->published()->count(),
+                'references_total' => CitabicReference::query()->count(),
+                'domains_total' => CitabicDomain::query()->count(),
+                'missions_total' => Mission::query()->count(),
+                'values_total' => CitabicValue::query()->count(),
+                'certifications_total' => Certification::query()->count(),
+                'categories_total' => Category::query()->count(),
+                'tags_total' => Tag::query()->count(),
+                'comments_total' => PostComment::query()->count(),
+                'pending_comments' => PostComment::query()->where('is_approved', false)->count(),
+                'contact_submissions_total' => ContactSubmission::query()->count(),
+                'contact_submissions_today' => ContactSubmission::query()
+                    ->whereDate('created_at', now()->toDateString())
+                    ->count(),
             ],
+            'recentComments' => PostComment::query()
+                ->with('post:id,title')
+                ->latest()
+                ->limit(6)
+                ->get(),
+            'recentContacts' => ContactSubmission::query()
+                ->latest()
+                ->limit(6)
+                ->get(),
+            'profile' => CitabicProfile::query()->first(),
         ]);
     }
 
@@ -105,13 +130,13 @@ class CmsController extends Controller
                 ->addColumn('image_preview', function (CitabicReference $row) {
                     $data = collect($row->blocks);
                     $heroImage = $data->where('type', 'heroImage')->first() ? $data->where('type', 'heroImage')->first()['content'] : null;
-                    if (!$heroImage) {
+                    if (! $heroImage) {
                         return '<span class="text-muted">No image</span>';
                     }
 
                     $url = Storage::disk('public')->url(str_replace('storage', '', $heroImage));
 
-                    return '<img src="' . e($url) . '" alt="' . e($row->title) . '" class="rounded" style="height:50px; width:50px; object-fit:cover;">';
+                    return '<img src="'.e($url).'" alt="'.e($row->title).'" class="rounded" style="height:50px; width:50px; object-fit:cover;">';
                 })
                 ->addColumn('actions', function ($row) {
                     $editButton = sprintf(
@@ -119,21 +144,20 @@ class CmsController extends Controller
    class="btn btn-sm btn-light-primary me-1"
    data-bs-toggle="tooltip"
    data-bs-placement="top"
-   title="' . __('admin.common.edit') . '"
-   aria-label="' . __('admin.common.edit') . '">
+   title="'.__('admin.common.edit').'"
+   aria-label="'.__('admin.common.edit').'">
     <i class="fa fa-pen"></i>
 </a>',
                         route('admin.references.edit', $row->id)
                     );
-
 
                     $deleteForm = sprintf(
                         '<button data-table-action="delete"  data-href="%s"
    class="btn btn-sm btn-light-danger"
    data-bs-toggle="tooltip"
    data-bs-placement="top"
-   title="' . __('admin.common.delete') . '"
-   aria-label="' . __('admin.common.delete') . '">
+   title="'.__('admin.common.delete').'"
+   aria-label="'.__('admin.common.delete').'">
     <i class="fa fa-trash-alt"></i>
 </button>',
                         route('admin.references.destroy', $row->id)
@@ -142,13 +166,13 @@ class CmsController extends Controller
 <i class="fa fa-eye"></i>
 </a>', route('references.show', $row->slug));
 
-
-                    return $showButton . $editButton . $deleteForm;
+                    return $showButton.$editButton.$deleteForm;
                 })
                 ->rawColumns(['image_preview', 'actions']);
 
             return $table->make(true);
         }
+
         return view('admin.references.references-index', [
             'references' => CitabicReference::query()->orderBy('sort_order')->get(),
         ]);
@@ -274,7 +298,7 @@ class CmsController extends Controller
         }
 
         $blocks = json_decode($validated['blocks'] ?? '[]', true);
-        if (!is_array($blocks)) {
+        if (! is_array($blocks)) {
             $blocks = [];
         }
 
@@ -331,9 +355,9 @@ class CmsController extends Controller
 
             // Handle English translations for info fields
             // Try to get from the new relationship-based structure first
-            $enItems = $profile->getInfo($field)->map(fn($info) => $info->translations['en'] ?? '')->filter()->all();
+            $enItems = $profile->getInfo($field)->map(fn ($info) => $info->translations['en'] ?? '')->filter()->all();
 
-            if (!empty($enItems)) {
+            if (! empty($enItems)) {
                 $formData['en'][$field] = $this->joinLines($enItems);
             } else {
                 // Fallback to the old JSON structure in CitabicProfile (during transition)
@@ -378,7 +402,7 @@ class CmsController extends Controller
         }
 
         return collect(preg_split('/\r\n|\r|\n/', $value))
-            ->map(fn(string $line) => trim($line))
+            ->map(fn (string $line) => trim($line))
             ->filter()
             ->values()
             ->all();
@@ -405,7 +429,7 @@ class CmsController extends Controller
             ]);
         }
 
-        if (!is_array($decoded)) {
+        if (! is_array($decoded)) {
             throw ValidationException::withMessages([
                 $field => "The {$field} field must decode to a JSON object or array.",
             ]);

@@ -51,6 +51,54 @@
 @endif
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof window.jQuery === 'undefined' || typeof $.fn.DataTable === 'undefined') {
+            return;
+        }
+
+        const locale = @json(app()->getLocale());
+        window.appLocale = locale;
+        const defaultLanguage = {
+            processing: 'Processing...',
+            search: 'Search:',
+            lengthMenu: 'Show _MENU_ entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            loadingRecords: 'Loading...',
+            zeroRecords: 'No matching records found',
+            emptyTable: 'No data available in table',
+            paginate: {
+                first: 'First',
+                previous: 'Previous',
+                next: 'Next',
+                last: 'Last',
+            },
+        };
+        const frenchLanguage = {
+            processing: 'Traitement...',
+            search: 'Rechercher:',
+            lengthMenu: 'Afficher _MENU_ elements',
+            info: 'Affichage de _START_ a _END_ sur _TOTAL_ elements',
+            infoEmpty: 'Affichage de 0 a 0 sur 0 element',
+            infoFiltered: '(filtre a partir de _MAX_ elements au total)',
+            loadingRecords: 'Chargement...',
+            zeroRecords: 'Aucun element correspondant trouve',
+            emptyTable: 'Aucune donnee disponible dans le tableau',
+            paginate: {
+                first: 'Premier',
+                previous: 'Precedent',
+                next: 'Suivant',
+                last: 'Dernier',
+            },
+        };
+
+        const language = String(locale).toLowerCase().startsWith('fr') ? frenchLanguage : defaultLanguage;
+        $.extend(true, $.fn.dataTable.defaults, { language });
+    });
+</script>
+
+<script>
     document.addEventListener('click', function (e) {
         const el = e.target.closest('[data-table-action="delete"]');
         if (!el) return;

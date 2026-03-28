@@ -13,8 +13,8 @@ class AuthController extends Controller
 {
     public function create(): View|RedirectResponse
     {
-        if (Auth::check() && Auth::user()->is_admin) {
-            return redirect()->route('admin.dashboard');
+        if (Auth::check() && Auth::user()->can('access admin panel')) {
+            return $this->redirectAfterLogin();
         }
 
         return view('admin.auth.login');
@@ -33,8 +33,15 @@ class AuthController extends Controller
         if (! Auth::attempt([
             'email' => $credentials['email'],
             'password' => $credentials['password'],
-            'is_admin' => true,
         ], $remember)) {
+            throw ValidationException::withMessages([
+                'email' => __('These credentials do not match our records.'),
+            ]);
+        }
+
+        if (! Auth::user()->can('access admin panel')) {
+            Auth::logout();
+
             throw ValidationException::withMessages([
                 'email' => __('These credentials do not match our records.'),
             ]);
@@ -42,7 +49,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->intended($this->defaultRedirectPath());
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -53,5 +60,19 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('admin.login');
+    }
+
+    private function redirectAfterLogin(): RedirectResponse
+    {
+        return redirect()->to($this->defaultRedirectPath());
+    }
+
+    private function defaultRedirectPath(): string
+    {
+        if (Auth::user()?->can('manage cms content')) {
+            return route('admin.dashboard');
+        }
+
+        return route('admin.posts.index');
     }
 }

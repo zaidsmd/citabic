@@ -15,7 +15,7 @@ class AdminAuthenticate
             return redirect()->route('admin.login');
         }
 
-        if (! Auth::user()->is_admin) {
+        if (! Auth::user()->can('access admin panel')) {
             abort(403);
         }
 

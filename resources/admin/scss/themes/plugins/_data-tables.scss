@@ -403,8 +403,13 @@
         background-color: var(--bs-card-bg);
     }
 
+    >div {
+        overflow: clip;
+        position: relative !important;
+    }
     // Spinner animation
     div {
+        position: absolute;
         display: inline-block;
         width: 1rem;
         height: 1rem;

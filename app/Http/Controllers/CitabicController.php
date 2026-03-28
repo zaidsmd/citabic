@@ -10,17 +10,23 @@ use App\Models\Certification;
 use App\Models\CitabicDomain;
 use App\Models\CitabicProfile;
 use App\Models\CitabicReference;
+use App\Models\ContactSubmission;
 use App\Models\Mission;
 use App\Models\Post;
 use App\Models\SectionContent;
 use App\Models\Tag;
+use App\Models\User;
+use App\Notifications\NewBlogCommentNotification;
+use App\Notifications\NewContactSubmissionNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notification as BaseNotification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -74,8 +80,6 @@ class CitabicController extends Controller
 
         return view('guest.pages.company', array_merge($this->sharedData(), ['cp' => $companyData]));
     }
-
-
 
     public function references(): View
     {
@@ -231,6 +235,7 @@ class CitabicController extends Controller
             ->firstOrFail();
 
         $comment = $post->comments()->create($request->validated());
+        $this->notifyAdmins(new NewBlogCommentNotification($comment));
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -250,12 +255,17 @@ class CitabicController extends Controller
 
     public function contact(): View
     {
-        return view('guest.pages.contact', $this->sharedData());
+        $contactPage = $this->getContactPageData(app()->getLocale());
+
+        return view('guest.pages.contact', array_merge(
+            $this->sharedData(),
+            ['contactPage' => $contactPage]
+        ));
     }
 
     public function submitContact(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
             'subject' => ['nullable', 'string', 'max:255'],
@@ -263,8 +273,28 @@ class CitabicController extends Controller
             'message' => ['nullable', 'string'],
         ]);
 
+        $submission = ContactSubmission::query()->create([
+            ...$data,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+        $this->notifyAdmins(new NewContactSubmissionNotification($submission));
+
         return response(__('site.contact.success'), 200)
             ->header('Content-Type', 'text/plain');
+    }
+
+    private function notifyAdmins(BaseNotification $notification): void
+    {
+        $adminUsers = User::query()
+            ->whereHas('roles', fn (Builder $query) => $query->where('name', 'admin'))
+            ->get();
+
+        if ($adminUsers->isEmpty()) {
+            return;
+        }
+
+        NotificationFacade::send($adminUsers, $notification);
     }
 
     private function sharedData(): array
@@ -633,5 +663,44 @@ class CitabicController extends Controller
         }
 
         return $path;
+    }
+
+    private function getContactPageData(string $locale): array
+    {
+        $cacheKey = 'contact_page:'.$locale;
+
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($locale): array {
+            $content = fn (ContentKey $key): ?string => SectionContent::query()
+                ->where('section', Section::CONTACT->value)
+                ->where('key', $key->value)
+                ->where('language', $locale)
+                ->value('value')
+                ?? SectionContent::query()
+                    ->where('section', Section::CONTACT->value)
+                    ->where('key', $key->value)
+                    ->where('language', 'fr')
+                    ->value('value');
+
+            $formTitle = $content(ContentKey::CONTACT_FORM_TEXT) ?: __('site.contact.title');
+            $metaTitle = $content(ContentKey::CONTACT_TITLE) ?: __('site.contact.seo.title');
+            $metaDescription = strip_tags($formTitle) ?: __('site.contact.seo.description');
+            $contactImagePath = $content(ContentKey::CONTACT_IMAGE);
+
+            return [
+                'form_title' => $formTitle,
+                'map_embed' => $content(ContentKey::MAP_EMBED),
+                'contact_image_path' => $contactImagePath,
+                'contact_image_url' => $this->resolveMediaUrl($contactImagePath),
+                'seo' => [
+                    'title' => 'CITABIC | '.$metaTitle,
+                    'description' => $metaDescription,
+                    'keywords' => __('site.contact.seo.keywords'),
+                    'og_title' => 'CITABIC | '.$metaTitle,
+                    'og_description' => $metaDescription,
+                    'og_image' => $this->resolveMediaUrl($contactImagePath) ?? '',
+                    'twitter_card' => 'summary_large_image',
+                ],
+            ];
+        });
     }
 }

@@ -6,22 +6,53 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View|JsonResponse
     {
-        $categories = Category::withCount('posts')->orderBy('name')->get();
+        if ($request->ajax()) {
+            $query = Category::query()->withCount('posts');
 
-        return view('admin.cms.categories.index', compact('categories'));
+            $table = datatables()->of($query)
+                ->addColumn('actions', function (Category $category): View {
+                    $actions = [
+                        [
+                            'type' => 'link',
+                            'classNames' => 'btn-sm btn-light-primary',
+                            'icon' => 'fa fa-pen',
+                            'link' => route('admin.categories.edit', $category),
+                            'attributes' => [
+                                'data-bs-toggle' => 'tooltip',
+                                'data-bs-placement' => 'top',
+                                'title' => __('admin.common.edit'),
+                                'aria-label' => __('admin.common.edit'),
+                            ],
+                        ],
+                        [
+                            'type' => 'destroy',
+                            'link' => route('admin.categories.destroy', $category),
+                        ],
+                    ];
+
+                    return view('admin.layouts.data-table-actions', compact('actions'));
+                })
+                ->rawColumns(['actions']);
+
+            return $table->make(true);
+        }
+
+        return view('admin.categories.index');
     }
 
     public function create(): View
     {
-        return view('admin.cms.categories.form', [
+        return view('admin.categories.form', [
             'category' => new Category,
         ]);
     }
@@ -38,7 +69,7 @@ class CategoryController extends Controller
 
     public function edit(Category $category): View
     {
-        return view('admin.cms.categories.form', [
+        return view('admin.categories.form', [
             'category' => $category,
         ]);
     }

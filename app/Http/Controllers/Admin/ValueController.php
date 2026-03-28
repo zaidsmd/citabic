@@ -10,23 +10,66 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ValueController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|JsonResponse
     {
         $type = $request->query('type', 'values');
-        $values = CitabicValue::where('type', $type)->latest('id')->get();
 
-        return view('admin.cms.values.index', compact('values', 'type'));
+        if ($request->ajax()) {
+            $query = CitabicValue::query()->where('type', $type);
+
+            $table = datatables()->of($query)
+                ->addColumn('image_preview', function (CitabicValue $value): string {
+                    if (! empty($value->image)) {
+                        $url = Storage::disk('public')->url($value->image);
+
+                        return '<img src="'.e($url).'" alt="'.e($value->title).'" style="width: 72px; height: 72px; object-fit: cover;" class="rounded border">';
+                    }
+
+                    return '<span class="text-muted small">'.e(__('admin.values.no_image')).'</span>';
+                })
+                ->addColumn('text_excerpt', function (CitabicValue $value): string {
+                    return Str::limit($value->text, 100);
+                })
+                ->addColumn('actions', function (CitabicValue $value): View {
+                    $actions = [
+                        [
+                            'type' => 'link',
+                            'classNames' => 'btn-sm btn-light-primary',
+                            'icon' => 'fa fa-pen',
+                            'link' => route('admin.values.edit', $value),
+                            'attributes' => [
+                                'data-bs-toggle' => 'tooltip',
+                                'data-bs-placement' => 'top',
+                                'title' => __('admin.common.edit'),
+                                'aria-label' => __('admin.common.edit'),
+                            ],
+                        ],
+                        [
+                            'type' => 'destroy',
+                            'link' => route('admin.values.destroy', $value),
+                        ],
+                    ];
+
+                    return view('admin.layouts.data-table-actions', compact('actions'));
+                })
+                ->rawColumns(['image_preview', 'actions', 'text_excerpt']);
+
+            return $table->make(true);
+        }
+
+        return view('admin.values.index', compact('type'));
     }
 
     public function create(Request $request): View
     {
         $type = $request->query('type', 'values');
 
-        return view('admin.cms.values.form', [
+        return view('admin.values.form', [
             'value' => new CitabicValue(['type' => $type]),
             'type' => $type,
             'form' => $this->formData(null, $type),
@@ -56,7 +99,7 @@ class ValueController extends Controller
 
     public function edit(CitabicValue $value): View
     {
-        return view('admin.cms.values.form', [
+        return view('admin.values.form', [
             'value' => $value,
             'type' => $value->type,
             'form' => $this->formData($value, $value->type),

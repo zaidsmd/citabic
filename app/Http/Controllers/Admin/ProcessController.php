@@ -5,23 +5,54 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CitabicProcess;
 use App\Models\CitabicProfile;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProcessController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View|JsonResponse
     {
-        $processes = CitabicProcess::orderBy('sort_order')->get();
-        return view('admin.cms.processes.index', compact('processes'));
+        if ($request->ajax()) {
+            $query = CitabicProcess::query();
+            $table = datatables()->of($query);
+            $table->addColumn('actions', function ($row) {
+                $actions = [
+                    [
+                        'type' => 'link',
+                        'classNames' => 'btn-sm btn-light-primary',
+                        'icon' => 'fa fa-pen',
+                        'link' => route('admin.processes.edit', $row->id),
+                        'attributes' => [
+                            'data-bs-toggle' => 'tooltip',
+                            'data-bs-placement' => 'top',
+                            'title' => __('admin.common.edit'),
+                            'aria-label' => __('admin.common.edit'),
+                        ],
+                    ],
+                    [
+                        'type' => 'destroy',
+                        'link' => route('admin.processes.destroy', $row->id),
+                    ],
+                ];
+
+                return view('admin.layouts.data-table-actions', compact('actions'));
+            })->rawColumns(['actions']);
+
+            return $table->make(true);
+        }
+
+        $processes = CitabicProcess::query()->latest()->get();
+
+        return view('admin.processes.index', compact('processes'));
     }
 
     public function create(): View
     {
-        return view('admin.cms.processes.form', [
-            'process' => new CitabicProcess(),
-            'form' => $this->formData(null)
+        return view('admin.processes.form', [
+            'process' => new CitabicProcess,
+            'form' => $this->formData(null),
         ]);
     }
 
@@ -32,7 +63,6 @@ class ProcessController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'sort_order' => 'required|integer',
             'en' => 'nullable|array',
         ]);
 
@@ -46,9 +76,9 @@ class ProcessController extends Controller
 
     public function edit(CitabicProcess $process): View
     {
-        return view('admin.cms.processes.form', [
+        return view('admin.processes.form', [
             'process' => $process,
-            'form' => $this->formData($process)
+            'form' => $this->formData($process),
         ]);
     }
 
@@ -57,7 +87,6 @@ class ProcessController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'sort_order' => 'required|integer',
             'en' => 'nullable|array',
         ]);
 
@@ -72,6 +101,7 @@ class ProcessController extends Controller
     public function destroy(CitabicProcess $process): RedirectResponse
     {
         $process->delete();
+
         return redirect()->route('admin.processes.index')->with('status', 'Process deleted successfully.');
     }
 
@@ -80,7 +110,6 @@ class ProcessController extends Controller
         return [
             'title' => old('title', $process?->title),
             'description' => old('description', $process?->description),
-            'sort_order' => old('sort_order', $process?->sort_order ?? 0),
             'en' => old('en', $process?->translations['en'] ?? []),
         ];
     }

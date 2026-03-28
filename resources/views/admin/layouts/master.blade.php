@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <!-- [Head] start -->
 
 <head>
-    <title>@yield('title') | Able Pro Dashboard Template</title>
+    <title>@yield('title') | CITABIC </title>
     @include('admin.layouts/head-page-meta')
 
     @yield('css')

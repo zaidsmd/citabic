@@ -19,11 +19,78 @@ use RuntimeException;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::with(['author', 'categories'])->latest()->paginate(10);
+        if ($request->ajax()) {
+            $query = Post::query()->with('categories')->latest();
 
-        return view('admin.cms.posts.index', compact('posts'));
+            $table = datatables()->of($query)
+                ->addColumn('image_preview', function (Post $post): string {
+                    if ($post->featured_image) {
+                        return '<img src="'.e($post->featured_image).'" alt="" style="height: 40px;">';
+                    }
+
+                    return '<span class="text-muted">'.e(__('admin.posts.index.no_image')).'</span>';
+                })
+                ->addColumn('status_badge', function (Post $post): string {
+                    $status = $post->status instanceof PostStatus ? $post->status : PostStatus::tryFrom((string) $post->status);
+                    $statusClass = match ($status) {
+                        PostStatus::Published => 'bg-light-success',
+                        PostStatus::Draft => 'bg-light-warning',
+                        PostStatus::Archived => 'bg-light-secondary',
+                        default => 'bg-light-secondary',
+                    };
+
+                    return '<span class="badge '.$statusClass.'">'.e($status?->label() ?? (string) $post->status).'</span>';
+                })
+                ->addColumn('categories_badges', function (Post $post): string {
+                    if ($post->categories->isEmpty()) {
+                        return '-';
+                    }
+
+                    return $post->categories
+                        ->map(fn ($category) => '<span class="badge bg-light-info me-1">'.e($category->name).'</span>')
+                        ->implode('');
+                })
+                ->addColumn('published_at_display', function (Post $post): string {
+                    return $post->published_at ? $post->published_at->format('d M Y H:i') : '-';
+                })
+                ->addColumn('actions', function (Post $post): string {
+                    $editButton = sprintf(
+                        '<a href="%s" class="btn btn-sm btn-light-primary me-1"><i class="fa fa-pen" ></i></a>',
+                        route('admin.posts.edit', $post),
+                    );
+
+                    $toggleButton = $post->status === PostStatus::Published
+                        ? sprintf(
+                            '<form action="%s" method="POST" class="d-inline me-1">%s%s<button type="submit" class="btn btn-sm btn-light-info"> <i class="fa fa-archive me-1"></i> %s</button></form>',
+                            route('admin.posts.unpublish', $post),
+                            csrf_field(),
+                            method_field('PATCH'),
+                            e(__('admin.posts.actions.unpublish'))
+                        )
+                        : sprintf(
+                            '<form action="%s" method="POST" class="d-inline me-1">%s%s<button type="submit" class="btn btn-sm btn-light-success"> <i class="fa fa-paper-plane me-1"></i> %s</button></form>',
+                            route('admin.posts.publish', $post),
+                            csrf_field(),
+                            method_field('PATCH'),
+                            e(__('admin.posts.actions.publish'))
+                        );
+
+                    $deleteButton = sprintf(
+                        '<button type="button" class="btn btn-sm btn-light-danger" data-table-action="delete" data-url="%s"><i class="fa fa-trash-alt"></i></button>',
+                        route('admin.posts.destroy', $post),
+                        e(__('admin.common.delete'))
+                    );
+
+                    return $toggleButton.$editButton.$deleteButton;
+                })
+                ->rawColumns(['image_preview', 'status_badge', 'categories_badges', 'actions']);
+
+            return $table->make(true);
+        }
+
+        return view('admin.posts.index');
     }
 
     public function create()
@@ -32,7 +99,7 @@ class PostController extends Controller
         $tags = Tag::all();
         $post = new Post; // For the form view to use safely
 
-        return view('admin.cms.posts.form', compact('categories', 'tags', 'post'));
+        return view('admin.posts.form', compact('categories', 'tags', 'post'));
     }
 
     public function store(StorePostRequest $request)
@@ -68,7 +135,7 @@ class PostController extends Controller
 
         $post->incrementViews();
 
-        return view('admin.cms.posts.show', compact('post'));
+        return view('admin.posts.show', compact('post'));
     }
 
     public function edit(Post $post)
@@ -76,7 +143,7 @@ class PostController extends Controller
         $categories = Category::all();
         $tags = Tag::all();
 
-        return view('admin.cms.posts.form', compact('post', 'categories', 'tags'));
+        return view('admin.posts.form', compact('post', 'categories', 'tags'));
     }
 
     public function update(UpdatePostRequest $request, Post $post)

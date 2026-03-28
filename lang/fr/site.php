@@ -158,6 +158,11 @@ return [
             'general' => 'Demande generale',
         ],
         'success' => 'Merci. Votre demande a bien ete recue.',
+        'seo' => [
+            'title' => 'Contact',
+            'description' => 'Prenez contact avec CITABIC pour vos projets de BTP, genie civil et immobilier.',
+            'keywords' => 'citabic, contact, btp, genie civil, immobilier',
+        ],
     ],
     'language' => [
         'label' => 'Langue',

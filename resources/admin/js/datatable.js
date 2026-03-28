@@ -51,7 +51,7 @@ const resolveLanguagePack = (language) => {
         return language;
     }
 
-    return language === 'fr' ? frenchLanguage : defaultLanguage;
+    return String(language).toLowerCase().startsWith('fr') ? frenchLanguage : defaultLanguage;
 };
 
 
@@ -61,10 +61,14 @@ export const initDataTable = ({
                                   filters = {},
                                   triggerButtonId,
                                   tableId = '#dataTable',
-                                  language = 'en',
+                                  language = null,
                                   customOptions = {}
                               }) => {
-    const languagePack = resolveLanguagePack(language);
+    const locale = typeof window !== 'undefined' && window.appLocale
+        ? window.appLocale
+        : (typeof document !== 'undefined' ? document.documentElement.lang : 'en');
+    const resolvedLanguage = language ?? locale;
+    const languagePack = resolveLanguagePack(resolvedLanguage);
 
     const table = $(tableId).DataTable({
         processing: true,

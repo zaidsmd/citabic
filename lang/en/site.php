@@ -158,6 +158,11 @@ return [
             'general' => 'General inquiry',
         ],
         'success' => 'Thank you. Your request has been received.',
+        'seo' => [
+            'title' => 'Contact',
+            'description' => 'Get in touch with CITABIC for construction, civil engineering, and real estate projects.',
+            'keywords' => 'citabic, contact, construction, civil engineering, real estate',
+        ],
     ],
     'language' => [
         'label' => 'Language',

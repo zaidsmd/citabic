@@ -1,7 +1,7 @@
 @props(['status' => null, 'error' => null, 'errors' => []])
 
 @php
-    $status = $status ?? session('status');
+    $status = $status ?? session('status') ?? session('success');
     $error = $error ?? session('error');
     $errors = $errors ?? session('errors')?->all() ?? [];
 @endphp

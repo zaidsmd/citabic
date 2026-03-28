@@ -115,7 +115,7 @@
                                     </div>
                                     @if($hasImage)
                                     <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="certification-image-cancel-btn">
-                                        <i class="fa fa-times me-1"></i>Cancel
+                                        <i class="fa fa-times me-1"></i>{{ __('admin.common.cancel') }}
                                     </button>
                                     @endif
                                 </div>
