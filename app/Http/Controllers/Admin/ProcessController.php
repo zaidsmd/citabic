@@ -10,8 +10,16 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
+/**
+ * Handles HTTP endpoints for Process Controller.
+ */
 class ProcessController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @param  Request  $request  Parameter.
+     */
     public function index(Request $request): View|JsonResponse
     {
         if ($request->ajax()) {
@@ -48,6 +56,9 @@ class ProcessController extends Controller
         return view('admin.processes.index', compact('processes'));
     }
 
+    /**
+     * Show the creation form for the resource.
+     */
     public function create(): View
     {
         return view('admin.processes.form', [
@@ -56,6 +67,13 @@ class ProcessController extends Controller
         ]);
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function store(Request $request): RedirectResponse
     {
         $profile = CitabicProfile::query()->firstOrFail();
@@ -74,6 +92,13 @@ class ProcessController extends Controller
         return redirect()->route('admin.processes.index')->with('status', 'Process created successfully.');
     }
 
+    /**
+     * Show the edit form for the resource.
+
+     *
+
+     * @param  CitabicProcess  $process  Parameter.
+     */
     public function edit(CitabicProcess $process): View
     {
         return view('admin.processes.form', [
@@ -82,6 +107,15 @@ class ProcessController extends Controller
         ]);
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  CitabicProcess  $process  Parameter.
+     */
     public function update(Request $request, CitabicProcess $process): RedirectResponse
     {
         $data = $request->validate([
@@ -98,6 +132,13 @@ class ProcessController extends Controller
         return redirect()->route('admin.processes.index')->with('status', 'Process updated successfully.');
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param  CitabicProcess  $process  Parameter.
+     */
     public function destroy(CitabicProcess $process): RedirectResponse
     {
         $process->delete();

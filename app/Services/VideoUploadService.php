@@ -6,20 +6,22 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+/**
+ * Provides domain logic for Video Upload Service.
+ */
 class VideoUploadService
 {
     /**
-     * Store an uploaded video file as-is (preserving original format).
+     * Persist a newly created resource.
      *
-     * @param  UploadedFile  $file
-     * @param  string        $folder  Storage folder (e.g. 'hero')
-     * @return string                 Stored path relative to the public disk
+     * @param  UploadedFile  $file  Parameter.
+     * @param  string  $folder  Parameter.
      */
     public function store(UploadedFile $file, string $folder): string
     {
         $extension = $file->getClientOriginalExtension() ?: $file->guessExtension();
-        $filename  = Str::uuid() . '.' . $extension;
-        $path      = $folder . '/' . $filename;
+        $filename = Str::uuid().'.'.$extension;
+        $path = $folder.'/'.$filename;
 
         Storage::disk('public')->putFileAs($folder, $file, $filename);
 

@@ -11,20 +11,43 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Handles HTTP endpoints for About Us Controller.
+ */
 class AboutUsController extends Controller
 {
-    protected AboutUsService $aboutUsService;
-
+    /**
+     * Create a new instance with injected dependencies.
+     *
+     * @param  AboutUsService  $aboutUsService  Parameter.
+     * @return mixed
+     */
     public function __construct(AboutUsService $aboutUsService)
     {
         $this->aboutUsService = $aboutUsService;
     }
 
+    /**
+     * Display a listing for the resource.
+
+     *
+
+     * @return mixed
+     */
     public function index()
     {
         return view('admin.pages.about-us', $this->aboutUsService->getAboutData());
     }
 
+    /**
+     * Handle image upload and return the stored media path.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  ImageUploadService  $imageService  Parameter.
+     */
     public function uploadImage(Request $request, ImageUploadService $imageService): JsonResponse
     {
         $validated = $request->validate([
@@ -51,6 +74,13 @@ class AboutUsController extends Controller
         }
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param  UpdateAboutUsRequest  $request  Parameter.
+     */
     public function update(UpdateAboutUsRequest $request): RedirectResponse
     {
         try {

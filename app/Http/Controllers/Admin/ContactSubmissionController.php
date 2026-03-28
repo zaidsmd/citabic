@@ -10,8 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
+/**
+ * Handles HTTP endpoints for Contact Submission Controller.
+ */
 class ContactSubmissionController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @param  Request  $request  Parameter.
+     */
     public function index(Request $request): View|JsonResponse
     {
         if ($request->ajax()) {
@@ -42,6 +50,15 @@ class ContactSubmissionController extends Controller
         return view('admin.contact-submissions.index');
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param ContactSubmission $contactSubmission Parameter.
+
+     * @param  Request  $request  Parameter.
+     */
     public function destroy(ContactSubmission $contactSubmission, Request $request): RedirectResponse|JsonResponse
     {
         $contactSubmission->delete();

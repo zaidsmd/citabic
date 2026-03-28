@@ -13,8 +13,16 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
+/**
+ * Handles HTTP endpoints for Value Controller.
+ */
 class ValueController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @param  Request  $request  Parameter.
+     */
     public function index(Request $request): View|JsonResponse
     {
         $type = $request->query('type', 'values');
@@ -65,6 +73,13 @@ class ValueController extends Controller
         return view('admin.values.index', compact('type'));
     }
 
+    /**
+     * Show the creation form for the resource.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function create(Request $request): View
     {
         $type = $request->query('type', 'values');
@@ -76,6 +91,13 @@ class ValueController extends Controller
         ]);
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function store(Request $request): RedirectResponse
     {
         $profile = CitabicProfile::query()->firstOrFail();
@@ -97,6 +119,13 @@ class ValueController extends Controller
             ->with('status', 'Value created successfully.');
     }
 
+    /**
+     * Show the edit form for the resource.
+
+     *
+
+     * @param  CitabicValue  $value  Parameter.
+     */
     public function edit(CitabicValue $value): View
     {
         return view('admin.values.form', [
@@ -106,6 +135,15 @@ class ValueController extends Controller
         ]);
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  CitabicValue  $value  Parameter.
+     */
     public function update(Request $request, CitabicValue $value): RedirectResponse
     {
         $data = $request->validate([
@@ -124,6 +162,13 @@ class ValueController extends Controller
             ->with('status', 'Value updated successfully.');
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param  CitabicValue  $value  Parameter.
+     */
     public function destroy(CitabicValue $value): RedirectResponse
     {
         $type = $value->type;
@@ -133,6 +178,15 @@ class ValueController extends Controller
             ->with('status', 'Value deleted successfully.');
     }
 
+    /**
+     * Handle image upload and return the stored media path.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  ImageUploadService  $imageUploadService  Parameter.
+     */
     public function uploadImage(Request $request, ImageUploadService $imageUploadService): JsonResponse
     {
         $request->validate([

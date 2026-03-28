@@ -22,8 +22,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Handles HTTP endpoints for Cms Controller.
+ */
 class CmsController extends Controller
 {
+    /**
+     * Dashboard.
+     */
     public function dashboard(): View
     {
         return view('admin.dashboard.index', [
@@ -57,6 +63,9 @@ class CmsController extends Controller
         ]);
     }
 
+    /**
+     * Edit profile.
+     */
     public function editProfile(): View
     {
         $profile = CitabicProfile::query()->firstOrFail();
@@ -67,6 +76,13 @@ class CmsController extends Controller
         ]);
     }
 
+    /**
+     * Update profile.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function updateProfile(Request $request): RedirectResponse
     {
         $profile = CitabicProfile::query()->firstOrFail();
@@ -121,6 +137,15 @@ class CmsController extends Controller
             ->with('status', 'Profile content updated successfully.');
     }
 
+    /**
+     * Render the public references listing.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @return mixed
+     */
     public function references(Request $request)
     {
         if ($request->ajax()) {
@@ -178,6 +203,9 @@ class CmsController extends Controller
         ]);
     }
 
+    /**
+     * Create reference.
+     */
     public function createReference(): View
     {
         return view('admin.references.reference-form', [
@@ -186,6 +214,13 @@ class CmsController extends Controller
         ]);
     }
 
+    /**
+     * Store reference.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function storeReference(Request $request): RedirectResponse
     {
         $reference = CitabicReference::query()->create($this->buildReferencePayload($request));
@@ -195,6 +230,13 @@ class CmsController extends Controller
             ->with('status', 'Reference created successfully.');
     }
 
+    /**
+     * Edit reference.
+
+     *
+
+     * @param  CitabicReference  $reference  Parameter.
+     */
     public function editReference(CitabicReference $reference): View
     {
         return view('admin.references.reference-form', [
@@ -203,6 +245,15 @@ class CmsController extends Controller
         ]);
     }
 
+    /**
+     * Update reference.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  CitabicReference  $reference  Parameter.
+     */
     public function updateReference(Request $request, CitabicReference $reference): RedirectResponse
     {
         $reference->update($this->buildReferencePayload($request, $reference));
@@ -212,6 +263,13 @@ class CmsController extends Controller
             ->with('status', 'Reference updated successfully.');
     }
 
+    /**
+     * Destroy reference.
+
+     *
+
+     * @param  CitabicReference  $reference  Parameter.
+     */
     public function destroyReference(CitabicReference $reference): RedirectResponse
     {
         $reference->delete();

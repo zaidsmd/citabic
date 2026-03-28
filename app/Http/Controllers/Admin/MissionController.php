@@ -12,8 +12,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
+/**
+ * Handles HTTP endpoints for Mission Controller.
+ */
 class MissionController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @param  Request  $request  Parameter.
+     */
     public function index(Request $request): View|JsonResponse
     {
         if ($request->ajax()) {
@@ -63,6 +71,9 @@ class MissionController extends Controller
         return view('admin.missions.index');
     }
 
+    /**
+     * Show the creation form for the resource.
+     */
     public function create(): View
     {
         return view('admin.missions.form', [
@@ -71,6 +82,13 @@ class MissionController extends Controller
         ]);
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -97,6 +115,13 @@ class MissionController extends Controller
         return redirect()->route('admin.missions.index')->with('status', 'Mission created successfully.');
     }
 
+    /**
+     * Show the edit form for the resource.
+
+     *
+
+     * @param  Mission  $mission  Parameter.
+     */
     public function edit(Mission $mission): View
     {
         return view('admin.missions.form', [
@@ -105,6 +130,15 @@ class MissionController extends Controller
         ]);
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  Mission  $mission  Parameter.
+     */
     public function update(Request $request, Mission $mission): RedirectResponse
     {
         $data = $request->validate([
@@ -132,6 +166,13 @@ class MissionController extends Controller
         return redirect()->route('admin.missions.index')->with('status', 'Mission updated successfully.');
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param  Mission  $mission  Parameter.
+     */
     public function destroy(Mission $mission): RedirectResponse
     {
         if ($mission->icon) {
@@ -142,6 +183,15 @@ class MissionController extends Controller
         return redirect()->route('admin.missions.index')->with('status', 'Mission deleted successfully.');
     }
 
+    /**
+     * Handle image upload and return the stored media path.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  ImageUploadService  $imageService  Parameter.
+     */
     public function uploadImage(Request $request, ImageUploadService $imageService): JsonResponse
     {
         $request->validate(['image' => 'required|image|max:10240']);

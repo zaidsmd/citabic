@@ -3,120 +3,16 @@
 namespace App\Services;
 
 use App\Enums\ContentKey;
-use App\Enums\Section;
-use App\Models\SectionContent;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Provides domain logic for About Us Service.
+ */
 class AboutUsService
 {
-    protected array $richTextFields = [
-        ContentKey::ABOUT_TEXT->value,
-        ContentKey::WHY_US_TEXT->value,
-        ContentKey::MISSION_TEXT->value,
-    ];
-
-    protected array $plainTextareaFields = [
-        ContentKey::WHY_US_CARDS->value,
-    ];
-
-    protected array $requiredFields = [
-        ContentKey::ABOUT_TITLE->value,
-        ContentKey::ROUNDED_TEXT->value,
-        ContentKey::ABOUT_TEXT->value,
-        ContentKey::MISSION_TEXT->value,
-    ];
-
-    protected array $contentSectionsConfig = [
-        [
-            'title_key' => 'admin.pages.about.sections.about',
-            'icon' => 'fa fa-circle-info',
-            'fields' => [
-                ContentKey::ABOUT_TITLE->value,
-                ContentKey::ROUNDED_TEXT->value,
-                ContentKey::ABOUT_TEXT->value,
-            ],
-        ],
-        [
-            'title_key' => 'admin.pages.about.sections.mission',
-            'icon' => 'fa fa-bullseye',
-            'fields' => [
-                ContentKey::MISSION_TITLE->value,
-                ContentKey::MISSION_TEXT->value,
-            ],
-        ],
-        [
-            'title_key' => 'admin.pages.about.sections.why_us',
-            'icon' => 'fa fa-star',
-            'fields' => [
-                ContentKey::WHY_US_TITLE->value,
-                ContentKey::WHY_US_TEXT->value,
-                ContentKey::WHY_US_CARDS->value,
-            ],
-        ],
-        [
-            'title_key' => 'admin.pages.about.sections.organisation',
-            'icon' => 'fa fa-sitemap',
-            'fields' => [
-                ContentKey::ORGANIGRAME_TITLE->value,
-                ContentKey::CARTOGRAPHIE_TITLE->value,
-            ],
-        ],
-    ];
-
-    protected array $imageSectionsConfig = [
-        [
-            'title_key' => 'admin.pages.about.sections.header_and_section_images',
-            'icon' => 'fa fa-image',
-            'fields' => [
-                ContentKey::ABOUT_HEADER_BG_IMG->value,
-                ContentKey::SECTION_IMAGE->value,
-            ],
-        ],
-        [
-            'title_key' => 'admin.pages.about.sections.organization_images',
-            'icon' => 'fa fa-diagram-project',
-            'fields' => [
-                ContentKey::ORGANIGRAME->value,
-                ContentKey::CARTOGRAPHIE->value,
-            ],
-        ],
-    ];
-
     /**
-     * Content fields that are translatable (text fields)
-     */
-    protected array $contentFields = [
-        ContentKey::ABOUT_TITLE,
-        ContentKey::ROUNDED_TEXT,
-        ContentKey::ABOUT_TEXT,
-        ContentKey::MISSION_TITLE,
-        ContentKey::MISSION_TEXT,
-        ContentKey::WHY_US_TITLE,
-        ContentKey::WHY_US_TEXT,
-        ContentKey::WHY_US_CARDS,
-        ContentKey::ORGANIGRAME_TITLE,
-        ContentKey::CARTOGRAPHIE_TITLE,
-    ];
-
-    /**
-     * Image fields (non-translatable)
-     */
-    protected array $imageFields = [
-        ContentKey::ABOUT_HEADER_BG_IMG,
-        ContentKey::SECTION_IMAGE,
-        ContentKey::ORGANIGRAME,
-        ContentKey::CARTOGRAPHIE,
-    ];
-
-    /**
-     * Available locales
-     */
-    protected array $locales = ['fr', 'en'];
-
-    /**
-     * Get all content fields as array of values
+     * Retrieve get content fields for downstream processing.
      */
     public function getContentFields(): array
     {
@@ -124,7 +20,7 @@ class AboutUsService
     }
 
     /**
-     * Get all image fields as array of values
+     * Retrieve get image fields for downstream processing.
      */
     public function getImageFields(): array
     {
@@ -132,7 +28,7 @@ class AboutUsService
     }
 
     /**
-     * Get all content data for the about page
+     * Retrieve get about data for downstream processing.
      */
     public function getAboutData(): array
     {
@@ -261,72 +157,11 @@ class AboutUsService
     }
 
     /**
-     * Fetch all section contents for about page
-     */
-    protected function fetchContents(): Collection
-    {
-        $allKeys = array_merge(
-            array_map(fn ($field) => $field->value, $this->contentFields),
-            array_map(fn ($field) => $field->value, $this->imageFields)
-        );
+     * Update about data.
 
-        return SectionContent::where('section', Section::ABOUT_PAGE)
-            ->whereIn('key', $allKeys)
-            ->get()
-            ->keyBy(fn ($item) => $item->language.'_'.$item->key);
-    }
+     *
 
-    /**
-     * Prepare content data from fetched contents
-     */
-    protected function prepareContentData(Collection $contents): array
-    {
-        $data = [];
-
-        foreach ($this->contentFields as $field) {
-            $fieldValue = $field->value;
-
-            foreach ($this->locales as $locale) {
-                $value = $contents->get($locale.'_'.$fieldValue)?->value ?? '';
-
-                if ($locale === 'fr') {
-                    $data[$fieldValue] = $value;
-                } else {
-                    $data['en'][$fieldValue] = $value;
-                }
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Prepare image data
-     */
-    protected function prepareImageData(): array
-    {
-        $images = [];
-        $imageKeys = array_map(fn ($field) => $field->value, $this->imageFields);
-        $storedImages = SectionContent::where('section', Section::ABOUT_PAGE)
-            ->whereIn('key', $imageKeys)
-            ->get()
-            ->groupBy('key');
-
-        foreach ($this->imageFields as $field) {
-            $fieldValue = $field->value;
-            $imageGroup = $storedImages->get($fieldValue, collect());
-            $image = $imageGroup->firstWhere('language', null)
-                ?? $imageGroup->firstWhere('language', 'fr')
-                ?? $imageGroup->first();
-
-            $images[$fieldValue] = $image?->value;
-        }
-
-        return $images;
-    }
-
-    /**
-     * Update about page content
+     * @param  Request  $request  Parameter.
      */
     public function updateAboutData(Request $request): void
     {
@@ -337,68 +172,11 @@ class AboutUsService
     }
 
     /**
-     * Update translatable fields
-     */
-    protected function updateTranslatableFields(Request $request): void
-    {
-        foreach ($this->contentFields as $field) {
-            $fieldValue = $field->value;
+     * Validate update.
 
-            // Update French content
-            if ($request->has($fieldValue) && ! empty($request->input($fieldValue))) {
-                $this->updateOrCreateContent(
-                    $fieldValue,
-                    'fr',
-                    $request->input($fieldValue)
-                );
-            }
+     *
 
-            // Update English content
-            if ($request->has("en.{$fieldValue}") && ! empty($request->input("en.{$fieldValue}"))) {
-                $this->updateOrCreateContent(
-                    $fieldValue,
-                    'en',
-                    $request->input("en.{$fieldValue}")
-                );
-            }
-        }
-    }
-
-    /**
-     * Update image fields
-     */
-    protected function updateImageFields(Request $request): void
-    {
-        foreach ($this->imageFields as $field) {
-            $fieldValue = $field->value;
-
-            if ($request->has($fieldValue) && ! empty($request->input($fieldValue))) {
-                $this->updateOrCreateContent(
-                    $fieldValue,
-                    null,
-                    $request->input($fieldValue)
-                );
-            }
-        }
-    }
-
-    /**
-     * Update or create a single content record
-     */
-    protected function updateOrCreateContent(string $key, ?string $language, string $value): void
-    {
-        SectionContent::updateOrCreate(
-            [
-                'section' => Section::ABOUT_PAGE,
-                'key' => $key,
-                'language' => $language,
-            ],
-            ['value' => $value]
-        );
-    }
-
-    /**
-     * Validate the update request
+     * @param  Request  $request  Parameter.
      */
     public function validateUpdate(Request $request): array
     {
@@ -421,7 +199,7 @@ class AboutUsService
     }
 
     /**
-     * Get validation rules for about us form
+     * Retrieve get validation rules for downstream processing.
      */
     public function getValidationRules(): array
     {
@@ -446,31 +224,7 @@ class AboutUsService
     }
 
     /**
-     * Get validation rules for a specific field
-     */
-    protected function getFieldValidationRules(ContentKey $field): string
-    {
-        $baseRules = 'nullable|string';
-
-        return match ($field) {
-            ContentKey::ABOUT_TITLE,
-            ContentKey::ROUNDED_TEXT,
-            ContentKey::MISSION_TITLE,
-            ContentKey::WHY_US_TITLE,
-            ContentKey::ORGANIGRAME_TITLE,
-            ContentKey::CARTOGRAPHIE_TITLE => $baseRules.'|max:255',
-
-            ContentKey::ABOUT_TEXT,
-            ContentKey::MISSION_TEXT,
-            ContentKey::WHY_US_TEXT,
-            ContentKey::WHY_US_CARDS => $baseRules.'|max:65535',
-
-            default => $baseRules.'|max:5000',
-        };
-    }
-
-    /**
-     * Get custom validation messages
+     * Retrieve get validation messages for downstream processing.
      */
     public function getValidationMessages(): array
     {

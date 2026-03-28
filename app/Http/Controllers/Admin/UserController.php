@@ -11,8 +11,16 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
+/**
+ * Handles HTTP endpoints for User Controller.
+ */
 class UserController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @param  Request  $request  Parameter.
+     */
     public function index(Request $request): View|JsonResponse
     {
         $this->ensureCanManageUsers();
@@ -70,6 +78,9 @@ class UserController extends Controller
         return view('admin.users.index');
     }
 
+    /**
+     * Show the creation form for the resource.
+     */
     public function create(): View
     {
         $this->ensureCanManageUsers();
@@ -80,6 +91,13 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param  StoreUserRequest  $request  Parameter.
+     */
     public function store(StoreUserRequest $request): RedirectResponse
     {
         $this->ensureCanManageUsers();
@@ -94,11 +112,25 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('status', __('admin.users.messages.created'));
     }
 
+    /**
+     * Display the requested resource.
+
+     *
+
+     * @param  User  $user  Parameter.
+     */
     public function show(User $user): void
     {
         abort(404);
     }
 
+    /**
+     * Show the edit form for the resource.
+
+     *
+
+     * @param  User  $user  Parameter.
+     */
     public function edit(User $user): View
     {
         $this->ensureCanManageUsers();
@@ -109,6 +141,15 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param UpdateUserRequest $request Parameter.
+
+     * @param  User  $user  Parameter.
+     */
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         $this->ensureCanManageUsers();
@@ -134,6 +175,13 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('status', __('admin.users.messages.updated'));
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param  User  $user  Parameter.
+     */
     public function destroy(User $user): RedirectResponse
     {
         $this->ensureCanManageUsers();

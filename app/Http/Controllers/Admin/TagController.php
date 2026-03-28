@@ -12,8 +12,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
+/**
+ * Handles HTTP endpoints for Tag Controller.
+ */
 class TagController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @param  Request  $request  Parameter.
+     */
     public function index(Request $request): View|JsonResponse
     {
         if ($request->ajax()) {
@@ -50,6 +58,9 @@ class TagController extends Controller
         return view('admin.tags.index');
     }
 
+    /**
+     * Show the creation form for the resource.
+     */
     public function create(): View
     {
         return view('admin.tags.form', [
@@ -57,6 +68,13 @@ class TagController extends Controller
         ]);
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param  StoreTagRequest  $request  Parameter.
+     */
     public function store(StoreTagRequest $request): RedirectResponse
     {
         $data = $request->validated();
@@ -67,6 +85,13 @@ class TagController extends Controller
         return redirect()->route('admin.tags.index')->with('status', 'Tag created successfully.');
     }
 
+    /**
+     * Show the edit form for the resource.
+
+     *
+
+     * @param  Tag  $tag  Parameter.
+     */
     public function edit(Tag $tag): View
     {
         return view('admin.tags.form', [
@@ -74,6 +99,15 @@ class TagController extends Controller
         ]);
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param UpdateTagRequest $request Parameter.
+
+     * @param  Tag  $tag  Parameter.
+     */
     public function update(UpdateTagRequest $request, Tag $tag): RedirectResponse
     {
         $data = $request->validated();
@@ -84,6 +118,13 @@ class TagController extends Controller
         return redirect()->route('admin.tags.index')->with('status', 'Tag updated successfully.');
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param  Tag  $tag  Parameter.
+     */
     public function destroy(Tag $tag): RedirectResponse
     {
         $tag->delete();

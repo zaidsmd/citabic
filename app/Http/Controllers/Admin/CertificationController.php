@@ -4,15 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Certification;
+use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Services\ImageUploadService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
+/**
+ * Handles HTTP endpoints for Certification Controller.
+ */
 class CertificationController extends Controller
 {
+    /**
+     * Show the creation form for the resource.
+     */
     public function create(): View
     {
         return view('admin.certifications.form', [
@@ -29,6 +35,15 @@ class CertificationController extends Controller
         ]);
     }
 
+    /**
+     * Display a listing for the resource.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @return mixed
+     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -45,13 +60,13 @@ class CertificationController extends Controller
 
             $table = datatables()->of($query)
                 ->addColumn('image_preview', function ($row) {
-                    if (!$row->image) {
+                    if (! $row->image) {
                         return '<span class="text-muted">No image</span>';
                     }
 
                     $url = $this->imageUrl($row->image);
 
-                    return '<img src="' . e($url) . '" alt="' . e($row->name) . '" class="rounded" style="height:50px; width:50px; object-fit:cover;">';
+                    return '<img src="'.e($url).'" alt="'.e($row->name).'" class="rounded" style="height:50px; width:50px; object-fit:cover;">';
                 })
                 ->addColumn('actions', function ($row) {
                     $editButton = sprintf(
@@ -59,29 +74,26 @@ class CertificationController extends Controller
    class="btn btn-sm btn-light-primary me-1"
    data-bs-toggle="tooltip"
    data-bs-placement="top"
-   title="' . __('admin.common.edit') . '"
-   aria-label="' . __('admin.common.edit') . '">
+   title="'.__('admin.common.edit').'"
+   aria-label="'.__('admin.common.edit').'">
     <i class="fa fa-pen"></i>
 </a>',
                         route('admin.certifications.edit', $row->id)
                     );
-
 
                     $deleteForm = sprintf(
                         '<button data-table-action="delete"  data-href="%s"
    class="btn btn-sm btn-light-danger"
    data-bs-toggle="tooltip"
    data-bs-placement="top"
-   title="' . __('admin.common.delete') . '"
-   aria-label="' . __('admin.common.delete') . '">
+   title="'.__('admin.common.delete').'"
+   aria-label="'.__('admin.common.delete').'">
     <i class="fa fa-trash-alt"></i>
 </button>',
                         route('admin.certifications.destroy', $row->id)
                     );
 
-
-
-                    return $editButton . $deleteForm;
+                    return $editButton.$deleteForm;
                 })
                 ->rawColumns(['image_preview', 'actions']);
 
@@ -91,6 +103,13 @@ class CertificationController extends Controller
         return view('admin.certifications.index');
     }
 
+    /**
+     * Show the edit form for the resource.
+
+     *
+
+     * @param  Certification  $certification  Parameter.
+     */
     public function edit(Certification $certification): View
     {
         $pairSlug = $certification->slug;
@@ -111,9 +130,18 @@ class CertificationController extends Controller
         ]);
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  ImageUploadService  $imageService  Parameter.
+     */
     public function store(Request $request, ImageUploadService $imageService): RedirectResponse
     {
-        if (!$request->hasFile('image') && $request->hasFile('file')) {
+        if (! $request->hasFile('image') && $request->hasFile('file')) {
             $request->files->set('image', $request->file('file'));
         }
 
@@ -146,9 +174,20 @@ class CertificationController extends Controller
         return redirect()->route('admin.certifications.index')->with('status', 'Certification created successfully.');
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param Certification $certification Parameter.
+
+     * @param  ImageUploadService  $imageService  Parameter.
+     */
     public function update(Request $request, Certification $certification, ImageUploadService $imageService): RedirectResponse
     {
-        if (!$request->hasFile('image') && $request->hasFile('file')) {
+        if (! $request->hasFile('image') && $request->hasFile('file')) {
             $request->files->set('image', $request->file('file'));
         }
 
@@ -163,7 +202,7 @@ class CertificationController extends Controller
         $pairSlug = $certification->slug;
         $fr = Certification::query()->where('slug', $pairSlug)->where('language', 'fr')->first() ?? $certification;
         $en = Certification::query()->where('slug', $pairSlug)->where('language', 'en')->first();
-        if (!$en) {
+        if (! $en) {
             $en = new Certification([
                 'slug' => $pairSlug,
                 'language' => 'en',
@@ -200,6 +239,13 @@ class CertificationController extends Controller
         return redirect()->route('admin.certifications.index')->with('status', 'Certification updated successfully.');
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param  Certification  $certification  Parameter.
+     */
     public function destroy(Certification $certification): RedirectResponse
     {
         $records = Certification::query()->where('slug', $certification->slug)->get();
@@ -216,7 +262,7 @@ class CertificationController extends Controller
 
     private function imageUrl(?string $path): ?string
     {
-        if (!$path) {
+        if (! $path) {
             return null;
         }
 
@@ -235,12 +281,12 @@ class CertificationController extends Controller
         $counter = 1;
 
         while (
-        Certification::query()
-            ->where('slug', $slug)
-            ->when($currentSlug, fn($query) => $query->where('slug', '!=', $currentSlug))
-            ->exists()
+            Certification::query()
+                ->where('slug', $slug)
+                ->when($currentSlug, fn ($query) => $query->where('slug', '!=', $currentSlug))
+                ->exists()
         ) {
-            $slug = $baseSlug . '-' . $counter;
+            $slug = $baseSlug.'-'.$counter;
             $counter++;
         }
 

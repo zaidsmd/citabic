@@ -17,8 +17,17 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RuntimeException;
 
+/**
+ * Handles HTTP endpoints for Post Controller.
+ */
 class PostController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @param  Request  $request  Parameter.
+     * @return mixed
+     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -93,6 +102,13 @@ class PostController extends Controller
         return view('admin.posts.index');
     }
 
+    /**
+     * Show the creation form for the resource.
+
+     *
+
+     * @return mixed
+     */
     public function create()
     {
         $categories = Category::all();
@@ -102,6 +118,15 @@ class PostController extends Controller
         return view('admin.posts.form', compact('categories', 'tags', 'post'));
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param StorePostRequest $request Parameter.
+
+     * @return mixed
+     */
     public function store(StorePostRequest $request)
     {
         $validated = $request->validated();
@@ -127,6 +152,15 @@ class PostController extends Controller
         return redirect()->route('admin.posts.index')->with('success', 'Post created successfully.');
     }
 
+    /**
+     * Display the requested resource.
+
+     *
+
+     * @param Post $post Parameter.
+
+     * @return mixed
+     */
     public function show(Post $post)
     {
         if ($post->status !== PostStatus::Published && (! auth()->check())) {
@@ -138,6 +172,15 @@ class PostController extends Controller
         return view('admin.posts.show', compact('post'));
     }
 
+    /**
+     * Show the edit form for the resource.
+
+     *
+
+     * @param Post $post Parameter.
+
+     * @return mixed
+     */
     public function edit(Post $post)
     {
         $categories = Category::all();
@@ -146,6 +189,17 @@ class PostController extends Controller
         return view('admin.posts.form', compact('post', 'categories', 'tags'));
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param UpdatePostRequest $request Parameter.
+
+     * @param Post $post Parameter.
+
+     * @return mixed
+     */
     public function update(UpdatePostRequest $request, Post $post)
     {
         $validated = $request->validated();
@@ -174,6 +228,15 @@ class PostController extends Controller
         return redirect()->route('admin.posts.index')->with('success', 'Post updated successfully.');
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param Post $post Parameter.
+
+     * @return mixed
+     */
     public function destroy(Post $post)
     {
         $post->delete();
@@ -181,6 +244,15 @@ class PostController extends Controller
         return redirect()->route('admin.posts.index')->with('success', 'Post deleted successfully.');
     }
 
+    /**
+     * Mark the resource as published.
+
+     *
+
+     * @param Post $post Parameter.
+
+     * @return mixed
+     */
     public function publish(Post $post)
     {
         $post->publish();
@@ -190,6 +262,15 @@ class PostController extends Controller
             ->with('success', __('admin.posts.messages.published'));
     }
 
+    /**
+     * Mark the resource as unpublished.
+
+     *
+
+     * @param Post $post Parameter.
+
+     * @return mixed
+     */
     public function unpublish(Post $post)
     {
         $post->unpublish();
@@ -199,6 +280,15 @@ class PostController extends Controller
             ->with('success', __('admin.posts.messages.unpublished'));
     }
 
+    /**
+     * Upload featured image.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  ImageUploadService  $imageService  Parameter.
+     */
     public function uploadFeaturedImage(Request $request, ImageUploadService $imageService): JsonResponse
     {
         $request->validate([
@@ -213,6 +303,15 @@ class PostController extends Controller
         ]);
     }
 
+    /**
+     * Translate fr to en.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  PostTranslationService  $postTranslationService  Parameter.
+     */
     public function translateFrToEn(Request $request, PostTranslationService $postTranslationService): JsonResponse
     {
         $validated = $request->validate([

@@ -8,8 +8,14 @@ use App\Models\SectionContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Provides domain logic for Section Content Page Service.
+ */
 class SectionContentPageService
 {
+    /**
+     * Retrieve get index data for downstream processing.
+     */
     public function getIndexData(): array
     {
         $locales = ['fr', 'en'];
@@ -194,6 +200,13 @@ class SectionContentPageService
         ];
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function update(Request $request): void
     {
         $locales = ['en', 'fr'];

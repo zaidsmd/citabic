@@ -10,8 +10,16 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
+/**
+ * Handles HTTP endpoints for Figure Controller.
+ */
 class FigureController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @param  Request  $request  Parameter.
+     */
     public function index(Request $request): View|JsonResponse
     {
         if ($request->ajax()) {
@@ -48,6 +56,9 @@ class FigureController extends Controller
         return view('admin.figures.index');
     }
 
+    /**
+     * Show the creation form for the resource.
+     */
     public function create(): View
     {
         return view('admin.figures.form', [
@@ -56,6 +67,13 @@ class FigureController extends Controller
         ]);
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function store(Request $request): RedirectResponse
     {
         $profile = CitabicProfile::query()->firstOrFail();
@@ -75,6 +93,13 @@ class FigureController extends Controller
         return redirect()->route('admin.figures.index')->with('status', 'Figure created successfully.');
     }
 
+    /**
+     * Show the edit form for the resource.
+
+     *
+
+     * @param  CitabicFigure  $figure  Parameter.
+     */
     public function edit(CitabicFigure $figure): View
     {
         return view('admin.figures.form', [
@@ -83,6 +108,15 @@ class FigureController extends Controller
         ]);
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  CitabicFigure  $figure  Parameter.
+     */
     public function update(Request $request, CitabicFigure $figure): RedirectResponse
     {
         $data = $request->validate([
@@ -99,6 +133,13 @@ class FigureController extends Controller
         return redirect()->route('admin.figures.index')->with('status', 'Figure updated successfully.');
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param  CitabicFigure  $figure  Parameter.
+     */
     public function destroy(CitabicFigure $figure): RedirectResponse
     {
         $figure->delete();

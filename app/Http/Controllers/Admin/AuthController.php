@@ -9,8 +9,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Handles HTTP endpoints for Auth Controller.
+ */
 class AuthController extends Controller
 {
+    /**
+     * Show the creation form for the resource.
+     */
     public function create(): View|RedirectResponse
     {
         if (Auth::check() && Auth::user()->can('access admin panel')) {
@@ -20,6 +26,13 @@ class AuthController extends Controller
         return view('admin.auth.login');
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function store(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
@@ -52,6 +65,13 @@ class AuthController extends Controller
         return redirect()->intended($this->defaultRedirectPath());
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::logout();

@@ -12,8 +12,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
+/**
+ * Handles HTTP endpoints for Domain Controller.
+ */
 class DomainController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @param  Request  $request  Parameter.
+     */
     public function index(Request $request): View|JsonResponse
     {
         if ($request->ajax()) {
@@ -53,6 +61,9 @@ class DomainController extends Controller
         return view('admin.domains.index');
     }
 
+    /**
+     * Show the creation form for the resource.
+     */
     public function create(): View
     {
         return view('admin.domains.form', [
@@ -61,6 +72,13 @@ class DomainController extends Controller
         ]);
     }
 
+    /**
+     * Persist a newly created resource.
+
+     *
+
+     * @param  Request  $request  Parameter.
+     */
     public function store(Request $request): RedirectResponse
     {
         $profile = CitabicProfile::query()->firstOrFail();
@@ -87,6 +105,13 @@ class DomainController extends Controller
         return redirect()->route('admin.domains.index')->with('status', 'Domain created successfully.');
     }
 
+    /**
+     * Show the edit form for the resource.
+
+     *
+
+     * @param  CitabicDomain  $domain  Parameter.
+     */
     public function edit(CitabicDomain $domain): View
     {
         return view('admin.domains.form', [
@@ -95,6 +120,15 @@ class DomainController extends Controller
         ]);
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  CitabicDomain  $domain  Parameter.
+     */
     public function update(Request $request, CitabicDomain $domain): RedirectResponse
     {
         $data = $request->validate([
@@ -119,6 +153,15 @@ class DomainController extends Controller
         return redirect()->route('admin.domains.index')->with('status', 'Domain updated successfully.');
     }
 
+    /**
+     * Handle image upload and return the stored media path.
+
+     *
+
+     * @param Request $request Parameter.
+
+     * @param  ImageUploadService  $imageService  Parameter.
+     */
     public function uploadImage(Request $request, ImageUploadService $imageService): JsonResponse
     {
         $request->validate(['image' => 'required|image|max:10240']);
@@ -127,6 +170,13 @@ class DomainController extends Controller
         return response()->json(['path' => $path, 'url' => Storage::disk('public')->url($path)]);
     }
 
+    /**
+     * Delete the specified resource.
+
+     *
+
+     * @param  CitabicDomain  $domain  Parameter.
+     */
     public function destroy(CitabicDomain $domain): RedirectResponse
     {
         $domain->delete();

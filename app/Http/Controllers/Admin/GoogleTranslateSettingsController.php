@@ -7,8 +7,16 @@ use App\Http\Requests\UpdateGoogleTranslateSettingsRequest;
 use App\Models\AppSetting;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Handles HTTP endpoints for Google Translate Settings Controller.
+ */
 class GoogleTranslateSettingsController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @return mixed
+     */
     public function index()
     {
         $projectId = AppSetting::getValue('google_translate_project_id', config('services.google_translate.project_id'));
@@ -20,6 +28,15 @@ class GoogleTranslateSettingsController extends Controller
         ]);
     }
 
+    /**
+     * Persist updates to the resource.
+
+     *
+
+     * @param UpdateGoogleTranslateSettingsRequest $request Parameter.
+
+     * @return mixed
+     */
     public function update(UpdateGoogleTranslateSettingsRequest $request)
     {
         $validated = $request->validated();

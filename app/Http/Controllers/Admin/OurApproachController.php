@@ -9,10 +9,17 @@ use App\Http\Requests\UpdateOurApproachRequest;
 use App\Models\ApproachItem;
 use App\Models\ApproachItemTranslation;
 use App\Models\SectionContent;
-use Dflydev\DotAccessData\Data;
 
+/**
+ * Handles HTTP endpoints for Our Approach Controller.
+ */
 class OurApproachController extends Controller
 {
+    /**
+     * Display a listing for the resource.
+     *
+     * @return mixed
+     */
     public function index()
     {
         $items = ApproachItem::query()
@@ -26,7 +33,7 @@ class OurApproachController extends Controller
                 ];
 
                 foreach ($item->translations as $translation) {
-                    if (!isset($translations[$translation->locale])) {
+                    if (! isset($translations[$translation->locale])) {
                         continue;
                     }
 
@@ -68,7 +75,15 @@ class OurApproachController extends Controller
         return view('admin.our-approach.index', compact('items', 'sectionMeta'));
     }
 
+    /**
+     * Persist updates to the resource.
 
+     *
+
+     * @param UpdateOurApproachRequest $request Parameter.
+
+     * @return mixed
+     */
     public function update(UpdateOurApproachRequest $request)
     {
         try {
@@ -102,7 +117,7 @@ class OurApproachController extends Controller
                     [
                         'section' => Section::OUR_APPROACH,
                         'language' => $language,
-                        'key' => ContentKey::OUR_APPROACH_TITLE
+                        'key' => ContentKey::OUR_APPROACH_TITLE,
                     ],
                     ['value' => $request->input($titleKey)]
                 );
@@ -129,9 +144,10 @@ class OurApproachController extends Controller
     {
         $itemData = $this->prepareApproachItemData($itemData);
 
-        if (!empty($itemData['id'])) {
+        if (! empty($itemData['id'])) {
             $approachItem = ApproachItem::findOrFail($itemData['id']);
             $approachItem->update($itemData);
+
             return $approachItem;
         }
 
@@ -143,7 +159,7 @@ class OurApproachController extends Controller
         return [
             'id' => $itemData['id'] ?? null,
             'color' => $itemData['color_theme'] ?? null,
-            'icon' => (string)($itemData['icon'] ?? ''),
+            'icon' => (string) ($itemData['icon'] ?? ''),
             'order' => $itemData['order'] ?? 0,
         ];
     }
@@ -161,7 +177,7 @@ class OurApproachController extends Controller
             ApproachItemTranslation::updateOrCreate(
                 [
                     'approach_item_id' => $approachItem->id,
-                    'locale' => $language
+                    'locale' => $language,
                 ],
                 [
                     'title' => $translationData['title'] ?? null,
@@ -179,7 +195,7 @@ class OurApproachController extends Controller
             ->filter()
             ->toArray();
 
-        if (!empty($currentItemIds)) {
+        if (! empty($currentItemIds)) {
             ApproachItem::whereNotIn('id', $currentItemIds)->delete();
         }
     }

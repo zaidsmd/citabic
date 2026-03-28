@@ -8,8 +8,18 @@ use Google\Cloud\Translate\V3\TranslateTextRequest;
 use RuntimeException;
 use Throwable;
 
+/**
+ * Provides domain logic for Post Translation Service.
+ */
 class PostTranslationService
 {
+    /**
+     * Translate fr to en.
+     *
+     * @param  ?string  $title  Parameter.
+     * @param  ?string  $excerpt  Parameter.
+     * @param  array  $blocks  Parameter.
+     */
     public function translateFrToEn(?string $title, ?string $excerpt, array $blocks): array
     {
         return [
