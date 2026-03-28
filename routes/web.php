@@ -38,7 +38,7 @@ Route::get('/references/{slug}', [CitabicController::class, 'reference'])->name(
 Route::get('/contact', [CitabicController::class, 'contact'])->name('contact');
 Route::post('/contact-submit', [CitabicController::class, 'submitContact'])->name('contact.submit');
 
-Route::prefix('cc')->name('admin.')->group(function () {
+Route::prefix('admins')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');
     Route::post('/login', [AuthController::class, 'store'])->name('login.store');
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
