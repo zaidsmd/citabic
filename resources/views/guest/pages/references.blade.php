@@ -30,15 +30,19 @@
                     <div class="col-md-6 col-xl-4">
                         <div class="property-card7 style2">
                             <div class="property-card-thumb img-shine">
-                                <img src="{{ $coverImage ?? asset('guest/assets/img/project/project_1_1.jpg') }}" alt="{{ $reference['title'] }}">
+                                <img src="{{ $coverImage ?? asset('guest/assets/img/project/project_1_1.jpg') }}"
+                                     alt="{{ $reference['title'] }}">
                             </div>
                             <div class="property-card-details">
                                 <div class="media-left">
-                                    <h4 class="property-card-title"><a href="{{ route('references.show', $reference['slug']) }}">{{ $reference['title'] }}</a></h4>
+                                    <h4 class="property-card-title"><a
+                                            href="{{ route('references.show', $reference['slug']) }}">{{ $reference['title'] }}</a>
+                                    </h4>
                                     <p class="property-card-subtitle">{{ $reference['client'] }}</p>
                                 </div>
                                 <div class="btn-wrap">
-                                    <a href="{{ route('references.show', $reference['slug']) }}" class="icon-btn"><img src="{{ asset('guest/assets/img/icon/arrow-right.svg') }}" alt=""></a>
+                                    <a href="{{ route('references.show', $reference['slug']) }}" class="icon-btn"><img
+                                            src="{{ asset('guest/assets/img/icon/arrow-right.svg') }}" alt=""></a>
                                 </div>
                             </div>
                         </div>

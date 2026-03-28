@@ -45,6 +45,15 @@ return [
         'contact' => 'Contact',
     ],
     'home' => [
+        'seo' => [
+            'title' => 'Home',
+            'description' => 'CITABIC delivers construction, civil engineering, and real estate projects with quality and safety.',
+            'keywords' => 'citabic, construction, civil engineering, real estate, morocco',
+        ],
+        'hero' => [
+            'discover_more' => 'Discover More',
+            'circle_text' => 'Explore and find Your Dream place',
+        ],
         'slide_1_text' => 'Based in Tangier, CITABIC delivers building, civil engineering and real-estate projects with a clear, responsive and disciplined execution model.',
         'slide_2_kicker' => 'Construction . Civil engineering . Real estate . Consulting',
         'slide_2_title' => 'A turnkey delivery model connecting studies, coordination and execution on site.',
@@ -68,6 +77,22 @@ return [
             'turnkey' => 'Turnkey project delivery',
             'quality' => 'Structured quality and safety',
             'delivery' => 'Responsive field execution',
+        ],
+        'values' => [
+            'title' => 'Our Values',
+            'empty' => 'No values configured.',
+        ],
+        'contact' => [
+            'subtitle' => 'Contact Us',
+            'submit' => 'Submit Message',
+        ],
+        'blog' => [
+            'subtitle' => 'News & Blog',
+            'title' => 'Read Our Insights',
+            'text' => 'Architects and engineers collaborate to create detailed design plans that translate concepts into feasible structures.',
+            'browse_all' => 'Browse All Blog',
+            'min_read' => 'min read',
+            'empty' => 'No published posts yet.',
         ],
     ],
     'company' => [
@@ -170,6 +195,19 @@ return [
         'en' => 'EN',
         'fr_name' => 'Francais',
         'en_name' => 'English',
+    ],
+    'errors' => [
+        'page_title' => 'CITABIC | Error :code',
+        'image_alt' => 'Error illustration',
+        'back_home' => 'Back to Home',
+        '404' => [
+            'title' => 'Oops! This page could not be found',
+            'description' => 'It looks like nothing was found at this location. Please try returning to the home page.',
+        ],
+        '500' => [
+            'title' => 'Something went wrong',
+            'description' => 'An unexpected error occurred on our side. Please try again in a few minutes.',
+        ],
     ],
     'about' => 'About Us',
 ];

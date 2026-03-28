@@ -44,7 +44,7 @@ Route::prefix('cc')->name('admin.')->group(function () {
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
 });
 
-Route::prefix('admins')->name('admin.')->middleware('admin.auth')->group(function () {
+Route::prefix('admins')->name('admin.')->middleware(['admin.auth', 'guest.cache.invalidate'])->group(function () {
     Route::middleware('can:manage cms content')->group(function () {
         Route::get('/', [CmsController::class, 'dashboard'])->name('dashboard');
         Route::get('/profile', [CmsController::class, 'editProfile'])->name('profile.edit');
@@ -135,5 +135,5 @@ Route::redirect('/shop-details', '/references')->name('shop-details');
 Route::redirect('/cart', '/references')->name('cart');
 Route::redirect('/checkout', '/references')->name('checkout');
 Route::redirect('/wishlist', '/references')->name('wishlist');
-Route::redirect('/error', '/')->name('error');
+Route::view('/error', 'guest.pages.error', ['statusCode' => 404])->name('error');
 Route::get('/project-details', fn () => redirect()->route('references.show', 'unite-industrielle-pjlp'))->name('project-details');

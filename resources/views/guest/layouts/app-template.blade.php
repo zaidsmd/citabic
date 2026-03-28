@@ -233,6 +233,19 @@
                                         <a href="{{ route('home') }}"><img src="{{ asset('guest/assets/img/logo-white.svg') }}" alt="CITABIC"></a>
                                     </div>
                                     <p class="about-text">{{ __('site.footer.about') }}</p>
+                                    @if(!empty($company['facebook']) || !empty($company['linkedin']) || !empty($company['instagram']))
+                                        <div class="th-social style5">
+                                            @if(!empty($company['facebook']))
+                                                <a href="{{ $company['facebook'] }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                                            @endif
+                                            @if(!empty($company['linkedin']))
+                                                <a href="{{ $company['linkedin'] }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
+                                            @endif
+                                            @if(!empty($company['instagram']))
+                                                <a href="{{ $company['instagram'] }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CompanyInfoKey;
 use App\Enums\ContentKey;
 use App\Enums\Section;
 use App\Http\Requests\StorePostCommentRequest;
@@ -10,6 +11,7 @@ use App\Models\Certification;
 use App\Models\CitabicDomain;
 use App\Models\CitabicProfile;
 use App\Models\CitabicReference;
+use App\Models\CompanyInfo;
 use App\Models\ContactSubmission;
 use App\Models\Mission;
 use App\Models\Post;
@@ -18,6 +20,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Notifications\NewBlogCommentNotification;
 use App\Notifications\NewContactSubmissionNotification;
+use App\Services\GuestPageCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\JsonResponse;
@@ -28,19 +31,27 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CitabicController extends Controller
 {
+    public function __construct(private GuestPageCache $guestPageCache) {}
+
     public function home(): View
     {
-        return view('guest.pages.home', $this->sharedData());
+        $locale = app()->getLocale();
+
+        return view('guest.pages.home', array_merge(
+            $this->sharedData(),
+            ['homePage' => $this->getHomePageData($locale)]
+        ));
     }
 
     public function company(): View
     {
         $locale = app()->getLocale();
-        $cacheKey = "company_page_{$locale}";
+        $cacheKey = $this->guestPageCache->key("company_page_{$locale}");
 
         $companyData = Cache::remember($cacheKey, now()->addHours(6), function () use ($locale) {
             $sc = fn (Section $section, ContentKey $key) => SectionContent::where('section', $section)
@@ -302,6 +313,11 @@ class CitabicController extends Controller
         $locale = app()->getLocale();
         $profile = CitabicProfile::query()->first();
         $references = CitabicReference::query()->orderBy('sort_order')->get();
+        $companyInfo = Cache::remember(
+            $this->guestPageCache->key('company_info:fr'),
+            now()->addHours(6),
+            static fn (): array => CompanyInfo::getAllInfo()
+        );
 
         $heroVideoPath = SectionContent::where('section', Section::HERO)
             ->where('key', ContentKey::HERO_VIDEO->value)
@@ -325,7 +341,11 @@ class CitabicController extends Controller
             return [
                 'site' => $site,
                 'references' => $site['references'],
-                'company' => $site['company'],
+                'company' => array_merge($site['company'], [
+                    'facebook' => $companyInfo[CompanyInfoKey::FACEBOOK->value] ?? null,
+                    'linkedin' => $companyInfo[CompanyInfoKey::LINKEDIN->value] ?? null,
+                    'instagram' => $companyInfo[CompanyInfoKey::INSTAGRAM->value] ?? null,
+                ]),
                 'why_features' => $whyFeatures,
             ];
         }
@@ -347,6 +367,9 @@ class CitabicController extends Controller
                 'status' => $translatedSite['status'],
                 'phone' => $translatedSite['phone'],
                 'email' => $translatedSite['email'],
+                'facebook' => $companyInfo[CompanyInfoKey::FACEBOOK->value] ?? null,
+                'linkedin' => $companyInfo[CompanyInfoKey::LINKEDIN->value] ?? null,
+                'instagram' => $companyInfo[CompanyInfoKey::INSTAGRAM->value] ?? null,
             ],
             'hero_video_path' => $heroVideoPath,
             'hero_video_url' => $this->resolveMediaUrl($heroVideoPath),
@@ -568,6 +591,7 @@ class CitabicController extends Controller
         $perPage = 6;
         $page = max(1, (int) request('page', 1));
         $cacheKey = 'blog_listing:'.$locale.':'.$scope.':'.md5(mb_strtolower($search)).':p'.$page.':pp'.$perPage;
+        $cacheKey = $this->guestPageCache->key($cacheKey);
 
         return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($category, $tag, $locale, $search, $perPage): array {
             $query = Post::query()->published();
@@ -619,6 +643,175 @@ class CitabicController extends Controller
         });
     }
 
+    private function getHomePageData(string $locale): array
+    {
+        $cacheKey = 'home_page:'.$locale;
+        $cacheKey = $this->guestPageCache->key($cacheKey);
+
+        return Cache::remember($cacheKey, now()->addDays(30), function () use ($locale): array {
+            $contentRows = SectionContent::query()
+                ->whereIn('section', [
+                    Section::HERO->value,
+                    Section::ABOUT->value,
+                    Section::ABOUT_PAGE->value,
+                    Section::DOMAIN->value,
+                    Section::WHY_CHOOSE_US->value,
+                    Section::HOME->value,
+                    Section::PROJECTS->value,
+                    Section::CONTACT->value,
+                ])
+                ->get(['section', 'key', 'value', 'language'])
+                ->groupBy(fn (SectionContent $content): string => $content->section.'|'.$content->key);
+
+            $content = function (Section $section, ContentKey $key) use ($contentRows, $locale): ?string {
+                $entries = $contentRows->get($section->value.'|'.$key->value, collect());
+
+                return $entries->firstWhere('language', $locale)?->value
+                    ?? $entries->firstWhere('language', 'fr')?->value
+                    ?? $entries->first()?->value;
+            };
+
+            $homeRecentPosts = Post::query()
+                ->published()
+                ->orderByDesc('published_at')
+                ->limit(8)
+                ->get()
+                ->map(function (Post $post) use ($locale): array {
+                    $translations = is_array($post->translations ?? null) ? $post->translations : [];
+                    $localized = $locale === 'fr' ? [] : ($translations[$locale] ?? []);
+
+                    $title = $localized['title'] ?? $post->title;
+                    $excerpt = $localized['excerpt'] ?? $post->excerpt ?? Str::limit(strip_tags($post->content ?? ''), 150);
+
+                    return [
+                        'slug' => $post->slug,
+                        'title' => $title,
+                        'excerpt' => $excerpt,
+                        'image_url' => $this->resolveMediaUrl($post->featured_image) ?? asset('guest/assets/img/blog/blog_3_1.jpg'),
+                        'published_at_label' => ($post->published_at ?? $post->created_at)?->format('F d, Y'),
+                        'reading_time' => (int) ($post->reading_time ?? 0),
+                    ];
+                })->all();
+
+            $homeProjectReferences = CitabicReference::query()
+                ->orderBy('sort_order')
+                ->limit(12)
+                ->get()
+                ->map(function (CitabicReference $reference) use ($locale): array {
+                    $translatedReference = $this->transformReference($reference, $locale);
+                    $blocks = collect($reference->blocks ?? []);
+                    $coverImagePath = $blocks
+                        ->first(fn ($block): bool => is_array($block) && ($block['type'] ?? null) === 'coverImage')['content'] ?? null;
+
+                    if (is_string($coverImagePath)) {
+                        $coverImagePath = str_replace('storage/', '', $coverImagePath);
+                    }
+
+                    return [
+                        'slug' => $reference->slug,
+                        'title' => $translatedReference['title'] ?? $reference->title,
+                        'client' => $translatedReference['client'] ?? $reference->client,
+                        'cover_image_url' => $this->resolveMediaUrl($coverImagePath) ?? $this->resolveMediaUrl($reference->image) ?? asset('guest/assets/img/project/project_1_1.jpg'),
+                    ];
+                })->all();
+
+            $localizedDomains = CitabicDomain::query()
+                ->orderBy('sort_order')
+                ->get()
+                ->map(function (CitabicDomain $domain) use ($locale): array {
+                    $translations = is_array($domain->translations ?? null) ? $domain->translations : [];
+                    $localized = $locale === 'fr' ? [] : ($translations[$locale] ?? []);
+
+                    return [
+                        'title' => $localized['title'] ?? $domain->title,
+                        'items' => $localized['items'] ?? $domain->items ?? [],
+                        'icon_url' => $this->resolveMediaUrl($domain->icon),
+                    ];
+                })->all();
+
+            $valuesSubtitle = $content(Section::HOME, ContentKey::VALUES_SUBTITLE) ?: __('site.company.block_label');
+            $valuesTitle = $content(Section::HOME, ContentKey::VALUES_TITLE) ?: __('site.home.values.title');
+            $blogSubtitle = $content(Section::HOME, ContentKey::BLOG_SUBTITLE) ?: __('site.home.blog.subtitle');
+            $blogTitle = $content(Section::HOME, ContentKey::BLOG_TITLE) ?: __('site.home.blog.title');
+            $blogText = $content(Section::HOME, ContentKey::BLOG_TEXT) ?: __('site.home.blog.text');
+            $contactTitle = $content(Section::CONTACT, ContentKey::CONTACT_FORM_TEXT) ?: __('site.contact.title');
+
+            $metaTitle = $content(Section::HOME, ContentKey::META_TITLE) ?: __('site.home.seo.title');
+            $metaDescription = $content(Section::HOME, ContentKey::META_DESCRIPTION) ?: __('site.home.seo.description');
+            $metaKeywords = $content(Section::HOME, ContentKey::META_KEYWORDS) ?: __('site.home.seo.keywords');
+            $homeOgImage = $this->resolveMediaUrl($content(Section::CONTACT, ContentKey::CONTACT_IMAGE));
+
+            return [
+                'seo' => [
+                    'title' => 'CITABIC | '.$metaTitle,
+                    'description' => strip_tags($metaDescription),
+                    'keywords' => $metaKeywords,
+                    'og_title' => 'CITABIC | '.$metaTitle,
+                    'og_description' => strip_tags($metaDescription),
+                    'og_image' => $homeOgImage ?? '',
+                    'twitter_card' => 'summary_large_image',
+                ],
+                'hero' => [
+                    'subtitle' => $content(Section::HERO, ContentKey::HERO_SUBTITLE),
+                    'title' => $content(Section::HERO, ContentKey::HERO_TITLE),
+                    'cta_text' => __('site.home.hero.discover_more'),
+                    'circle_text' => $content(Section::ABOUT_PAGE, ContentKey::ROUNDED_TEXT) ?: __('site.home.hero.circle_text'),
+                ],
+                'about' => [
+                    'image_1_url' => $this->resolveMediaUrl($content(Section::ABOUT, ContentKey::ABOUT_IMAGE_1)),
+                    'image_2_url' => $this->resolveMediaUrl($content(Section::ABOUT, ContentKey::ABOUT_IMAGE_2)),
+                    'image_3_url' => $this->resolveMediaUrl($content(Section::ABOUT, ContentKey::ABOUT_IMAGE_3)),
+                    'rounded_text' => $content(Section::ABOUT_PAGE, ContentKey::ROUNDED_TEXT),
+                    'subtitle' => $content(Section::ABOUT, ContentKey::ABOUT_SUBTITLE),
+                    'title' => $content(Section::ABOUT, ContentKey::ABOUT_TITLE),
+                    'text' => $content(Section::ABOUT, ContentKey::ABOUT_TEXT),
+                ],
+                'domains' => [
+                    'subtitle' => $content(Section::DOMAIN, ContentKey::DOMAIN_SUBTITLE),
+                    'title' => $content(Section::DOMAIN, ContentKey::DOMAIN_TITLE),
+                    'text' => $content(Section::DOMAIN, ContentKey::DOMAIN_TEXT),
+                    'items' => $localizedDomains,
+                ],
+                'why' => [
+                    'image_url' => $this->resolveMediaUrl($content(Section::WHY_CHOOSE_US, ContentKey::WHY_IMAGE)),
+                    'subtitle' => $content(Section::WHY_CHOOSE_US, ContentKey::WHY_SUBTITLE),
+                    'title' => $content(Section::WHY_CHOOSE_US, ContentKey::WHY_TITLE),
+                    'text' => $content(Section::WHY_CHOOSE_US, ContentKey::WHY_TEXT),
+                ],
+                'values' => [
+                    'subtitle' => $valuesSubtitle,
+                    'title' => $valuesTitle,
+                    'text' => $content(Section::HOME, ContentKey::VALUES_TEXT) ?? '',
+                    'empty_text' => __('site.home.values.empty'),
+                ],
+                'projects' => [
+                    'subtitle' => $content(Section::PROJECTS, ContentKey::PROJECTS_SUBTITLE),
+                    'title' => $content(Section::PROJECTS, ContentKey::PROJECTS_TITLE),
+                    'text' => $content(Section::PROJECTS, ContentKey::PROJECTS_TEXT),
+                    'items' => $homeProjectReferences,
+                ],
+                'contact' => [
+                    'subtitle' => __('site.home.contact.subtitle'),
+                    'form_title' => $contactTitle,
+                    'contact_image_url' => $this->resolveMediaUrl($content(Section::CONTACT, ContentKey::CONTACT_IMAGE)),
+                    'map_embed' => $content(Section::CONTACT, ContentKey::MAP_EMBED),
+                    'submit_text' => __('site.home.contact.submit'),
+                    'message_placeholder' => __('site.contact.message_placeholder'),
+                ],
+                'blog' => [
+                    'subtitle' => $blogSubtitle,
+                    'title' => $blogTitle,
+                    'text' => $blogText,
+                    'browse_text' => __('site.home.blog.browse_all'),
+                    'read_more_text' => __('site.blog.listing.read_more'),
+                    'min_read_text' => __('site.home.blog.min_read'),
+                    'empty_text' => __('site.home.blog.empty'),
+                    'posts' => $homeRecentPosts,
+                ],
+            ];
+        });
+    }
+
     private function hydrateReferenceArray(array $reference): array
     {
         $imagePath = $this->normalizeAssetPath($reference['image'] ?? null);
@@ -649,7 +842,7 @@ class CitabicController extends Controller
             return asset($path);
         }
 
-        return Storage::disk('public')->url($path);
+        return Storage::disk('public')->url(str_replace('storage/', '', $path));
     }
 
     private function normalizeAssetPath(?string $path): ?string
@@ -668,6 +861,7 @@ class CitabicController extends Controller
     private function getContactPageData(string $locale): array
     {
         $cacheKey = 'contact_page:'.$locale;
+        $cacheKey = $this->guestPageCache->key($cacheKey);
 
         return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($locale): array {
             $content = fn (ContentKey $key): ?string => SectionContent::query()

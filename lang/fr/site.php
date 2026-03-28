@@ -45,6 +45,15 @@ return [
         'contact' => 'Contact',
     ],
     'home' => [
+        'seo' => [
+            'title' => 'Accueil',
+            'description' => 'CITABIC realise vos projets BTP, genie civil et immobilier avec qualite et securite.',
+            'keywords' => 'citabic, btp, genie civil, immobilier, maroc',
+        ],
+        'hero' => [
+            'discover_more' => 'Decouvrir',
+            'circle_text' => 'Explorez et trouvez votre espace ideal',
+        ],
         'slide_1_text' => 'Entreprise basee a Tanger, CITABIC pilote des projets de batiment, genie civil et immobilier avec une execution claire, rapide et rigoureuse.',
         'slide_2_kicker' => 'BTP . Genie civil . Immobilier . Conseil',
         'slide_2_title' => 'Une execution cle en main qui relie etudes, coordination et realisation sur le terrain.',
@@ -68,6 +77,22 @@ return [
             'turnkey' => 'Pilotage cle en main',
             'quality' => 'Qualite et securite structurees',
             'delivery' => 'Execution reactive sur le terrain',
+        ],
+        'values' => [
+            'title' => 'Nos valeurs',
+            'empty' => 'Aucune valeur configuree.',
+        ],
+        'contact' => [
+            'subtitle' => 'Contactez-nous',
+            'submit' => 'Envoyer le message',
+        ],
+        'blog' => [
+            'subtitle' => 'Actualites & Blog',
+            'title' => 'Nos analyses',
+            'text' => 'Architectes et ingenieurs collaborent pour concevoir des plans detailles qui transforment les idees en structures realisables.',
+            'browse_all' => 'Voir tout le blog',
+            'min_read' => 'min de lecture',
+            'empty' => 'Aucun article publie pour le moment.',
         ],
     ],
     'company' => [
@@ -170,6 +195,19 @@ return [
         'en' => 'EN',
         'fr_name' => 'Francais',
         'en_name' => 'English',
+    ],
+    'errors' => [
+        'page_title' => 'CITABIC | Erreur :code',
+        'image_alt' => 'Illustration d erreur',
+        'back_home' => 'Retour a l accueil',
+        '404' => [
+            'title' => 'Oups ! Cette page est introuvable',
+            'description' => 'Aucun contenu ne correspond a cette adresse. Veuillez retourner a la page d accueil.',
+        ],
+        '500' => [
+            'title' => 'Une erreur est survenue',
+            'description' => 'Une erreur inattendue est survenue de notre cote. Merci de reessayer dans quelques minutes.',
+        ],
     ],
     'about' => 'A propos de nous',
 ];

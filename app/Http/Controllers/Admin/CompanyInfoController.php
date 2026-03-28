@@ -12,9 +12,9 @@ class CompanyInfoController extends Controller
     public function index(Request $request)
     {
         $info = CompanyInfo::getAllInfo();
+
         return view('admin.company-info.index', compact('info'));
     }
-
 
     public function update(CompanyInfoRequest $request)
     {
