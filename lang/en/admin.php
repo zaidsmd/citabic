@@ -27,6 +27,7 @@ return [
         'back' => 'Back',
         'reset' => 'Reset',
         'confirm_delete' => 'Are you sure you want to delete this item?',
+        'logout' => 'Logout',
     ],
     'language' => [
         'fr' => 'French',
@@ -199,6 +200,19 @@ return [
         'contact_submission' => [
             'title' => 'New contact submission',
             'message' => ':name submitted a contact form (Subject: :subject).',
+        ],
+    ],
+    'errors' => [
+        'back_home' => 'Go to home',
+        '404' => [
+            'code' => '404',
+            'title' => 'Page Not Found',
+            'message' => 'The page you are looking was moved, removed,<br />renamed, or might never exist!',
+        ],
+        '500' => [
+            'code' => '500',
+            'title' => 'Internal Server Error',
+            'message' => 'Server error 500. We are fixing the problem.<br />Please try again later.',
         ],
     ],
     'dashboard' => [

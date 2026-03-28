@@ -15,7 +15,6 @@
 
     <!-- [ Main Content ] end -->
 
-    @include('admin.layouts/customizer')
 
     @include('admin.layouts/footer-js')
 

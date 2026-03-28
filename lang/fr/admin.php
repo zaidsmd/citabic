@@ -27,6 +27,7 @@ return [
             'fr' => 'Francais',
             'en' => 'Anglais',
         ],
+        'logout' => 'Deconnexion',
     ],
     'language' => [
         'fr' => 'Francais',
@@ -199,6 +200,19 @@ return [
         'contact_submission' => [
             'title' => 'Nouvelle soumission de contact',
             'message' => ':name a soumis le formulaire de contact (Sujet : :subject).',
+        ],
+    ],
+    'errors' => [
+        'back_home' => 'Retour a l accueil',
+        '404' => [
+            'code' => '404',
+            'title' => 'Page introuvable',
+            'message' => 'La page que vous recherchez a ete deplacee, supprimee,<br />renommee, ou n existe peut-etre pas.',
+        ],
+        '500' => [
+            'code' => '500',
+            'title' => 'Erreur interne du serveur',
+            'message' => 'Erreur serveur 500. Nous corrigeons le probleme.<br />Veuillez reessayer plus tard.',
         ],
     ],
     'dashboard' => [

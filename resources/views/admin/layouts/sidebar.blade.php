@@ -35,15 +35,11 @@
                     </div>
                     <div class="collapse pc-user-links" id="pc_sidebar_userlink">
                         <div class="pt-3">
-                            <a href="#!">
-                                <i class="ti ti-user"></i>
-                                <span data-i18n="My Account">My Account</span>
-                            </a>
                             <form method="post" action="{{route('admin.logout')}}">
                                 @csrf
                                 <a href="#"  role="button" onclick="event.preventDefault(); this.closest('form').submit();">
                                     <i class="ti ti-power"></i>
-                                    <span data-i18n="Logout">Logout</span>
+                                    <span >@lang('admin.common.logout')</span>
                                 </a>
                             </form>
 

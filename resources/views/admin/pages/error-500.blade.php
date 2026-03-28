@@ -1,6 +1,6 @@
 @extends('admin.layouts.master-auth')
 
-@section('title', '505')
+@section('title', __('admin.errors.500.code'))
 
 @section('content')
 
@@ -15,17 +15,16 @@
                 <div class="error-image-block">
                   <div class="row justify-content-center">
                     <div class="col-10">
-                      <img class="img-fluid" src="/build/images/pages/img-error-500.svg" alt="img" />
+                      <img class="img-fluid" src="{{asset('/build/images/pages/img-error-500.svg')}}" alt="img" />
                     </div>
                   </div>
                 </div>
                 <div class="text-center">
-                  <h1 class="mt-4"><b>Internal Server Error</b></h1>
-                  <p class="mt-2 mb-4 text-sm text-muted"
-                    >Server error 500. we fixing the problem. please<br />
-                    try again at a later stage.</p
-                  >
-                  <a href="/dashboard/index" class="btn btn-primary mb-3">Go to homepage</a>
+                  <h1 class="mt-4"><b>{{ __('admin.errors.500.title') }}</b></h1>
+                  <p class="mt-2 mb-4 text-sm text-muted">
+                      {!! __('admin.errors.500.message') !!}
+                  </p>
+                  <a href="{{ route('admin.dashboard') }}" class="btn btn-primary mb-3">{{ __('admin.errors.back_home') }}</a>
                 </div>
               </div>
             </div>

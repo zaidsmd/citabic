@@ -25,7 +25,6 @@
     </div>
     <!-- [ Main Content ] end -->
     @include('admin.layouts/footer-block')
-    @include('admin.layouts/customizer')
 
     @include('admin.layouts/footer-js')
 
