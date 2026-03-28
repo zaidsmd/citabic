@@ -307,7 +307,7 @@
             <div class="container">
                 <div class="row gy-2 align-items-center">
                     <div class="col-lg-6">
-                        <p class="copyright-text text-white">Copyright <i class="fal fa-copyright"></i> 2026 <a href="{{ route('home') }}">CITABIC</a>, {{ __('site.footer.rights') }}</p>
+                        <p class="copyright-text text-white">Copyright <i class="fal fa-copyright"></i> 2026 <a href="{{ route('home') }}">CITABIC</a>, {{ __('site.footer.rights') }} {{ __('site.footer.developed_by') }} <a href="https://devbyzaid.site" target="_blank" rel="noopener noreferrer">Zaid Samadi</a></p>
                     </div>
                     <div class="col-lg-6 text-center text-lg-end">
                         <div class="footer-links">

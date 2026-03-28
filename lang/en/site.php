@@ -36,6 +36,7 @@ return [
         'certifications' => 'Certifications',
         'projects' => 'Projects',
         'rights' => 'all rights reserved.',
+        'developed_by' => 'Developed by',
     ],
     'breadcrumbs' => [
         'company' => 'Company',
