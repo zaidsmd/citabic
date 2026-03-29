@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Enums\ContentKey;
+use App\Enums\Section;
+use App\Models\SectionContent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -11,6 +14,101 @@ use Illuminate\Support\Facades\DB;
  */
 class AboutUsService
 {
+    protected array $richTextFields = [
+        ContentKey::ABOUT_TEXT->value,
+        ContentKey::WHY_US_TEXT->value,
+        ContentKey::MISSION_TEXT->value,
+    ];
+
+    protected array $plainTextareaFields = [
+        ContentKey::WHY_US_CARDS->value,
+    ];
+
+    protected array $requiredFields = [
+        ContentKey::ABOUT_TITLE->value,
+        ContentKey::ROUNDED_TEXT->value,
+        ContentKey::ABOUT_TEXT->value,
+        ContentKey::MISSION_TEXT->value,
+    ];
+
+    protected array $contentSectionsConfig = [
+        [
+            'title_key' => 'admin.pages.about.sections.about',
+            'icon' => 'fa fa-circle-info',
+            'fields' => [
+                ContentKey::ABOUT_TITLE->value,
+                ContentKey::ROUNDED_TEXT->value,
+                ContentKey::ABOUT_TEXT->value,
+            ],
+        ],
+        [
+            'title_key' => 'admin.pages.about.sections.mission',
+            'icon' => 'fa fa-bullseye',
+            'fields' => [
+                ContentKey::MISSION_TITLE->value,
+                ContentKey::MISSION_TEXT->value,
+            ],
+        ],
+        [
+            'title_key' => 'admin.pages.about.sections.why_us',
+            'icon' => 'fa fa-star',
+            'fields' => [
+                ContentKey::WHY_US_TITLE->value,
+                ContentKey::WHY_US_TEXT->value,
+                ContentKey::WHY_US_CARDS->value,
+            ],
+        ],
+        [
+            'title_key' => 'admin.pages.about.sections.organisation',
+            'icon' => 'fa fa-sitemap',
+            'fields' => [
+                ContentKey::ORGANIGRAME_TITLE->value,
+                ContentKey::CARTOGRAPHIE_TITLE->value,
+            ],
+        ],
+    ];
+
+    protected array $imageSectionsConfig = [
+        [
+            'title_key' => 'admin.pages.about.sections.header_and_section_images',
+            'icon' => 'fa fa-image',
+            'fields' => [
+                ContentKey::ABOUT_HEADER_BG_IMG->value,
+                ContentKey::SECTION_IMAGE->value,
+            ],
+        ],
+        [
+            'title_key' => 'admin.pages.about.sections.organization_images',
+            'icon' => 'fa fa-diagram-project',
+            'fields' => [
+                ContentKey::ORGANIGRAME->value,
+                ContentKey::CARTOGRAPHIE->value,
+            ],
+        ],
+    ];
+
+    protected array $contentFields = [
+        ContentKey::ABOUT_TITLE,
+        ContentKey::ROUNDED_TEXT,
+        ContentKey::ABOUT_TEXT,
+        ContentKey::MISSION_TITLE,
+        ContentKey::MISSION_TEXT,
+        ContentKey::WHY_US_TITLE,
+        ContentKey::WHY_US_TEXT,
+        ContentKey::WHY_US_CARDS,
+        ContentKey::ORGANIGRAME_TITLE,
+        ContentKey::CARTOGRAPHIE_TITLE,
+    ];
+
+    protected array $imageFields = [
+        ContentKey::ABOUT_HEADER_BG_IMG,
+        ContentKey::SECTION_IMAGE,
+        ContentKey::ORGANIGRAME,
+        ContentKey::CARTOGRAPHIE,
+    ];
+
+    protected array $locales = ['fr', 'en'];
+
     /**
      * Retrieve get content fields for downstream processing.
      */
@@ -156,6 +254,64 @@ class AboutUsService
         ];
     }
 
+    protected function fetchContents(): Collection
+    {
+        $allKeys = array_merge(
+            array_map(fn ($field) => $field->value, $this->contentFields),
+            array_map(fn ($field) => $field->value, $this->imageFields)
+        );
+
+        return SectionContent::query()
+            ->where('section', Section::ABOUT_PAGE)
+            ->whereIn('key', $allKeys)
+            ->get()
+            ->keyBy(fn ($item) => $item->language.'_'.$item->key);
+    }
+
+    protected function prepareContentData(Collection $contents): array
+    {
+        $data = [];
+
+        foreach ($this->contentFields as $field) {
+            $fieldValue = $field->value;
+
+            foreach ($this->locales as $locale) {
+                $value = $contents->get($locale.'_'.$fieldValue)?->value ?? '';
+
+                if ($locale === 'fr') {
+                    $data[$fieldValue] = $value;
+                } else {
+                    $data['en'][$fieldValue] = $value;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    protected function prepareImageData(): array
+    {
+        $images = [];
+        $imageKeys = array_map(fn ($field) => $field->value, $this->imageFields);
+        $storedImages = SectionContent::query()
+            ->where('section', Section::ABOUT_PAGE)
+            ->whereIn('key', $imageKeys)
+            ->get()
+            ->groupBy('key');
+
+        foreach ($this->imageFields as $field) {
+            $fieldValue = $field->value;
+            $imageGroup = $storedImages->get($fieldValue, collect());
+            $image = $imageGroup->firstWhere('language', null)
+                ?? $imageGroup->firstWhere('language', 'fr')
+                ?? $imageGroup->first();
+
+            $images[$fieldValue] = $image?->value;
+        }
+
+        return $images;
+    }
+
     /**
      * Update about data.
 
@@ -169,6 +325,56 @@ class AboutUsService
             $this->updateTranslatableFields($request);
             $this->updateImageFields($request);
         });
+    }
+
+    protected function updateTranslatableFields(Request $request): void
+    {
+        foreach ($this->contentFields as $field) {
+            $fieldValue = $field->value;
+
+            if ($request->has($fieldValue) && ! empty($request->input($fieldValue))) {
+                $this->updateOrCreateContent(
+                    $fieldValue,
+                    'fr',
+                    $request->input($fieldValue)
+                );
+            }
+
+            if ($request->has("en.{$fieldValue}") && ! empty($request->input("en.{$fieldValue}"))) {
+                $this->updateOrCreateContent(
+                    $fieldValue,
+                    'en',
+                    $request->input("en.{$fieldValue}")
+                );
+            }
+        }
+    }
+
+    protected function updateImageFields(Request $request): void
+    {
+        foreach ($this->imageFields as $field) {
+            $fieldValue = $field->value;
+
+            if ($request->has($fieldValue) && ! empty($request->input($fieldValue))) {
+                $this->updateOrCreateContent(
+                    $fieldValue,
+                    null,
+                    $request->input($fieldValue)
+                );
+            }
+        }
+    }
+
+    protected function updateOrCreateContent(string $key, ?string $language, string $value): void
+    {
+        SectionContent::query()->updateOrCreate(
+            [
+                'section' => Section::ABOUT_PAGE,
+                'key' => $key,
+                'language' => $language,
+            ],
+            ['value' => $value]
+        );
     }
 
     /**
@@ -221,6 +427,27 @@ class AboutUsService
         }
 
         return $rules;
+    }
+
+    protected function getFieldValidationRules(ContentKey $field): string
+    {
+        $baseRules = 'nullable|string';
+
+        return match ($field) {
+            ContentKey::ABOUT_TITLE,
+            ContentKey::ROUNDED_TEXT,
+            ContentKey::MISSION_TITLE,
+            ContentKey::WHY_US_TITLE,
+            ContentKey::ORGANIGRAME_TITLE,
+            ContentKey::CARTOGRAPHIE_TITLE => $baseRules.'|max:255',
+
+            ContentKey::ABOUT_TEXT,
+            ContentKey::MISSION_TEXT,
+            ContentKey::WHY_US_TEXT,
+            ContentKey::WHY_US_CARDS => $baseRules.'|max:65535',
+
+            default => $baseRules.'|max:5000',
+        };
     }
 
     /**
