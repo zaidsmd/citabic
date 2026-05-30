@@ -3,10 +3,13 @@
 use App\Http\Middleware\AdminAuthenticate;
 use App\Http\Middleware\InvalidateGuestPageCache;
 use App\Http\Middleware\SetLocale;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -65,9 +68,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 'request' => $request,
             ]);
 
-            $statusCode = $exception instanceof HttpExceptionInterface
-                ? $exception->getStatusCode()
-                : 500;
+            $statusCode = match (true) {
+                $exception instanceof HttpExceptionInterface => $exception->getStatusCode(),
+                $exception instanceof AuthenticationException => 401,
+                $exception instanceof AccessDeniedException => 403,
+                $exception instanceof NotFoundHttpException => 404,
+                $exception instanceof ValidationException => 422,
+                default => 500
+            };
 
             if ($statusCode < 500) {
                 return null;
