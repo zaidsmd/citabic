@@ -60,6 +60,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
+            Log::channel('daily')->error($exception->getMessage(), [
+                'trace' => $exception->getTraceAsString(),
+                'request' => $request,
+            ]);
+
             $statusCode = $exception instanceof HttpExceptionInterface
                 ? $exception->getStatusCode()
                 : 500;
