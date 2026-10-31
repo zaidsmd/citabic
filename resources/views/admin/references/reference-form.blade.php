@@ -24,6 +24,7 @@
         .block-dropzone .dz-message { margin: 0; }
         .block-img-preview { position: relative; display: inline-block; max-width: 100%; }
         .block-img-preview img { max-height: 160px; border-radius: 6px; object-fit: cover; width: 100%; }
+        .block-img-preview video { max-height: 160px; border-radius: 6px; object-fit: cover; width: 100%; background: #000; }
         .block-img-preview .btn-change-img {
             position: absolute; top: 4px; right: 4px;
             font-size: 10px; padding: 2px 8px;
@@ -58,6 +59,7 @@
         .block-item .block-label.type-subheading { background: #e83e8c; }
         .block-item .block-label.type-text { background: #20c997; }
         .block-item .block-label.type-image { background: #fd7e14; }
+        .block-item .block-label.type-video { background: #d63384; }
         .block-item .block-label.type-doubleImage { background: #dc3545; }
         .block-item .block-label.type-imageTextRow { background: #17a2b8; }
         .block-item .block-label.type-list { background: #0d6efd; }
@@ -163,7 +165,7 @@
 
         .gallery-images-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             gap: 12px;
             margin-top: 8px;
         }
@@ -251,6 +253,9 @@
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-warning" onclick="addBlock('image')">
                                 <i class="ti ti-photo me-1"></i>{{ __('admin.references.block_types.image') }}
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="addBlock('video')">
+                                <i class="ti ti-video me-1"></i>{{ __('admin.references.block_types.video') }}
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="addBlock('doubleImage')">
                                 <i class="ti ti-layout-columns me-1"></i>{{ __('admin.references.block_types.doubleImage') }}
@@ -361,6 +366,7 @@
     <script>
         window.referenceFormConfig = {
             uploadUrl: '{{ route('admin.sections.upload-image') }}',
+            uploadVideoUrl: '{{ route('admin.sections.upload-video') }}',
             csrfToken: '{{ csrf_token() }}',
             assets: {
                 bootstrapCss: '{{ asset('guest/assets/css/bootstrap.min.css') }}',
@@ -373,6 +379,7 @@
                 block_subheading: @json(__('admin.references.block_types.subheading')),
                 block_text: @json(__('admin.references.block_types.text')),
                 block_image: @json(__('admin.references.block_types.image')),
+                block_video: @json(__('admin.references.block_types.video')),
                 block_doubleImage: @json(__('admin.references.block_types.doubleImage')),
                 block_imageTextRow: @json(__('admin.references.block_types.imageTextRow')),
                 block_coverImage: @json(__('admin.references.block_types.coverImage')),
@@ -396,6 +403,8 @@
                 list_ar_placeholder: @json(__('admin.references.list_ar_placeholder')),
                 images_lang_independent: @json(__('admin.references.images_lang_independent')),
                 add_image: @json(__('admin.references.add_image')),
+                add_video: @json(__('admin.references.add_video')),
+                drop_video: @json(__('admin.references.drop_video')),
                 remove: @json(__('admin.references.remove')),
                 change: @json(__('admin.references.change')),
                 drop_image: @json(__('admin.references.drop_image')),

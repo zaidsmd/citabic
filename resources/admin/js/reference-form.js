@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         subheading:   { label: trans.block_subheading, icon: 'ti-h-4', color: 'type-subheading' },
         text:         { label: trans.block_text, icon: 'ti-align-left', color: 'type-text' },
         image:        { label: trans.block_image, icon: 'ti-photo', color: 'type-image' },
+        video:        { label: trans.block_video || 'Video', icon: 'ti-video', color: 'type-video' },
         doubleImage:  { label: trans.block_doubleImage, icon: 'ti-layout-columns', color: 'type-doubleImage' },
         imageTextRow: { label: trans.block_imageTextRow, icon: 'ti-layout-sidebar-right', color: 'type-imageTextRow' },
         coverImage:   { label: trans.block_coverImage, icon: 'ti-photo-filled', color: 'type-coverImage' },
@@ -16,6 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
         list:         { label: trans.block_list, icon: 'ti-list-check', color: 'type-list' },
         gallery:      { label: trans.block_gallery, icon: 'ti-photo-plus', color: 'type-gallery' },
     };
+
+    function isVideoFile(src) {
+        if (!src) return false;
+        if (typeof src === 'object') return src.type === 'video' || isVideoFile(src.path || src.url);
+        const clean = String(src).split('?')[0].toLowerCase();
+        return clean.endsWith('.mp4') || clean.endsWith('.webm') || clean.endsWith('.ogg') || clean.endsWith('.mov');
+    }
 
     let blocks = [];
     try {
@@ -88,6 +96,9 @@ document.addEventListener('DOMContentLoaded', function () {
             case 'image':
                 contentHtml = buildDropzoneHtml(index, 'content', block.content || '', 'image');
                 break;
+            case 'video':
+                contentHtml = buildDropzoneHtml(index, 'content', block.content || '', 'video');
+                break;
             case 'coverImage':
                 contentHtml = buildDropzoneHtml(index, 'content', block.content || '', 'cover');
                 break;
@@ -119,13 +130,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 var images = block.images || [];
                 contentHtml = '<div class="gallery-images-grid" data-block-index="' + index + '">';
                 images.forEach(function (img, gi) {
+                    var isVid = isVideoFile(img);
+                    var val = typeof img === 'object' ? (img.path || img.url || '') : img;
                     contentHtml += '<div class="gallery-image-item" data-gi="' + gi + '">' +
-                        buildDropzoneHtml(index, 'gallery_' + gi, img, 'gallery') +
+                        buildDropzoneHtml(index, 'gallery_' + gi, val, isVid ? 'video' : 'gallery') +
                         '<button type="button" class="btn btn-sm btn-outline-danger w-100 btn-remove-gallery-img" data-gi="' + gi + '"><i class="ti ti-trash me-1"></i>' + trans.remove + '</button>' +
                         '</div>';
                 });
                 contentHtml += '</div>';
-                contentHtml += '<button type="button" class="btn btn-sm btn-outline-primary mt-2 btn-add-gallery-img" data-block-index="' + index + '"><i class="ti ti-plus me-1"></i>' + trans.add_image + '</button>';
+                contentHtml += '<div class="d-flex gap-2 mt-2">' +
+                    '<button type="button" class="btn btn-sm btn-outline-primary btn-add-gallery-img" data-block-index="' + index + '"><i class="ti ti-plus me-1"></i>' + trans.add_image + '</button>' +
+                    '<button type="button" class="btn btn-sm btn-outline-danger btn-add-gallery-vid" data-block-index="' + index + '"><i class="ti ti-video me-1"></i>' + (trans.add_video || 'Add Video') + '</button>' +
+                    '</div>';
                 break;
         }
 
@@ -311,7 +327,14 @@ document.addEventListener('DOMContentLoaded', function () {
             subheading: (b) => `<h4 class="fw-semibold mb-20 mt-50">${esc(b.content || '')}</h4>`,
             text: (b) => `<div class="mb-40">${b.content || ''}</div>`,
             image: (b) => wrapImg(b.content, 'image', 'mb-30'),
-
+            video: (b) => {
+                if (!b.content) return '';
+                return `
+                <div class="page-img mb-40">
+                    <video src="${esc(b.content)}" controls muted playsinline style="width:100%;max-height:420px;background:#000;border-radius:8px;object-fit:cover;"></video>
+                </div>
+                `;
+            },
             doubleImage: (b) => `
             <div class="row gx-40 gy-40 align-items-center mb-40">
                 <div class="col-lg-6">${wrapImg(b.image1, 'image1')}</div>
@@ -349,13 +372,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="gallery-masonry">
                     ${b.images
                     .filter(Boolean)
-                    .map(img => `
-                            <div class="gallery-item">
-                                <div class="gallery-img-wrapper">
-                                    <img src="${esc(img)}" alt="gallery">
-                                </div>
+                    .map(img => {
+                        const val = typeof img === 'object' ? (img.path || img.url || '') : img;
+                        if (!val) return '';
+                        const isVid = isVideoFile(val);
+                        if (isVid) {
+                            return `
+                            <div class="gallery-item" style="position:relative;background:#000;min-height:160px;border-radius:1rem;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                                <video src="${esc(val)}" muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+                                <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;background:rgba(0,0,0,0.65);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fas fa-play" style="font-size:14px;"></i>
+                                </span>
                             </div>
-                        `).join('')}
+                            `;
+                        }
+                        return `
+                        <div class="gallery-item">
+                            <div class="gallery-img-wrapper">
+                                <img src="${esc(val)}" alt="gallery">
+                            </div>
+                        </div>
+                        `;
+                    }).join('')}
                 </div>
             `;
             }
@@ -387,9 +425,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <h3 class="widget_title">${trans.sidebar_project_info}</h3>
                 <div class="info-list">
                     <ul>
-                        ${client ? buildSidebarItem('fas fa-user', trans.sidebar_client, client) : ''}
-                        ${surface ? buildSidebarItem('fas fa-layer-group', trans.sidebar_surface, surface) : ''}
-                        ${budget ? buildSidebarItem('fas fa-cash-register', trans.sidebar_budget, budget) : ''}
+                        ${client ? buildSidebarItem('fas fa-user', trans.sidebar_client, client) : ''}\n                        ${surface ? buildSidebarItem('fas fa-layer-group', trans.sidebar_surface, surface) : ''}\n                        ${budget ? buildSidebarItem('fas fa-cash-register', trans.sidebar_budget, budget) : ''}
                     </ul>
                 </div>
             </div>
@@ -444,6 +480,7 @@ document.addEventListener('DOMContentLoaded', function () {
         iframe.onload = resize;
         setTimeout(resize, 300);
     }
+
     function initDragDrop() {
         let dragIndex = null;
         const items = container.querySelectorAll('.block-item');
@@ -479,6 +516,7 @@ document.addEventListener('DOMContentLoaded', function () {
             case 'heroImage':
             case 'image':
             case 'coverImage':
+            case 'video':
                 block.content = '';
                 break;
             case 'heading':
@@ -530,26 +568,32 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const uploadUrl = config.uploadUrl;
+    const uploadVideoUrl = config.uploadVideoUrl || '/admin/sections/upload-video';
     const csrfToken = config.csrfToken;
 
     function buildDropzoneHtml(blockIndex, field, currentValue, type) {
         const dzId = 'dz-' + blockIndex + '-' + field;
-        if (currentValue) {
-            return '<div class="block-img-preview" id="' + dzId + '-preview">' +
-                '<img src="' + esc(currentValue) + '" alt="">' +
-                '<button type="button" class="btn btn-sm btn-light btn-change-img" data-dz-id="' + dzId + '" data-block="' + blockIndex + '" data-field="' + field + '"><i class="ti ti-edit me-1"></i>' + trans.change + '</button>' +
-                '</div>' +
-                '<div id="' + dzId + '" class="block-dropzone" style="display:none">' +
-                '<div class="dz-message"><i class="ti ti-cloud-upload" style="font-size:24px;display:block;margin-bottom:4px;"></i><small>' + trans.drop_image + '</small></div>' +
-                '</div>';
+        const isVid = type === 'video' || isVideoFile(currentValue);
+        const dropText = isVid ? (trans.drop_video || 'Drop video here or click to upload') : trans.drop_image;
+        const dropIcon = isVid ? 'ti-video' : 'ti-cloud-upload';
+
+        let previewMedia = '';
+        if (isVid) {
+            previewMedia = '<video src="' + esc(currentValue || '') + '" muted playsinline controls style="max-height:160px;width:100%;border-radius:6px;object-fit:cover;background:#000;"></video>';
+        } else {
+            previewMedia = '<img src="' + esc(currentValue || '') + '" alt="">';
         }
-        return '<div class="block-img-preview" id="' + dzId + '-preview" style="display:none">' +
-            '<img src="" alt="">' +
+
+        const previewHtml = '<div class="block-img-preview" id="' + dzId + '-preview"' + (currentValue ? '' : ' style="display:none"') + '>' +
+            previewMedia +
             '<button type="button" class="btn btn-sm btn-light btn-change-img" data-dz-id="' + dzId + '" data-block="' + blockIndex + '" data-field="' + field + '"><i class="ti ti-edit me-1"></i>' + trans.change + '</button>' +
-            '</div>' +
-            '<div id="' + dzId + '" class="block-dropzone">' +
-            '<div class="dz-message"><i class="ti ti-cloud-upload" style="font-size:24px;display:block;margin-bottom:4px;"></i><small>' + trans.drop_image + '</small></div>' +
             '</div>';
+
+        const dropzoneHtml = '<div id="' + dzId + '" class="block-dropzone" data-type="' + (isVid ? 'video' : 'image') + '"' + (currentValue ? ' style="display:none"' : '') + '>' +
+            '<div class="dz-message"><i class="ti ' + dropIcon + '" style="font-size:24px;display:block;margin-bottom:4px;"></i><small>' + dropText + '</small></div>' +
+            '</div>';
+
+        return previewHtml + dropzoneHtml;
     }
 
     function initBlockDropzones() {
@@ -560,42 +604,59 @@ document.addEventListener('DOMContentLoaded', function () {
             const parts = dzId.replace('dz-', '').split('-');
             const blockIndex = parseInt(parts[0]);
             const field = parts.slice(1).join('-') || parts[1];
+            const isVid = el.dataset.type === 'video';
             const previewEl = document.getElementById(dzId + '-preview');
 
             const dz = new Dropzone('#' + dzId, {
-                url: uploadUrl,
+                url: isVid ? uploadVideoUrl : uploadUrl,
                 autoProcessQueue: true,
                 uploadMultiple: false,
                 maxFiles: 1,
-                paramName: 'image',
-                acceptedFiles: 'image/*',
+                paramName: isVid ? 'video' : 'image',
+                acceptedFiles: isVid ? 'video/mp4,video/webm,video/ogg' : 'image/*',
                 addRemoveLinks: false,
                 headers: { 'X-CSRF-TOKEN': csrfToken },
                 createImageThumbnails: false,
             });
+
             dz.on('sending', function (file, xhr, formData) {
                 formData.append('key', 'reference_block_' + blockIndex + '_' + field);
+                formData.append('folder', 'references');
             });
             dz.on('addedfile', function () {
                 dz.files.filter((f, i) => i < dz.files.length - 1).forEach(f => dz.removeFile(f));
             });
             dz.on('success', function (file, response) {
-                if (response.path) {
-                    var imgPath = '/storage/' + response.path;
-                    if (field.startsWith('gallery_')) {
-                        var gi = parseInt(field.replace('gallery_', ''));
-                        if (!blocks[blockIndex].images) blocks[blockIndex].images = [];
-                        blocks[blockIndex].images[gi] = imgPath;
-                    } else {
-                        blocks[blockIndex][field] = imgPath;
-                    }
-                    previewEl.querySelector('img').src = imgPath;
-                    previewEl.style.display = '';
-                    el.style.display = 'none';
-                    dz.removeAllFiles();
-                    syncJSON();
-                    updatePreview();
+                var savedPath = response.path ? ('/storage/' + response.path) : (response.stream_url || response.url);
+                if (field.startsWith('gallery_')) {
+                    var gi = parseInt(field.replace('gallery_', ''));
+                    if (!blocks[blockIndex].images) blocks[blockIndex].images = [];
+                    blocks[blockIndex].images[gi] = savedPath;
+                } else {
+                    blocks[blockIndex][field] = savedPath;
                 }
+
+                if (isVid) {
+                    const videoTag = previewEl.querySelector('video');
+                    if (videoTag) {
+                        videoTag.src = savedPath;
+                    } else {
+                        previewEl.innerHTML = '<video src="' + esc(savedPath) + '" muted playsinline controls style="max-height:160px;width:100%;border-radius:6px;object-fit:cover;background:#000;"></video>' +
+                            '<button type="button" class="btn btn-sm btn-light btn-change-img" data-dz-id="' + dzId + '" data-block="' + blockIndex + '" data-field="' + field + '"><i class="ti ti-edit me-1"></i>' + trans.change + '</button>';
+                    }
+                } else {
+                    const imgTag = previewEl.querySelector('img');
+                    if (imgTag) {
+                        imgTag.src = savedPath;
+                    }
+                }
+
+                previewEl.style.display = '';
+                el.style.display = 'none';
+                dz.removeAllFiles();
+                syncJSON();
+                updatePreview();
+                renderBlocks();
             });
         });
 
@@ -662,6 +723,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderBlocks();
             });
         });
+
+        document.querySelectorAll('.btn-add-gallery-vid').forEach(function (btn) {
+            if (btn._boundVid) return;
+            btn._boundVid = true;
+            btn.addEventListener('click', function () {
+                var idx = parseInt(this.dataset.blockIndex);
+                if (!blocks[idx].images) blocks[idx].images = [];
+                blocks[idx].images.push({ type: 'video', path: '' });
+                renderBlocks();
+            });
+        });
+
         document.querySelectorAll('.btn-remove-gallery-img').forEach(function (btn) {
             if (btn._bound) return;
             btn._bound = true;

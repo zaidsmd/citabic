@@ -1,11 +1,8 @@
 <?php
 
-use App\Models\CitabicDomain;
-use App\Models\CitabicFigure;
-use App\Models\CitabicInfo;
-use App\Models\CitabicProfile;
-use App\Models\CitabicValue;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $profiles = CitabicProfile::all();
+        $profiles = \App\Models\CitabicProfile::all();
 
         foreach ($profiles as $profile) {
             // Migrate values
             foreach (['values', 'human_values'] as $type) {
                 $items = is_array($profile->$type) ? $profile->$type : [];
                 foreach ($items as $index => $item) {
-                    CitabicValue::create([
+                    \App\Models\CitabicValue::create([
                         'citabic_profile_id' => $profile->id,
                         'type' => $type,
                         'title' => $item['title'] ?? '',
@@ -34,7 +31,7 @@ return new class extends Migration
             // Migrate domains
             $domains = is_array($profile->domains) ? $profile->domains : [];
             foreach ($domains as $index => $domain) {
-                CitabicDomain::create([
+                \App\Models\CitabicDomain::create([
                     'citabic_profile_id' => $profile->id,
                     'title' => $domain['title'] ?? '',
                     'items' => $domain['items'] ?? [],
@@ -45,7 +42,7 @@ return new class extends Migration
             // Migrate figures
             $figures = is_array($profile->figures) ? $profile->figures : [];
             foreach ($figures as $index => $figure) {
-                CitabicFigure::create([
+                \App\Models\CitabicFigure::create([
                     'citabic_profile_id' => $profile->id,
                     'label' => $figure['label'] ?? '',
                     'value' => $figure['value'] ?? '',
@@ -62,13 +59,13 @@ return new class extends Migration
                 'partnerships',
                 'compliance',
                 'organization',
-                'why_choose_us',
+                'why_choose_us'
             ];
 
             foreach ($infoTypes as $type) {
                 $items = is_array($profile->$type) ? $profile->$type : [];
                 foreach ($items as $index => $content) {
-                    CitabicInfo::create([
+                    \App\Models\CitabicInfo::create([
                         'citabic_profile_id' => $profile->id,
                         'type' => $type,
                         'content' => $content,
@@ -81,9 +78,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        CitabicValue::truncate();
-        CitabicDomain::truncate();
-        CitabicFigure::truncate();
-        CitabicInfo::truncate();
+        \App\Models\CitabicValue::truncate();
+        \App\Models\CitabicDomain::truncate();
+        \App\Models\CitabicFigure::truncate();
+        \App\Models\CitabicInfo::truncate();
     }
 };

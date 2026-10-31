@@ -759,6 +759,95 @@ class CitabicContentService
         $reference['image'] = $imagePath;
         $reference['image_url'] = $this->resolveMediaUrl($imagePath);
 
+        if (! empty($reference['blocks']) && is_array($reference['blocks'])) {
+            $disk = Storage::disk('public');
+            foreach ($reference['blocks'] as &$block) {
+                if (! is_array($block)) {
+                    continue;
+                }
+
+                $blockType = $block['type'] ?? '';
+
+                if ($blockType === 'gallery' && ! empty($block['images']) && is_array($block['images'])) {
+                    $hydratedItems = [];
+                    foreach ($block['images'] as $img) {
+                        $rawPath = is_array($img) ? ($img['path'] ?? $img['url'] ?? '') : (string) $img;
+                        $cleanRelative = str_replace('storage/', '', ltrim(parse_url($rawPath, PHP_URL_PATH) ?? '', '/'));
+                        $ext = strtolower(pathinfo($cleanRelative, PATHINFO_EXTENSION));
+                        $isVideo = in_array($ext, ['mp4', 'webm', 'ogg', 'mov'], true) || (is_array($img) && ($img['type'] ?? '') === 'video');
+
+                        if ($isVideo) {
+                            $streamUrl = $cleanRelative && $disk->exists($cleanRelative)
+                                ? route('media.stream', ['path' => $cleanRelative])
+                                : $this->resolveMediaUrl($rawPath);
+
+                            $baseWithoutExt = preg_replace('/\.[^.]+$/', '', $cleanRelative);
+                            $posterWebp = $baseWithoutExt.'_poster.webp';
+                            $posterJpg = $baseWithoutExt.'_poster.jpg';
+                            $posterHyphenWebp = $baseWithoutExt.'-poster.webp';
+                            $posterHyphenJpg = $baseWithoutExt.'-poster.jpg';
+
+                            $posterUrl = null;
+                            if ($cleanRelative && $disk->exists($posterWebp)) {
+                                $posterUrl = $disk->url($posterWebp);
+                            } elseif ($cleanRelative && $disk->exists($posterHyphenWebp)) {
+                                $posterUrl = $disk->url($posterHyphenWebp);
+                            } elseif ($cleanRelative && $disk->exists($posterJpg)) {
+                                $posterUrl = $disk->url($posterJpg);
+                            } elseif ($cleanRelative && $disk->exists($posterHyphenJpg)) {
+                                $posterUrl = $disk->url($posterHyphenJpg);
+                            }
+
+                            $hydratedItems[] = [
+                                'type' => 'video',
+                                'url' => $this->resolveMediaUrl($rawPath),
+                                'stream_url' => $streamUrl,
+                                'poster_url' => $posterUrl,
+                                'original' => $rawPath,
+                            ];
+                        } else {
+                            $hydratedItems[] = [
+                                'type' => 'image',
+                                'url' => $this->resolveMediaUrl($rawPath),
+                                'stream_url' => null,
+                                'poster_url' => null,
+                                'original' => $rawPath,
+                            ];
+                        }
+                    }
+                    $block['items'] = $hydratedItems;
+                    $block['images'] = array_map(fn ($item) => $item['url'], $hydratedItems);
+                } elseif ($blockType === 'video' && ! empty($block['content'])) {
+                    $rawPath = (string) $block['content'];
+                    $cleanRelative = str_replace('storage/', '', ltrim(parse_url($rawPath, PHP_URL_PATH) ?? '', '/'));
+                    $block['stream_url'] = $cleanRelative && $disk->exists($cleanRelative)
+                        ? route('media.stream', ['path' => $cleanRelative])
+                        : $this->resolveMediaUrl($rawPath);
+
+                    $baseWithoutExt = preg_replace('/\.[^.]+$/', '', $cleanRelative);
+                    $posterWebp = $baseWithoutExt.'_poster.webp';
+                    $posterJpg = $baseWithoutExt.'_poster.jpg';
+                    $posterHyphenWebp = $baseWithoutExt.'-poster.webp';
+                    $posterHyphenJpg = $baseWithoutExt.'-poster.jpg';
+
+                    $posterUrl = null;
+                    if ($cleanRelative && $disk->exists($posterWebp)) {
+                        $posterUrl = $disk->url($posterWebp);
+                    } elseif ($cleanRelative && $disk->exists($posterHyphenWebp)) {
+                        $posterUrl = $disk->url($posterHyphenWebp);
+                    } elseif ($cleanRelative && $disk->exists($posterJpg)) {
+                        $posterUrl = $disk->url($posterJpg);
+                    } elseif ($cleanRelative && $disk->exists($posterHyphenJpg)) {
+                        $posterUrl = $disk->url($posterHyphenJpg);
+                    }
+
+                    $block['poster_url'] = $posterUrl;
+                    $block['content'] = $this->resolveMediaUrl($rawPath);
+                }
+            }
+            unset($block);
+        }
+
         return $reference;
     }
 

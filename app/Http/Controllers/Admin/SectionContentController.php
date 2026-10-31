@@ -58,7 +58,13 @@ class SectionContentController extends Controller
     public function uploadVideo(Request $request, VideoUploadService $videoService): JsonResponse
     {
         $request->validate(['video' => 'required|file|mimetypes:video/mp4,video/webm,video/ogg|max:102400']);
-        $result = $videoService->storeWithOptimization($request->file('video'), 'hero');
+
+        $folder = $request->input('folder', 'hero');
+        if (! in_array($folder, ['hero', 'references', 'posts', 'about'], true)) {
+            $folder = 'hero';
+        }
+
+        $result = $videoService->storeWithOptimization($request->file('video'), $folder);
 
         return response()->json([
             'path' => $result['path'],
