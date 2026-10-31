@@ -166,9 +166,7 @@
             flex-direction: row-reverse;
         }
 
-        [dir="rtl"] .main-menu ul li {
-            margin: 0 0 0 34px;
-        }
+
 
         [dir="rtl"] .header-button .lang-switcher {
             margin-right: 0 !important;
