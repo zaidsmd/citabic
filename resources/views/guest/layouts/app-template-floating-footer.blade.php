@@ -204,6 +204,161 @@
             right: auto;
             left: -10px;
         }
+
+        /* RTL - Home: Pourquoi nous choisir */
+        [dir="rtl"] .sub-title:before,
+        [dir="rtl"] .sub-title:after {
+            right: 0;
+            left: auto;
+        }
+        [dir="rtl"] .title-area.text-center .sub-title:before,
+        [dir="rtl"] .title-area.text-center .sub-title:after {
+            left: 50%;
+            right: auto;
+        }
+        [dir="rtl"] .why-sec2 .title-area {
+            text-align: right;
+        }
+        [dir="rtl"] .why-img-box2 {
+            margin-left: 0;
+            margin-right: -315px;
+            border-radius: 0 0 0 50px;
+        }
+        @media (max-width: 1500px) {
+            [dir="rtl"] .why-img-box2 {
+                margin-left: 0;
+                margin-right: -200px;
+            }
+        }
+        @media (max-width: 1399px) {
+            [dir="rtl"] .why-img-box2 {
+                margin-left: 0;
+                margin-right: 0;
+                margin-top: 0;
+                border-radius: 20px;
+            }
+        }
+        [dir="rtl"] .why-feature-list .why-feature-list-wrap:after {
+            right: 20px;
+            left: auto;
+        }
+        [dir="rtl"] .why-feature-list .why-feature-list-details,
+        [dir="rtl"] .why-feature-list .feature-title,
+        [dir="rtl"] .why-feature-list .feature-text {
+            text-align: right;
+        }
+
+        /* RTL - Contact Page */
+        [dir="rtl"] .about-contact-grid,
+        [dir="rtl"] .about-contact-details {
+            text-align: right;
+        }
+        [dir="rtl"] .contact-sec-map {
+            left: 0;
+            right: auto;
+        }
+        [dir="rtl"] .contact-sec-map .location-map-address {
+            left: 15%;
+            right: auto;
+        }
+        [dir="rtl"] .location-map-address .media-body {
+            text-align: right;
+        }
+        @media (max-width: 991px) {
+            [dir="rtl"] .contact-sec-map {
+                position: relative;
+                left: auto;
+                right: auto;
+            }
+        }
+        @media (max-width: 575px) {
+            [dir="rtl"] .contact-sec-map .location-map-address {
+                left: 15px;
+                right: auto;
+            }
+        }
+        [dir="rtl"] .contact-thumb6-1,
+        [dir="rtl"] .contact-area-5 .contact-thumb6-1 {
+            right: 0;
+            left: auto;
+        }
+        @media (max-width: 991px) {
+            [dir="rtl"] .contact-thumb6-1,
+        [dir="rtl"] .contact-area-5 .contact-thumb6-1 {
+                right: auto;
+                left: auto;
+                position: relative;
+                width: 100%;
+            }
+        }
+        [dir="rtl"] .contact-wrap6 {
+            padding-right: 90px;
+            padding-left: 0;
+            margin-left: -120px;
+            margin-right: 0;
+            text-align: right;
+        }
+        [dir="rtl"] .contact-wrap6 .form-title {
+            text-align: right;
+        }
+        @media (max-width: 1500px) {
+            [dir="rtl"] .contact-wrap6 {
+                margin-left: 0;
+                padding-right: 50px;
+                padding-left: 0;
+            }
+        }
+        @media (max-width: 1399px) {
+            [dir="rtl"] .contact-wrap6 {
+                padding-right: 20px;
+                padding-left: 0;
+            }
+        }
+        @media (max-width: 1299px) {
+            [dir="rtl"] .contact-wrap6 {
+                padding-right: 30px;
+                padding-left: 0;
+            }
+        }
+        @media (max-width: 991px) {
+            [dir="rtl"] .contact-wrap6 {
+                padding-right: 0;
+                padding-left: 0;
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+
+        /* RTL - Forms & Inputs */
+        [dir="rtl"] .form-group {
+            text-align: right;
+        }
+        [dir="rtl"] .form-group > i {
+            left: 25px;
+            right: auto;
+        }
+        [dir="rtl"] .form-control,
+        [dir="rtl"] input,
+        [dir="rtl"] textarea,
+        [dir="rtl"] select,
+        [dir="rtl"] .form-select {
+            padding-left: 45px;
+            padding-right: 25px;
+            text-align: right;
+        }
+        [dir="rtl"] select.form-select,
+        [dir="rtl"] .form-select {
+            background-position: left 26px center;
+        }
+        [dir="rtl"] input[type=date]::-webkit-calendar-picker-indicator {
+            left: 20px;
+            right: auto;
+        }
+        [dir="rtl"] .th-btn .btn-icon img {
+            transform: scaleX(-1);
+            margin-right: 8px;
+            margin-left: 0;
+        }
     </style>
     @yield('structured_data')
     @stack('styles')

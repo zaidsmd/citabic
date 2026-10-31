@@ -54,7 +54,7 @@
                             <img src="{{asset('guest/assets/img/icon/envelope.svg')}}" alt="icon">
                         </div>
                         <div class="about-contact-details">
-                            <h6 class="about-contact-details-title">Email:</h6>
+                            <h6 class="about-contact-details-title">{{ __('site.contact.email') }}:</h6>
                             <p class="about-contact-details-text"><a href="mailto:{{ $company['email'] }}">{{ $company['email'] }}</a></p>
                         </div>
                     </div>

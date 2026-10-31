@@ -1,0 +1,276 @@
+@use '../../base/variable' as *;
+@use '../../base/mixin' as *;
+
+/* ==========================================================================
+   RTL Styles (Arabic Locale)
+   ========================================================================== */
+
+[dir="rtl"] {
+    /* ----------------------------------------------------------------------
+       1. Typography & Base
+       ---------------------------------------------------------------------- */
+    font-family: 'Cairo', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    text-align: right;
+    direction: rtl;
+
+    h1, h2, h3, h4, h5, h6,
+    .sec-title, .hero-title, .box-title, .title-area h2 {
+        font-family: 'Cairo', 'Outfit', sans-serif;
+        letter-spacing: normal;
+    }
+
+    .lang-switcher-link {
+        font-family: 'Cairo', sans-serif;
+        letter-spacing: normal;
+    }
+
+    .mobile-lang-switcher .lang-switcher-link small {
+        margin-left: 0;
+        margin-right: 6px;
+    }
+
+    /* ----------------------------------------------------------------------
+       2. Directional Indicators & Navigation
+       ---------------------------------------------------------------------- */
+    .th-btn-icon i,
+    .th-btn i.fa-arrow-right,
+    .th-btn i.fa-angle-right,
+    .th-btn i.fa-chevron-right,
+    .th-btn i.fa-arrow-left,
+    .th-btn i.fa-angle-left,
+    .slider-drag-cursor i,
+    .breadcumb-menu li:after,
+    .pagination li a i.fa-angle-right {
+        transform: scaleX(-1);
+        display: inline-block;
+    }
+
+    .th-btn.th-btn-icon {
+        flex-direction: row-reverse;
+    }
+
+    .th-btn .btn-icon img {
+        transform: scaleX(-1);
+        margin-right: 8px;
+        margin-left: 0;
+    }
+
+    .main-menu ul li {
+        margin: 0 0 0 34px;
+    }
+
+    .header-button .lang-switcher {
+        margin-right: 0 !important;
+        margin-left: 1rem !important;
+    }
+
+    .footer-widget .widget_title:after {
+        right: 0;
+        left: auto;
+    }
+
+    .th-mobile-menu ul li {
+        text-align: right;
+    }
+
+    .counter-card .media-body,
+    .process-card2 .box-content,
+    .contact-feature .media-body,
+    .about-feature .media-body {
+        text-align: right;
+    }
+
+    .breadcumb-menu {
+        direction: rtl;
+        li {
+            margin-right: 0;
+            margin-left: 15px;
+            &:after {
+                right: auto;
+                left: -10px;
+            }
+        }
+    }
+
+    /* ----------------------------------------------------------------------
+       3. Home Page - Pourquoi Nous Choisir (Why Choose Us Section)
+       ---------------------------------------------------------------------- */
+    .sub-title {
+        &:before,
+        &:after {
+            right: 0;
+            left: auto;
+        }
+    }
+
+    .title-area.text-center .sub-title {
+        &:before,
+        &:after {
+            left: 50%;
+            right: auto;
+        }
+    }
+
+    .why-sec2 {
+        .title-area {
+            text-align: right;
+        }
+    }
+
+    .why-img-box2 {
+        margin-left: 0;
+        margin-right: -315px;
+        border-radius: 0 0 0 50px;
+
+        @include xxl {
+            margin-left: 0;
+            margin-right: -200px;
+        }
+
+        @include ml {
+            margin-left: 0;
+            margin-right: 0;
+            margin-top: 0;
+            border-radius: 20px;
+        }
+    }
+
+    .why-feature-list {
+        .why-feature-list-wrap {
+            &:after {
+                right: 20px;
+                left: auto;
+            }
+
+            .why-feature-list-details {
+                text-align: right;
+            }
+
+            .feature-title,
+            .feature-text {
+                text-align: right;
+            }
+        }
+    }
+
+    /* ----------------------------------------------------------------------
+       4. Contact Page (Map & Info Grid, Form & Image)
+       ---------------------------------------------------------------------- */
+    .about-contact-grid {
+        text-align: right;
+        .about-contact-details {
+            text-align: right;
+        }
+    }
+
+    .contact-sec-map {
+        left: 0;
+        right: auto;
+
+        .location-map-address {
+            left: 15%;
+            right: auto;
+
+            .media-body {
+                text-align: right;
+            }
+        }
+
+        @include md {
+            position: relative;
+            left: auto;
+            right: auto;
+            top: auto;
+            bottom: -80px;
+            width: 100%;
+        }
+
+        @include xs {
+            .location-map-address {
+                left: 15px;
+                right: auto;
+            }
+        }
+    }
+
+    .contact-thumb6-1,
+    .contact-area-5 .contact-thumb6-1 {
+        right: 0;
+        left: auto;
+
+        @include md {
+            position: relative;
+            right: auto;
+            left: auto;
+            width: 100%;
+            top: -80px;
+        }
+    }
+
+    .contact-wrap6 {
+        padding-right: 90px;
+        padding-left: 0;
+        margin-left: -120px;
+        margin-right: 0;
+        text-align: right;
+
+        .form-title {
+            text-align: right;
+        }
+
+        @include xxl {
+            margin-left: 0;
+            padding-right: 50px;
+            padding-left: 0;
+        }
+
+        @include ml {
+            padding-right: 20px;
+            padding-left: 0;
+        }
+
+        @include xl {
+            padding-right: 30px;
+            padding-left: 0;
+        }
+
+        @include md {
+            padding-right: 0;
+            padding-left: 0;
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+
+    /* ----------------------------------------------------------------------
+       5. Form Inputs, Selects, Dropdowns & Floating Icons
+       ---------------------------------------------------------------------- */
+    .form-group {
+        text-align: right;
+
+        > i {
+            left: 25px;
+            right: auto;
+        }
+    }
+
+    .form-control,
+    input,
+    textarea,
+    select,
+    .form-select {
+        padding-left: 45px;
+        padding-right: 25px;
+        text-align: right;
+    }
+
+    select.form-select,
+    .form-select {
+        background-position: left 26px center;
+    }
+
+    input[type=date]::-webkit-calendar-picker-indicator {
+        left: 20px;
+        right: auto;
+    }
+}

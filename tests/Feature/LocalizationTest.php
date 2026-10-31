@@ -71,4 +71,24 @@ class LocalizationTest extends TestCase
             $response->assertSee('lang="ar"', false);
         }
     }
+
+    public function test_contact_and_home_why_section_have_correct_rtl_structure_and_translation(): void
+    {
+        $homeResponse = $this->withSession(['locale' => 'ar'])->get(route('home'));
+        $homeResponse->assertOk();
+        $homeResponse->assertSee('why-sec2');
+        $homeResponse->assertSee('why-img-box2');
+        $homeResponse->assertSee('[dir="rtl"] .why-img-box2', false);
+        $homeResponse->assertSee('margin-right: -315px;', false);
+        $homeResponse->assertSee('[dir="rtl"] .why-feature-list', false);
+
+        $contactResponse = $this->withSession(['locale' => 'ar'])->get(route('contact'));
+        $contactResponse->assertOk();
+        $contactResponse->assertSee(__('site.contact.email', [], 'ar') . ':');
+        $contactResponse->assertDontSee('<h6 class="about-contact-details-title">Email:</h6>', false);
+        $contactResponse->assertSee('[dir="rtl"] .contact-sec-map', false);
+        $contactResponse->assertSee('[dir="rtl"] .contact-thumb6-1', false);
+        $contactResponse->assertSee('[dir="rtl"] .contact-wrap6', false);
+        $contactResponse->assertSee('margin-left: -120px;', false);
+    }
 }
