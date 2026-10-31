@@ -82,11 +82,15 @@ class FigureController extends Controller
             'label' => 'required|string|max:255',
             'value' => 'required|string|max:255',
             'en' => 'nullable|array',
+            'ar' => 'nullable|array',
         ]);
 
         $data['sort_order'] = CitabicFigure::query()->max('sort_order') + 1;
-        $data['translations'] = ['en' => $data['en'] ?? []];
-        unset($data['en']);
+        $data['translations'] = [
+            'en' => $data['en'] ?? [],
+            'ar' => $data['ar'] ?? [],
+        ];
+        unset($data['en'], $data['ar']);
 
         $profile->figures()->create($data);
 
@@ -123,10 +127,14 @@ class FigureController extends Controller
             'label' => 'required|string|max:255',
             'value' => 'required|string|max:255',
             'en' => 'nullable|array',
+            'ar' => 'nullable|array',
         ]);
 
-        $data['translations'] = ['en' => $data['en'] ?? []];
-        unset($data['en']);
+        $translations = $figure->translations ?? [];
+        $translations['en'] = $data['en'] ?? [];
+        $translations['ar'] = $data['ar'] ?? [];
+        $data['translations'] = $translations;
+        unset($data['en'], $data['ar']);
 
         $figure->update($data);
 
@@ -154,6 +162,7 @@ class FigureController extends Controller
             'value' => old('value', $figure?->value),
             'sort_order' => old('sort_order', $figure?->sort_order ?? 0),
             'en' => old('en', $figure?->translations['en'] ?? []),
+            'ar' => old('ar', $figure?->translations['ar'] ?? []),
         ];
     }
 }

@@ -6,7 +6,7 @@
         'coral'  => '#D85A30',
         'indigo' => '#534AB7',
     ];
-    $locales  = ['fr' => 'Français', 'en' => 'English'];
+    $locales  = ['fr' => 'Français', 'en' => 'English', 'ar' => 'العربية'];
 @endphp
 
 <template id="item-template">

@@ -101,12 +101,14 @@ class CmsController extends Controller
         ];
 
         $en_data = $request->input('en', []);
+        $ar_data = $request->input('ar', []);
 
         $infosData = [];
         foreach ($infoTypes as $type) {
             $infosData[$type] = [
                 'fr' => $this->parseLines($request->input($type)),
                 'en' => $this->parseLines($en_data[$type] ?? ''),
+                'ar' => $this->parseLines($ar_data[$type] ?? ''),
             ];
         }
 
@@ -117,8 +119,9 @@ class CmsController extends Controller
         foreach ($infoTypes as $type) {
             $frItems = $infosData[$type]['fr'];
             $enItems = $infosData[$type]['en'];
+            $arItems = $infosData[$type]['ar'];
 
-            $maxItems = max(count($frItems), count($enItems));
+            $maxItems = max(count($frItems), count($enItems), count($arItems));
 
             for ($i = 0; $i < $maxItems; $i++) {
                 $profile->infos()->create([
@@ -127,6 +130,7 @@ class CmsController extends Controller
                     'sort_order' => $i,
                     'translations' => [
                         'en' => $enItems[$i] ?? '',
+                        'ar' => $arItems[$i] ?? '',
                     ],
                 ]);
             }
@@ -306,6 +310,7 @@ class CmsController extends Controller
             'why_choose_us' => ['nullable', 'string'],
             'information_system' => ['required', 'string'],
             'en' => ['nullable', 'array'],
+            'ar' => ['nullable', 'array'],
         ]);
 
         return [
@@ -324,7 +329,10 @@ class CmsController extends Controller
             'email' => $validated['email'],
             'hero_video_path' => $validated['hero_video_path'] ?: null,
             'information_system' => $validated['information_system'],
-            'translations' => ['en' => $validated['en'] ?? []],
+            'translations' => [
+                'en' => $validated['en'] ?? [],
+                'ar' => $validated['ar'] ?? [],
+            ],
         ];
     }
 
@@ -348,6 +356,7 @@ class CmsController extends Controller
             'items' => ['nullable', 'string'],
             'blocks' => ['nullable', 'string'],
             'en' => ['nullable', 'array'],
+            'ar' => ['nullable', 'array'],
         ]);
 
         $en_data = $validated['en'] ?? [];
@@ -355,10 +364,19 @@ class CmsController extends Controller
             $en_data['items'] = $this->parseLines($en_data['items']);
         }
 
+        $ar_data = $validated['ar'] ?? [];
+        if (isset($ar_data['items'])) {
+            $ar_data['items'] = $this->parseLines($ar_data['items']);
+        }
+
         $blocks = json_decode($validated['blocks'] ?? '[]', true);
         if (! is_array($blocks)) {
             $blocks = [];
         }
+
+        $translations = $reference?->translations ?? [];
+        $translations['en'] = $en_data;
+        $translations['ar'] = $ar_data;
 
         return [
             'slug' => $validated['slug'],
@@ -372,13 +390,14 @@ class CmsController extends Controller
             'sort_order' => $validated['sort_order'],
             'items' => $this->parseLines($validated['items'] ?? null),
             'blocks' => $blocks,
-            'translations' => ['en' => $en_data],
+            'translations' => $translations,
         ];
     }
 
     private function profileFormData(CitabicProfile $profile): array
     {
         $en = $profile->translations['en'] ?? [];
+        $ar = $profile->translations['ar'] ?? [];
 
         // For info fields, we need to join them into strings
         $infoFields = [
@@ -406,24 +425,35 @@ class CmsController extends Controller
                 'tagline' => $en['company']['tagline'] ?? ($en['tagline'] ?? ''),
                 'information_system' => $en['information_system'] ?? '',
             ],
+            'ar' => [
+                'tagline' => $ar['company']['tagline'] ?? ($ar['tagline'] ?? ''),
+                'information_system' => $ar['information_system'] ?? '',
+            ],
         ];
 
         foreach ($infoFields as $field) {
             $formData[$field] = $this->joinLines($profile->getInfo($field)->pluck('content')->all());
 
-            // Handle English translations for info fields
-            // Try to get from the new relationship-based structure first
             $enItems = $profile->getInfo($field)->map(fn ($info) => $info->translations['en'] ?? '')->filter()->all();
-
             if (! empty($enItems)) {
                 $formData['en'][$field] = $this->joinLines($enItems);
             } else {
-                // Fallback to the old JSON structure in CitabicProfile (during transition)
                 $enValue = $en[$field] ?? '';
                 if (is_array($enValue)) {
                     $enValue = $this->joinLines($enValue);
                 }
                 $formData['en'][$field] = $enValue;
+            }
+
+            $arItems = $profile->getInfo($field)->map(fn ($info) => $info->translations['ar'] ?? '')->filter()->all();
+            if (! empty($arItems)) {
+                $formData['ar'][$field] = $this->joinLines($arItems);
+            } else {
+                $arValue = $ar[$field] ?? '';
+                if (is_array($arValue)) {
+                    $arValue = $this->joinLines($arValue);
+                }
+                $formData['ar'][$field] = $arValue;
             }
         }
 
@@ -435,6 +465,11 @@ class CmsController extends Controller
         $en = $reference?->translations['en'] ?? [];
         if (isset($en['items']) && is_array($en['items'])) {
             $en['items'] = $this->joinLines($en['items']);
+        }
+
+        $ar = $reference?->translations['ar'] ?? [];
+        if (isset($ar['items']) && is_array($ar['items'])) {
+            $ar['items'] = $this->joinLines($ar['items']);
         }
 
         return [
@@ -450,6 +485,7 @@ class CmsController extends Controller
             'items' => $this->joinLines($reference?->items ?? []),
             'blocks' => $reference?->blocks ?? [],
             'en' => $en,
+            'ar' => $ar,
         ];
     }
 

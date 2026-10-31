@@ -18,7 +18,7 @@ class SectionContentPageService
      */
     public function getIndexData(): array
     {
-        $locales = ['fr', 'en'];
+        $locales = config('localization.supported', ['fr', 'en', 'ar']);
         $textFieldSections = $this->textFieldSections();
         $translatableKeys = array_keys($textFieldSections);
         $imageFieldSections = $this->imageFieldSections();
@@ -209,7 +209,7 @@ class SectionContentPageService
      */
     public function update(Request $request): void
     {
-        $locales = ['en', 'fr'];
+        $locales = config('localization.supported', ['fr', 'en', 'ar']);
         $textFields = $this->textFieldSections();
 
         foreach ($textFields as $key => $section) {

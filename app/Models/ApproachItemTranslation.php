@@ -19,4 +19,3 @@ class ApproachItemTranslation extends Model
         return $this->belongsTo(ApproachItem::class);
     }
 }
-

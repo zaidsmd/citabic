@@ -22,21 +22,27 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-6">
+                        <div class="row g-3">
+                            <div class="col-lg-4">
                                 <x-admin.text-input
                                     name="label"
                                     :label="__('admin.figures.label_fr')"
                                     :value="old('label', $form['label'])"
                                     :required="true"/>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <x-admin.text-input
                                     name="en[label]"
                                     :label="__('admin.figures.label_en')"
                                     :value="old('en.label', $form['en']['label'] ?? '')"/>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-4" dir="rtl">
+                                <x-admin.text-input
+                                    name="ar[label]"
+                                    :label="__('admin.figures.label_ar')"
+                                    :value="old('ar.label', $form['ar']['label'] ?? '')"/>
+                            </div>
+                            <div class="col-lg-12">
                                 <x-admin.text-input
                                     name="value"
                                     :label="__('admin.figures.value')"

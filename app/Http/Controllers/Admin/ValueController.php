@@ -108,10 +108,14 @@ class ValueController extends Controller
             'text' => 'required|string',
             'image' => 'nullable|string|max:2048',
             'en' => 'nullable|array',
+            'ar' => 'nullable|array',
         ]);
 
-        $data['translations'] = ['en' => $data['en'] ?? []];
-        unset($data['en']);
+        $data['translations'] = [
+            'en' => $data['en'] ?? [],
+            'ar' => $data['ar'] ?? [],
+        ];
+        unset($data['en'], $data['ar']);
 
         $profile->values()->create($data);
 
@@ -151,10 +155,14 @@ class ValueController extends Controller
             'text' => 'required|string',
             'image' => 'nullable|string|max:2048',
             'en' => 'nullable|array',
+            'ar' => 'nullable|array',
         ]);
 
-        $data['translations'] = ['en' => $data['en'] ?? []];
-        unset($data['en']);
+        $translations = $value->translations ?? [];
+        $translations['en'] = $data['en'] ?? [];
+        $translations['ar'] = $data['ar'] ?? [];
+        $data['translations'] = $translations;
+        unset($data['en'], $data['ar']);
 
         $value->update($data);
 
@@ -209,6 +217,7 @@ class ValueController extends Controller
             'text' => old('text', $value?->text),
             'image' => old('image', $value?->image),
             'en' => old('en', $value?->translations['en'] ?? []),
+            'ar' => old('ar', $value?->translations['ar'] ?? []),
         ];
     }
 }

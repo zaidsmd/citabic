@@ -107,7 +107,7 @@ class AboutUsService
         ContentKey::CARTOGRAPHIE,
     ];
 
-    protected array $locales = ['fr', 'en'];
+    protected array $locales = ['fr', 'en', 'ar'];
 
     /**
      * Retrieve get content fields for downstream processing.

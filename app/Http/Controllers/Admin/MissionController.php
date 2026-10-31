@@ -99,11 +99,14 @@ class MissionController extends Controller
             'en' => 'nullable|array',
             'en.title' => 'nullable|string|max:255',
             'en.description' => 'nullable|string',
+            'ar' => 'nullable|array',
+            'ar.title' => 'nullable|string|max:255',
+            'ar.description' => 'nullable|string',
         ]);
         $mission = Mission::create([
             'icon' => $data['icon'] ?? null,
         ]);
-        foreach (['fr', 'en'] as $locale) {
+        foreach (config('localization.supported', ['fr', 'en', 'ar']) as $locale) {
             MissionTranslation::create([
                 'mission_id' => $mission->id,
                 'locale' => $locale,
@@ -149,11 +152,14 @@ class MissionController extends Controller
             'en' => 'nullable|array',
             'en.title' => 'nullable|string|max:255',
             'en.description' => 'nullable|string',
+            'ar' => 'nullable|array',
+            'ar.title' => 'nullable|string|max:255',
+            'ar.description' => 'nullable|string',
         ]);
         $mission->update([
             'icon' => $data['icon'] ?? null,
         ]);
-        foreach (['fr', 'en'] as $locale) {
+        foreach (config('localization.supported', ['fr', 'en', 'ar']) as $locale) {
             MissionTranslation::updateOrCreate(
                 ['mission_id' => $mission->id, 'locale' => $locale],
                 [
@@ -207,11 +213,13 @@ class MissionController extends Controller
     {
         $fr = $mission?->translations->firstWhere('locale', 'fr');
         $en = $mission?->translations->firstWhere('locale', 'en');
+        $ar = $mission?->translations->firstWhere('locale', 'ar');
 
         return [
             'icon' => old('icon', $mission?->icon),
             'fr' => old('fr', ['title' => $fr?->title ?? '', 'description' => $fr?->description ?? '']),
             'en' => old('en', ['title' => $en?->title ?? '', 'description' => $en?->description ?? '']),
+            'ar' => old('ar', ['title' => $ar?->title ?? '', 'description' => $ar?->description ?? '']),
         ];
     }
 }

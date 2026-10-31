@@ -25,6 +25,7 @@
             this.blocks = toArray(this.config.blocksData).map((block) => this.normalizeBlock(block));
             this.frContainer = document.getElementById('blocks-container-fr');
             this.enContainer = document.getElementById('blocks-container-en');
+            this.arContainer = document.getElementById('blocks-container-ar');
             this.blocksInput = document.getElementById('blocks-json');
             this.previewIframe = document.getElementById('preview-iframe');
             this.heroButton = document.getElementById('add-hero-block-btn');
@@ -56,11 +57,11 @@
                     return { type, image: '' };
                 case 'heading':
                 case 'subheading':
-                    return { type, content: '', content_en: '' };
+                    return { type, content: '', content_en: '', content_ar: '' };
                 case 'paragraph':
-                    return { type, content: '', content_en: '' };
+                    return { type, content: '', content_en: '', content_ar: '' };
                 case 'quote':
-                    return { type, content: '', author: '', content_en: '', author_en: '' };
+                    return { type, content: '', author: '', content_en: '', author_en: '', content_ar: '', author_ar: '' };
                 case 'image':
                     return { type, image: '' };
                 case 'doubleImage':
@@ -68,9 +69,9 @@
                 case 'gallery':
                     return { type, images: [] };
                 case 'list':
-                    return { type, listType: 'unordered', items: [''], items_en: [''] };
+                    return { type, listType: 'unordered', items: [''], items_en: [''], items_ar: [''] };
                 case 'video':
-                    return { type, url: '', url_en: '' };
+                    return { type, url: '', url_en: '', url_ar: '' };
                 default:
                     return { type };
             }
@@ -84,6 +85,7 @@
             if (type === 'list') {
                 merged.items = toArray(merged.items);
                 merged.items_en = toArray(merged.items_en);
+                merged.items_ar = toArray(merged.items_ar);
                 if (merged.items.length === 0) {
                     merged.items = [''];
                 }
@@ -142,7 +144,7 @@
         }
 
         updateListItem(index, lang, itemIndex, value) {
-            const field = lang === 'en' ? 'items_en' : 'items';
+            const field = lang === 'en' ? 'items_en' : (lang === 'ar' ? 'items_ar' : 'items');
             if (!Array.isArray(this.blocks[index][field])) {
                 this.blocks[index][field] = [];
             }
@@ -153,7 +155,7 @@
         }
 
         addListItem(index, lang) {
-            const field = lang === 'en' ? 'items_en' : 'items';
+            const field = lang === 'en' ? 'items_en' : (lang === 'ar' ? 'items_ar' : 'items');
             if (!Array.isArray(this.blocks[index][field])) {
                 this.blocks[index][field] = [];
             }
@@ -163,7 +165,7 @@
         }
 
         removeListItem(index, lang, itemIndex) {
-            const field = lang === 'en' ? 'items_en' : 'items';
+            const field = lang === 'en' ? 'items_en' : (lang === 'ar' ? 'items_ar' : 'items');
             if (!Array.isArray(this.blocks[index][field])) {
                 return;
             }
@@ -352,6 +354,43 @@
             }
         }
 
+        buildArBlockContent(block, index) {
+            switch (block.type) {
+                case 'heading':
+                case 'subheading':
+                    return `<input type="text" class="form-control block-input" dir="rtl" data-index="${index}" data-field="content_ar" placeholder="${esc(this.trans.heading_placeholder || 'Header text...')} (AR)" value="${esc(block.content_ar || '')}">`;
+                case 'paragraph':
+                    return `<textarea class="form-control block-tinymce" dir="rtl" id="tinymce-ar-${index}" data-index="${index}" data-field="content_ar" rows="6" placeholder="${esc(this.trans.paragraph_placeholder || 'Paragraph...')} (AR)">${esc(block.content_ar || '')}</textarea>`;
+                case 'quote':
+                    return `
+                        <textarea class="form-control mb-2 block-input" dir="rtl" data-index="${index}" data-field="content_ar" rows="4" placeholder="${esc(this.trans.quote_placeholder || 'Quote...')} (AR)">${esc(block.content_ar || '')}</textarea>
+                        <input type="text" class="form-control block-input" dir="rtl" data-index="${index}" data-field="author_ar" placeholder="Author (AR)" value="${esc(block.author_ar || '')}">
+                    `;
+                case 'list': {
+                    const items = toArray(block.items_ar);
+                    return `
+                        <div class="list-items-group" dir="rtl">
+                            ${items.map((item, itemIndex) => `
+                                <div class="d-flex gap-2 mb-2">
+                                    <input type="text" class="form-control list-item-input" dir="rtl" data-lang="ar" data-index="${index}" data-item-index="${itemIndex}" value="${esc(item || '')}" placeholder="${esc(this.trans.list_placeholder || 'List item...')} (AR)">
+                                    <button type="button" class="btn btn-sm btn-outline-danger btn-remove-list-item" data-lang="ar" data-index="${index}" data-item-index="${itemIndex}">
+                                        <i class="ti ti-trash"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary btn-add-list-item" data-lang="ar" data-index="${index}">
+                            <i class="ti ti-plus me-1"></i>${esc(this.trans.add_list_item || 'Add item')}
+                        </button>
+                    `;
+                }
+                case 'video':
+                    return `<input type="url" class="form-control block-input" dir="rtl" data-index="${index}" data-field="url_ar" placeholder="${esc(this.trans.video_url_placeholder || 'Video URL')} (AR)" value="${esc(block.url_ar || '')}">`;
+                default:
+                    return `<div class="alert alert-secondary mb-0"><i class="ti ti-info-circle me-1"></i>${esc(this.trans.images_lang_independent || 'Images are shared across languages.')}</div>`;
+            }
+        }
+
         createBlockElement(block, index, lang) {
             const types = this.blockTypes();
             const typeConfig = types[block.type] || { label: block.type, icon: 'ti-box', color: '' };
@@ -359,16 +398,23 @@
             element.className = 'block-item';
             element.dataset.index = String(index);
 
-            const contentHtml = lang === 'fr'
-                ? this.buildFrBlockContent(block, index)
-                : this.buildEnBlockContent(block, index);
+            let contentHtml = '';
+            if (lang === 'fr') {
+                contentHtml = this.buildFrBlockContent(block, index);
+            } else if (lang === 'ar') {
+                contentHtml = this.buildArBlockContent(block, index);
+            } else {
+                contentHtml = this.buildEnBlockContent(block, index);
+            }
+
+            const langLabel = lang === 'en' ? ' (EN)' : (lang === 'ar' ? ' (AR)' : '');
 
             element.innerHTML = `
                 <span class="block-label ${esc(typeConfig.color)}">
-                    <i class="ti ${esc(typeConfig.icon)} me-1"></i>${esc(typeConfig.label)}${lang === 'en' ? ' (EN)' : ''}
+                    <i class="ti ${esc(typeConfig.icon)} me-1"></i>${esc(typeConfig.label)}${langLabel}
                 </span>
                 ${lang === 'fr' ? `<div class="block-toolbar">${this.buildToolbar(index)}</div>` : ''}
-                <div class="block-content">${contentHtml}</div>
+                <div class="block-content"${lang === 'ar' ? ' dir="rtl"' : ''}>${contentHtml}</div>
             `;
 
             return element;
@@ -385,10 +431,16 @@
 
             this.frContainer.innerHTML = '';
             this.enContainer.innerHTML = '';
+            if (this.arContainer) {
+                this.arContainer.innerHTML = '';
+            }
 
             this.blocks.forEach((block, index) => {
                 this.frContainer.appendChild(this.createBlockElement(block, index, 'fr'));
                 this.enContainer.appendChild(this.createBlockElement(block, index, 'en'));
+                if (this.arContainer) {
+                    this.arContainer.appendChild(this.createBlockElement(block, index, 'ar'));
+                }
             });
 
             this.bindBlockEvents();

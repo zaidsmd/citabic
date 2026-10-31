@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Helpers\NumberWrapper;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\ServiceProvider;
 
 class NumberWrapperServiceProvider extends ServiceProvider
 {
@@ -24,7 +24,7 @@ class NumberWrapperServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('number-wrapper', function () {
-            return new NumberWrapper();
+            return new NumberWrapper;
         });
     }
 }

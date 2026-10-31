@@ -26,13 +26,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const container = document.getElementById('blocks-container');
     const containerEn = document.getElementById('blocks-container-en');
+    const containerAr = document.getElementById('blocks-container-ar');
 
     function renderBlocks() {
         container.innerHTML = '';
         containerEn.innerHTML = '';
+        if (containerAr) containerAr.innerHTML = '';
         blocks.forEach(function (block, index) {
             container.appendChild(createBlockElement(block, index, 'fr'));
             containerEn.appendChild(createBlockEnElement(block, index));
+            if (containerAr) containerAr.appendChild(createBlockArElement(block, index));
         });
         syncJSON();
         updatePreview();
@@ -203,6 +206,50 @@ document.addEventListener('DOMContentLoaded', function () {
         div.innerHTML =
             '<span class="block-label ' + typeConf.color + '"><i class="ti ' + typeConf.icon + ' me-1"></i>' + typeConf.label + ' (EN)</span>' +
             '<div class="block-content">' + contentHtml + '</div>';
+
+        div.querySelectorAll('[data-field]').forEach(function (input) {
+            input.addEventListener('input', function () {
+                blocks[index][this.dataset.field] = this.value;
+                syncJSON();
+            });
+        });
+
+        return div;
+    }
+
+    function createBlockArElement(block, index) {
+        const div = document.createElement('div');
+        div.className = 'block-item';
+        const typeConf = blockTypes[block.type] || { label: block.type, icon: 'ti-box', color: '' };
+
+        let contentHtml = '';
+        switch (block.type) {
+            case 'heading':
+                contentHtml = '<input type="text" class="form-control" dir="rtl" placeholder="' + esc(trans.heading_ar_placeholder || 'Heading (AR)...') + '" value="' + esc(block.content_ar || '') + '" data-field="content_ar">';
+                break;
+            case 'subheading':
+                contentHtml = '<input type="text" class="form-control" dir="rtl" placeholder="' + esc(trans.subheading_ar_placeholder || 'Subheading (AR)...') + '" value="' + esc(block.content_ar || '') + '" data-field="content_ar">';
+                break;
+            case 'text':
+                contentHtml = '<textarea class="form-control block-tinymce" dir="rtl" id="tinymce-ar-' + index + '-content_ar" rows="5" placeholder="' + esc(trans.text_ar_placeholder || 'Text (AR)...') + '" data-field="content_ar" data-block-index="' + index + '">' + esc(block.content_ar || '') + '</textarea>';
+                break;
+            case 'imageTextRow':
+                contentHtml = '<textarea class="form-control" dir="rtl" rows="4" placeholder="' + esc(trans.text_items_ar_placeholder || 'Text (AR)...') + '" data-field="content_ar">' + esc(block.content_ar || '') + '</textarea>';
+                break;
+            case 'imageText':
+                contentHtml = '<textarea class="form-control block-tinymce" dir="rtl" id="tinymce-ar-' + index + '-content_ar" rows="4" placeholder="' + esc(trans.text_ar_placeholder || 'Text (AR)...') + '" data-field="content_ar" data-block-index="' + index + '">' + esc(block.content_ar || '') + '</textarea>';
+                break;
+            case 'list':
+                contentHtml = '<textarea class="form-control" dir="rtl" rows="5" placeholder="' + esc(trans.list_ar_placeholder || 'List (AR)...') + '" data-field="content_ar">' + esc(block.content_ar || '') + '</textarea>';
+                break;
+            default:
+                contentHtml = '<div class="alert alert-secondary mb-0"><i class="ti ti-info-circle me-1"></i>' + (trans.images_lang_independent || 'Images are language independent.') + '</div>';
+                break;
+        }
+
+        div.innerHTML =
+            '<span class="block-label ' + typeConf.color + '"><i class="ti ' + typeConf.icon + ' me-1"></i>' + typeConf.label + ' (AR)</span>' +
+            '<div class="block-content" dir="rtl">' + contentHtml + '</div>';
 
         div.querySelectorAll('[data-field]').forEach(function (input) {
             input.addEventListener('input', function () {

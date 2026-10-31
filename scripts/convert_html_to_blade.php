@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $root = dirname(__DIR__);
-$viewDirectory = $root . '/resources/views/pages';
+$viewDirectory = $root.'/resources/views/pages';
 
 if (! is_dir($viewDirectory) && ! mkdir($viewDirectory, 0777, true) && ! is_dir($viewDirectory)) {
     fwrite(STDERR, "Failed to create view directory.\n");
@@ -38,10 +38,10 @@ $pages = [
 $routeReplacements = [];
 
 foreach ($pages as $file => $routeName) {
-    $routeReplacements['href="' . $file . '"'] = 'href="{{ route(\'' . $routeName . '\') }}"';
+    $routeReplacements['href="'.$file.'"'] = 'href="{{ route(\''.$routeName.'\') }}"';
 }
 
-foreach (glob($root . '/*.html') as $htmlFile) {
+foreach (glob($root.'/*.html') as $htmlFile) {
     $basename = basename($htmlFile);
 
     if (! array_key_exists($basename, $pages)) {
@@ -91,7 +91,7 @@ foreach (glob($root . '/*.html') as $htmlFile) {
         $content
     );
 
-    $target = $viewDirectory . '/' . $pages[$basename] . '.blade.php';
+    $target = $viewDirectory.'/'.$pages[$basename].'.blade.php';
 
     if (file_put_contents($target, $content) === false) {
         fwrite(STDERR, "Failed to write {$target}.\n");
@@ -99,4 +99,4 @@ foreach (glob($root . '/*.html') as $htmlFile) {
     }
 }
 
-echo "Converted " . count($pages) . " pages.\n";
+echo 'Converted '.count($pages)." pages.\n";

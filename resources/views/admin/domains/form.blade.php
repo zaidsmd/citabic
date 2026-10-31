@@ -28,7 +28,7 @@
                     <div class="card-body p-4">
                         <div class="row g-4">
                             <div class="col-lg-8">
-                                <x-admin.language-tabs :locales="['fr', 'en']" id-prefix="domain" class="mb-3"/>
+                                <x-admin.language-tabs id-prefix="domain" class="mb-3"/>
 
                                 <div class="tab-content" id="domainTabsContent">
                                     <div class="tab-pane fade show active" id="domain-fr-content" role="tabpanel" aria-labelledby="domain-fr-tab">
@@ -68,7 +68,7 @@
 
                                         <label class="fw-semibold mb-2">{{ __('admin.domains.items_en') }}</label>
                                         <div id="en-items-list" class="mb-2">
-                                            @php($enItems = old('en.items', $form['en']['items'] ?? []))
+                                            @php($enItems = old('en.items', $form['en']['items'] ?? []))\
                                             @if(count($enItems) > 0)
                                                 @foreach($enItems as $item)
                                                     <div class="input-group mb-2 item-row">
@@ -86,6 +86,36 @@
                                         <button type="button" class="btn btn-outline-primary btn-sm" id="add-en-item">
                                             <i class="fa fa-plus-circle me-2"></i>{{ __('admin.domains.form.add_item') }}
                                         </button>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="domain-ar-content" role="tabpanel" aria-labelledby="domain-ar-tab">
+                                        <div dir="rtl">
+                                            <x-admin.text-input
+                                                name="ar[title]"
+                                                :label="__('admin.domains.form.title_ar')"
+                                                :value="old('ar.title', $form['ar']['title'] ?? '')"/>
+
+                                            <label class="fw-semibold mb-2">{{ __('admin.domains.items_ar') }}</label>
+                                            <div id="ar-items-list" class="mb-2">
+                                                @php($arItems = old('ar.items', $form['ar']['items'] ?? []))
+                                                @if(count($arItems) > 0)
+                                                    @foreach($arItems as $item)
+                                                        <div class="input-group mb-2 item-row">
+                                                            <input type="text" name="ar[items][]" class="form-control" value="{{ $item }}" placeholder="{{ __('admin.domains.form.item_placeholder') }}" dir="rtl">
+                                                            <button type="button" class="btn btn-outline-danger remove-item-btn"><i class="fa fa-trash-alt"></i></button>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <div class="input-group mb-2 item-row">
+                                                        <input type="text" name="ar[items][]" class="form-control" placeholder="{{ __('admin.domains.form.item_placeholder') }}" dir="rtl">
+                                                        <button type="button" class="btn btn-outline-danger remove-item-btn"><i class="fa fa-trash-alt"></i></button>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" id="add-ar-item">
+                                                <i class="fa fa-plus-circle me-2"></i>{{ __('admin.domains.form.add_item') }}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -176,7 +206,7 @@
         }
 
         if (typeof Dropzone !== 'undefined') {
-            const dz = new Dropzone('#icon-dropzone', {
+            const dz = new Dropzone('#icon-dropzone', {\
                 url: uploadUrl,
                 autoProcessQueue: true,
                 uploadMultiple: false,
@@ -200,43 +230,68 @@
             });
         }
 
-        function addItemRow(listId, inputName) {
+        function addItemRow(listId, inputName, isRtl = false) {
             const list = document.getElementById(listId);
+            if (!list) return;
             const row = document.createElement('div');
             row.className = 'input-group mb-2 item-row';
+            const dirAttr = isRtl ? 'dir="rtl"' : '';
             row.innerHTML = `
-                <input type="text" name="${inputName}" class="form-control" placeholder="{{ __('admin.domains.form.item_placeholder') }}">
+                <input type="text" name="${inputName}" class="form-control" placeholder="{{ __('admin.domains.form.item_placeholder') }}" ${dirAttr}>
                 <button type="button" class="btn btn-outline-danger remove-item-btn"><i class="fa fa-trash-alt"></i></button>`;
             list.appendChild(row);
         }
 
-        function syncEnToFr() {
+        function syncLocalesToFr() {
             const frList = document.getElementById('fr-items-list');
             const enList = document.getElementById('en-items-list');
+            const arList = document.getElementById('ar-items-list');
             const frCount = frList.querySelectorAll('.item-row').length;
-            const enRows = enList.querySelectorAll('.item-row');
-            const enCount = enRows.length;
 
-            if (frCount > enCount) {
-                for (let i = enCount; i < frCount; i++) {
-                    addItemRow('en-items-list', 'en[items][]');
+            if (enList) {
+                const enRows = enList.querySelectorAll('.item-row');
+                const enCount = enRows.length;
+                if (frCount > enCount) {
+                    for (let i = enCount; i < frCount; i++) {
+                        addItemRow('en-items-list', 'en[items][]');
+                    }
+                } else if (frCount < enCount) {
+                    const rowsToRemove = Array.from(enRows).slice(frCount);
+                    rowsToRemove.forEach((row) => row.remove());
+                    if (enList.querySelectorAll('.item-row').length === 0) {
+                        addItemRow('en-items-list', 'en[items][]');
+                    }
                 }
-            } else if (frCount < enCount) {
-                const rowsToRemove = Array.from(enRows).slice(frCount);
-                rowsToRemove.forEach((row) => row.remove());
-                if (enList.querySelectorAll('.item-row').length === 0) {
-                    addItemRow('en-items-list', 'en[items][]');
+            }
+
+            if (arList) {
+                const arRows = arList.querySelectorAll('.item-row');
+                const arCount = arRows.length;
+                if (frCount > arCount) {
+                    for (let i = arCount; i < frCount; i++) {
+                        addItemRow('ar-items-list', 'ar[items][]', true);
+                    }
+                } else if (frCount < arCount) {
+                    const rowsToRemove = Array.from(arRows).slice(frCount);
+                    rowsToRemove.forEach((row) => row.remove());
+                    if (arList.querySelectorAll('.item-row').length === 0) {
+                        addItemRow('ar-items-list', 'ar[items][]', true);
+                    }
                 }
             }
         }
 
-        document.getElementById('add-fr-item').addEventListener('click', function () {
+        document.getElementById('add-fr-item')?.addEventListener('click', function () {
             addItemRow('fr-items-list', 'items[]');
-            syncEnToFr();
+            syncLocalesToFr();
         });
 
-        document.getElementById('add-en-item').addEventListener('click', function () {
+        document.getElementById('add-en-item')?.addEventListener('click', function () {
             addItemRow('en-items-list', 'en[items][]');
+        });
+
+        document.getElementById('add-ar-item')?.addEventListener('click', function () {
+            addItemRow('ar-items-list', 'ar[items][]', true);
         });
 
         document.addEventListener('click', function (event) {
@@ -256,7 +311,7 @@
                 }
 
                 if (isFrList) {
-                    syncEnToFr();
+                    syncLocalesToFr();
                 }
             }
         });

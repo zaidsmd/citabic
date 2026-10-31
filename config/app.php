@@ -84,15 +84,14 @@ return [
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
-    'theme_contrast' => env('theme_contrast', 'false'), # [ false , true ]
-    'caption_show' => env('caption_show', 'true'), # [ false , true ]
-    'preset_theme' => env('preset_theme', 'preset-7'), # [ preset-1 to preset-10 ]
-    'theme_layout' => env('theme_layout', 'vertical'), # [ vertical, horizontal, color-header, compact, tab ]
-    'dark_layout' => env('dark_layout', 'true'), # [ false , true , default ]
-    'rtl_layout' => env('rtl_layout', 'false'), # [ false , true ]
-    'box_container' => env('box_container', 'false'), # [ false , true ]
-    'rtlflag' => env('rtlflag', 'ltr'), # ['rtl', 'ltr']
-
+    'theme_contrast' => env('theme_contrast', 'false'), // [ false , true ]
+    'caption_show' => env('caption_show', 'true'), // [ false , true ]
+    'preset_theme' => env('preset_theme', 'preset-7'), // [ preset-1 to preset-10 ]
+    'theme_layout' => env('theme_layout', 'vertical'), // [ vertical, horizontal, color-header, compact, tab ]
+    'dark_layout' => env('dark_layout', 'true'), // [ false , true , default ]
+    'rtl_layout' => env('rtl_layout', 'false'), // [ false , true ]
+    'box_container' => env('box_container', 'false'), // [ false , true ]
+    'rtlflag' => env('rtlflag', 'ltr'), // ['rtl', 'ltr']
 
     /*
     |--------------------------------------------------------------------------

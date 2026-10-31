@@ -194,8 +194,11 @@ return [
         'label' => 'Language',
         'fr' => 'FR',
         'en' => 'EN',
-        'fr_name' => 'Francais',
+        'ar' => 'AR',
+        'fr_name' => 'Français',
         'en_name' => 'English',
+        'ar_name' => 'العربية',
+        'switch_to' => 'Switch to :name',
     ],
     'errors' => [
         'page_title' => 'CITABIC | Error :code',

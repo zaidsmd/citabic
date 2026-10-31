@@ -224,6 +224,11 @@
                             <i class="ti ti-language me-1"></i>@lang('admin.common.language.en')
                         </button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="ar-tab" data-bs-toggle="tab" data-bs-target="#ar-content" type="button" role="tab">
+                            <i class="ti ti-language me-1"></i>@lang('admin.common.language.ar')
+                        </button>
+                    </li>
                 </ul>
 
                 <div class="tab-content" id="langTabsContent">
@@ -277,6 +282,15 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                         <div id="blocks-container-en"></div>
+                    </div>
+
+                    <div class="tab-pane fade" id="ar-content" role="tabpanel">
+                        <div class="alert alert-info alert-dismissible fade show mb-3" role="alert">
+                            <i class="ti ti-info-circle me-1"></i>
+                            {{ __('admin.references.ar_translation_info') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <div id="blocks-container-ar" dir="rtl"></div>
                     </div>
                 </div>
             </div>
@@ -375,6 +389,11 @@
                 text_en_placeholder: @json(__('admin.references.text_en_placeholder')),
                 text_items_en_placeholder: @json(__('admin.references.text_items_en_placeholder')),
                 list_en_placeholder: @json(__('admin.references.list_en_placeholder')),
+                heading_ar_placeholder: @json(__('admin.references.heading_ar_placeholder')),
+                subheading_ar_placeholder: @json(__('admin.references.subheading_ar_placeholder')),
+                text_ar_placeholder: @json(__('admin.references.text_ar_placeholder')),
+                text_items_ar_placeholder: @json(__('admin.references.text_items_ar_placeholder')),
+                list_ar_placeholder: @json(__('admin.references.list_ar_placeholder')),
                 images_lang_independent: @json(__('admin.references.images_lang_independent')),
                 add_image: @json(__('admin.references.add_image')),
                 remove: @json(__('admin.references.remove')),

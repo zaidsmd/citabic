@@ -17,4 +17,3 @@ class ApproachItem extends Model
         return $this->hasMany(ApproachItemTranslation::class);
     }
 }
-

@@ -77,7 +77,7 @@
                             </div>
 
                             <div class="col-12">
-                                <x-admin.language-tabs :locales="['fr', 'en']" id-prefix="value" class="mb-3"/>
+                                <x-admin.language-tabs id-prefix="value" class="mb-3"/>
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="value-fr-content" role="tabpanel" aria-labelledby="value-fr-tab">
                                         <div class="border rounded p-3 h-100">
@@ -115,6 +115,24 @@
                                                     rows="5"
                                                     placeholder="{{ __('admin.values.text_en') }}">{{ old('en.text', $form['en']['text'] ?? '') }}</textarea>
                                                 <label class="fw-semibold" for="value_text_en">{{ __('admin.values.text_en') }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="value-ar-content" role="tabpanel" aria-labelledby="value-ar-tab">
+                                        <div class="border rounded p-3 h-100" dir="rtl">
+                                            <x-admin.text-input
+                                                name="ar[title]"
+                                                :label="__('admin.values.title_ar')"
+                                                :value="old('ar.title', $form['ar']['title'] ?? '')"/>
+                                            <div class="form-floating mb-3">
+                                                <textarea
+                                                    name="ar[text]"
+                                                    id="value_text_ar"
+                                                    class="form-control js-value-editor"
+                                                    rows="5"
+                                                    dir="rtl"
+                                                    placeholder="{{ __('admin.values.text_ar') }}">{{ old('ar.text', $form['ar']['text'] ?? '') }}</textarea>
+                                                <label class="fw-semibold" for="value_text_ar">{{ __('admin.values.text_ar') }}</label>
                                             </div>
                                         </div>
                                     </div>

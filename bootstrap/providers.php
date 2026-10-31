@@ -1,8 +1,9 @@
 <?php
 
 use App\Providers\AppServiceProvider;
+use App\Providers\NumberWrapperServiceProvider;
 
 return [
     AppServiceProvider::class,
-    App\Providers\NumberWrapperServiceProvider::class,
+    NumberWrapperServiceProvider::class,
 ];

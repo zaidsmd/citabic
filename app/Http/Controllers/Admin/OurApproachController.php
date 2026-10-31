@@ -30,6 +30,7 @@ class OurApproachController extends Controller
                 $translations = [
                     'fr' => ['label' => '', 'title' => '', 'description' => ''],
                     'en' => ['label' => '', 'title' => '', 'description' => ''],
+                    'ar' => ['label' => '', 'title' => '', 'description' => ''],
                 ];
 
                 foreach ($item->translations as $translation) {
@@ -60,13 +61,14 @@ class OurApproachController extends Controller
             'translations' => [
                 'fr' => ['title' => ''],
                 'en' => ['title' => ''],
+                'ar' => ['title' => ''],
             ],
         ];
 
         SectionContent::query()
             ->where('section', Section::OUR_APPROACH->value)
             ->where('key', ContentKey::OUR_APPROACH_TITLE->value)
-            ->whereIn('language', ['fr', 'en'])
+            ->whereIn('language', ['fr', 'en', 'ar'])
             ->get()
             ->each(function (SectionContent $content) use (&$sectionMeta): void {
                 $sectionMeta['translations'][$content->language]['title'] = $content->value;
@@ -77,11 +79,8 @@ class OurApproachController extends Controller
 
     /**
      * Persist updates to the resource.
-
      *
-
-     * @param UpdateOurApproachRequest $request Parameter.
-
+     * @param  UpdateOurApproachRequest  $request  Parameter.
      * @return mixed
      */
     public function update(UpdateOurApproachRequest $request)
@@ -110,7 +109,7 @@ class OurApproachController extends Controller
 
     private function updateSectionTitles(UpdateOurApproachRequest $request): void
     {
-        foreach (['en', 'fr'] as $language) {
+        foreach (['en', 'fr', 'ar'] as $language) {
             $titleKey = "section.translations.{$language}.title";
             if ($request->has($titleKey)) {
                 SectionContent::updateOrCreate(
@@ -128,14 +127,14 @@ class OurApproachController extends Controller
     private function updateApproachItems(UpdateOurApproachRequest $request): void
     {
         $items = $request->input('items', []);
-        $languages = ['en', 'fr'];
+        $languages = ['en', 'fr', 'ar'];
 
         foreach ($items as $itemData) {
             $approachItem = $this->updateOrCreateApproachItem($itemData);
 
             // Update translations for each language
             foreach ($languages as $language) {
-                $this->updateApproachItemTranslation($approachItem, $language, $request);
+                $this->updateApproachItemTranslation($approachItem, $language, $itemData);
             }
         }
     }
@@ -167,13 +166,11 @@ class OurApproachController extends Controller
     private function updateApproachItemTranslation(
         ApproachItem $approachItem,
         string $language,
-        UpdateOurApproachRequest $request
+        array $itemData
     ): void {
-        $translationKey = "section.translations.{$language}";
+        $translationData = $itemData['translations'][$language] ?? null;
 
-        if ($request->has($translationKey)) {
-            $translationData = $request->input($translationKey);
-
+        if ($translationData) {
             ApproachItemTranslation::updateOrCreate(
                 [
                     'approach_item_id' => $approachItem->id,

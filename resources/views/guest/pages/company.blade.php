@@ -102,9 +102,14 @@
                             <div class="box-icon overflow-hidden">
                                 <img src="{{ Storage::disk('public')->url($item->icon) }}" alt="icon" loading="lazy" decoding="async">
                             </div>
+                            @php
+                                $missionTrans = $item->translations->firstWhere('locale', app()->getLocale())
+                                    ?? $item->translations->firstWhere('locale', 'fr')
+                                    ?? $item->translations->first();
+                            @endphp
                             <div class="box-content">
-                                <h3 class="box-title">{{ $item->translations->where('locale', config('app.locale'))->first()?->title }}</h3>
-                                <p class="box-text">{{ $item->translations->where('locale', config('app.locale'))->first()?->description }}</p>
+                                <h3 class="box-title">{{ $missionTrans?->title }}</h3>
+                                <p class="box-text">{{ $missionTrans?->description }}</p>
                             </div>
                         </div>
                     </div>

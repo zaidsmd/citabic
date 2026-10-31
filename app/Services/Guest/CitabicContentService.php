@@ -51,7 +51,14 @@ class CitabicContentService
             $sc = fn (Section $section, ContentKey $key) => SectionContent::where('section', $section)
                 ->where('key', $key)
                 ->where('language', $locale)
-                ->first()?->value;
+                ->first()?->value
+                ?? SectionContent::where('section', $section)
+                    ->where('key', $key)
+                    ->where('language', 'fr')
+                    ->first()?->value
+                ?? SectionContent::where('section', $section)
+                    ->where('key', $key)
+                    ->first()?->value;
 
             $scAny = fn (Section $section, ContentKey $key) => SectionContent::where('section', $section)
                 ->where('key', $key)
@@ -412,13 +419,18 @@ class CitabicContentService
         $whyFeaturesRaw = SectionContent::where('section', Section::WHY_CHOOSE_US->value)
             ->where('key', ContentKey::WHY_FEATURES->value)
             ->where('language', $locale)
-            ->value('value');
+            ->value('value')
+            ?? SectionContent::where('section', Section::WHY_CHOOSE_US->value)
+                ->where('key', ContentKey::WHY_FEATURES->value)
+                ->where('language', 'fr')
+                ->value('value');
         $whyFeatures = json_decode($whyFeaturesRaw ?? '[]', true) ?: [];
+
+        $heroAssets = $this->resolveHeroVideoAssets($heroVideoPath);
 
         if (! $profile) {
             $site = config('citabic');
-            $site['hero_video_path'] = $heroVideoPath;
-            $site['hero_video_url'] = $this->resolveMediaUrl($heroVideoPath);
+            $site = array_merge($site, $heroAssets);
             $site['references'] = collect($site['references'])
                 ->map(fn (array $reference) => $this->hydrateReferenceArray($reference))
                 ->all();
@@ -458,8 +470,11 @@ class CitabicContentService
                 'linkedin' => $companyInfo[CompanyInfoKey::LINKEDIN->value] ?? null,
                 'instagram' => $companyInfo[CompanyInfoKey::INSTAGRAM->value] ?? null,
             ],
-            'hero_video_path' => $heroVideoPath,
-            'hero_video_url' => $this->resolveMediaUrl($heroVideoPath),
+            'hero_video_path' => $heroAssets['hero_video_path'],
+            'hero_video_url' => $heroAssets['hero_video_url'],
+            'hero_video_stream_url' => $heroAssets['hero_video_stream_url'],
+            'hero_video_webm_url' => $heroAssets['hero_video_webm_url'],
+            'hero_video_poster_url' => $heroAssets['hero_video_poster_url'],
             'intro' => $translatedSite['intro'],
             'market_context' => $translatedSite['market_context'],
             'mission' => $translatedSite['mission'],
@@ -703,7 +718,22 @@ class CitabicContentService
             return $this->hydrateReferenceArray($base);
         }
 
-        return $this->hydrateReferenceArray(array_merge($base, $reference->translations[$locale] ?? []));
+        $localized = array_merge($base, $reference->translations[$locale] ?? []);
+
+        if (! empty($localized['blocks']) && is_array($localized['blocks'])) {
+            $suffix = $locale === 'en' ? '_en' : ($locale === 'ar' ? '_ar' : '');
+            if ($suffix !== '') {
+                $localized['blocks'] = array_map(function ($block) use ($suffix) {
+                    if (is_array($block) && isset($block['content'.$suffix]) && trim((string) $block['content'.$suffix]) !== '') {
+                        $block['content'] = $block['content'.$suffix];
+                    }
+
+                    return $block;
+                }, $localized['blocks']);
+            }
+        }
+
+        return $this->hydrateReferenceArray($localized);
     }
 
     private function applyBlogSearch(Builder|BelongsToMany $query, string $search): void
@@ -766,5 +796,54 @@ class CitabicContentService
         }
 
         return $path;
+    }
+
+    private function resolveHeroVideoAssets(?string $heroVideoPath): array
+    {
+        if (! $heroVideoPath) {
+            return [
+                'hero_video_path' => null,
+                'hero_video_url' => null,
+                'hero_video_stream_url' => null,
+                'hero_video_webm_url' => null,
+                'hero_video_poster_url' => null,
+            ];
+        }
+
+        $directUrl = $this->resolveMediaUrl($heroVideoPath);
+        $disk = Storage::disk('public');
+        $relativeClean = str_replace('storage/', '', $this->normalizeAssetPath($heroVideoPath) ?? '');
+
+        $streamUrl = $relativeClean && $disk->exists($relativeClean)
+            ? route('media.stream', ['path' => $relativeClean])
+            : $directUrl;
+
+        $webmUrl = null;
+        $posterUrl = null;
+
+        if ($relativeClean) {
+            $basePathWithoutExt = preg_replace('/\.[^.]+$/', '', $relativeClean);
+
+            $webmPath = $basePathWithoutExt.'.webm';
+            if ($disk->exists($webmPath)) {
+                $webmUrl = route('media.stream', ['path' => $webmPath]);
+            }
+
+            $posterWebp = $basePathWithoutExt.'-poster.webp';
+            $posterJpg = $basePathWithoutExt.'-poster.jpg';
+            if ($disk->exists($posterWebp)) {
+                $posterUrl = $disk->url($posterWebp);
+            } elseif ($disk->exists($posterJpg)) {
+                $posterUrl = $disk->url($posterJpg);
+            }
+        }
+
+        return [
+            'hero_video_path' => $heroVideoPath,
+            'hero_video_url' => $directUrl,
+            'hero_video_stream_url' => $streamUrl,
+            'hero_video_webm_url' => $webmUrl,
+            'hero_video_poster_url' => $posterUrl,
+        ];
     }
 }

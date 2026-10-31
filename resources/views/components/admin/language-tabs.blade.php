@@ -1,5 +1,5 @@
 @props([
-    'locales' => ['fr', 'en'],
+    'locales' => config('localization.supported', ['fr', 'en', 'ar']),
     'idPrefix' => 'about',
 ])
 

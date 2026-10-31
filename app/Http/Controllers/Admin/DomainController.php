@@ -74,9 +74,7 @@ class DomainController extends Controller
 
     /**
      * Persist a newly created resource.
-
      *
-
      * @param  Request  $request  Parameter.
      */
     public function store(Request $request): RedirectResponse
@@ -89,6 +87,7 @@ class DomainController extends Controller
             'items' => 'nullable|array',
             'items.*' => 'nullable|string|max:255',
             'en' => 'nullable|array',
+            'ar' => 'nullable|array',
         ]);
 
         $data['items'] = collect($data['items'] ?? [])->map(fn ($v) => trim($v))->filter()->values()->all();
@@ -97,8 +96,17 @@ class DomainController extends Controller
         if (isset($en_data['items'])) {
             $en_data['items'] = collect($en_data['items'])->map(fn ($v) => trim($v))->filter()->values()->all();
         }
-        $data['translations'] = ['en' => $en_data];
-        unset($data['en']);
+
+        $ar_data = $data['ar'] ?? [];
+        if (isset($ar_data['items'])) {
+            $ar_data['items'] = collect($ar_data['items'])->map(fn ($v) => trim($v))->filter()->values()->all();
+        }
+
+        $data['translations'] = [
+            'en' => $en_data,
+            'ar' => $ar_data,
+        ];
+        unset($data['en'], $data['ar']);
 
         $profile->domains()->create($data);
 
@@ -107,9 +115,7 @@ class DomainController extends Controller
 
     /**
      * Show the edit form for the resource.
-
      *
-
      * @param  CitabicDomain  $domain  Parameter.
      */
     public function edit(CitabicDomain $domain): View
@@ -122,11 +128,8 @@ class DomainController extends Controller
 
     /**
      * Persist updates to the resource.
-
      *
-
-     * @param Request $request Parameter.
-
+     * @param  Request  $request  Parameter.
      * @param  CitabicDomain  $domain  Parameter.
      */
     public function update(Request $request, CitabicDomain $domain): RedirectResponse
@@ -137,6 +140,7 @@ class DomainController extends Controller
             'items' => 'nullable|array',
             'items.*' => 'nullable|string|max:255',
             'en' => 'nullable|array',
+            'ar' => 'nullable|array',
         ]);
 
         $data['items'] = collect($data['items'] ?? [])->map(fn ($v) => trim($v))->filter()->values()->all();
@@ -145,8 +149,17 @@ class DomainController extends Controller
         if (isset($en_data['items'])) {
             $en_data['items'] = collect($en_data['items'])->map(fn ($v) => trim($v))->filter()->values()->all();
         }
-        $data['translations'] = ['en' => $en_data];
-        unset($data['en']);
+
+        $ar_data = $data['ar'] ?? [];
+        if (isset($ar_data['items'])) {
+            $ar_data['items'] = collect($ar_data['items'])->map(fn ($v) => trim($v))->filter()->values()->all();
+        }
+
+        $translations = $domain->translations ?? [];
+        $translations['en'] = $en_data;
+        $translations['ar'] = $ar_data;
+        $data['translations'] = $translations;
+        unset($data['en'], $data['ar']);
 
         $domain->update($data);
 
@@ -155,11 +168,8 @@ class DomainController extends Controller
 
     /**
      * Handle image upload and return the stored media path.
-
      *
-
-     * @param Request $request Parameter.
-
+     * @param  Request  $request  Parameter.
      * @param  ImageUploadService  $imageService  Parameter.
      */
     public function uploadImage(Request $request, ImageUploadService $imageService): JsonResponse
@@ -172,9 +182,7 @@ class DomainController extends Controller
 
     /**
      * Delete the specified resource.
-
      *
-
      * @param  CitabicDomain  $domain  Parameter.
      */
     public function destroy(CitabicDomain $domain): RedirectResponse
@@ -187,12 +195,14 @@ class DomainController extends Controller
     private function formData(?CitabicDomain $domain): array
     {
         $en = $domain?->translations['en'] ?? [];
+        $ar = $domain?->translations['ar'] ?? [];
 
         return [
             'title' => old('title', $domain?->title),
             'icon' => old('icon', $domain?->icon),
             'items' => old('items', $domain?->items ?? []),
             'en' => old('en', $en),
+            'ar' => old('ar', $ar),
         ];
     }
 }

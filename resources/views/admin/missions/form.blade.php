@@ -29,7 +29,7 @@
                         <div class="card shadow-sm border-0">
                             <div class="card-body p-4">
                                 <div class="row g-4">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="border rounded p-3 h-100">
                                         <x-admin.text-input
                                             name="fr[title]"
@@ -46,7 +46,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="border rounded p-3 h-100">
                                         <x-admin.text-input
                                             name="en[title]"
@@ -58,6 +58,23 @@
                                             :label="__('admin.missions.form.description_en')"
                                             :value="$form['en']['description']"
                                             :error-key="'en.description'"
+                                            :rows="5"
+                                            :floating="true"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="border rounded p-3 h-100">
+                                        <x-admin.text-input
+                                            name="ar[title]"
+                                            :label="__('admin.missions.form.title_ar')"
+                                            :value="$form['ar']['title']"
+                                            :error-key="'ar.title'"/>
+                                        <x-admin.textarea
+                                            name="ar[description]"
+                                            :label="__('admin.missions.form.description_ar')"
+                                            :value="$form['ar']['description']"
+                                            :error-key="'ar.description'"
                                             :rows="5"
                                             :floating="true"/>
                                         </div>

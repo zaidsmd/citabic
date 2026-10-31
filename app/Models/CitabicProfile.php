@@ -22,7 +22,7 @@ class CitabicProfile extends Model
         'email',
         'hero_video_path',
         'information_system',
-        'language'
+        'language',
     ];
 
     public function processes()

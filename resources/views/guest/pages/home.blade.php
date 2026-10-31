@@ -12,6 +12,9 @@
 @section('twitter_description', $homePage['seo']['og_description'])
 @section('twitter_image', $homePage['seo']['og_image'])
 @push('styles')
+    @if (! empty($site['hero_video_poster_url']))
+        <link rel="preload" as="image" href="{{ $site['hero_video_poster_url'] }}">
+    @endif
     <style>
         .hero-video-bg-wrap {
             position: absolute;
@@ -80,12 +83,17 @@
              data-slider-options='{"effect":"fade","loop":false,"autoHeight": true}'>
             <div class="swiper-wrapper">
                 <div class="swiper-slide">
-                    <div class="th-hero-bg" data-bg-src="{{asset('guest/assets/img/hero/hero_bg_10_1.jpg')}}"
+                    <div class="th-hero-bg" data-bg-src="{{ $site['hero_video_poster_url'] ?? asset('guest/assets/img/hero/hero_bg_14_1.jpg') }}"
                          data-mask-src="{{asset('guest/assets/img/hero/hero_10_bg_mask.png')}}">
                         <div class="hero-video-bg-wrap">
-                            <video data-hero-video data-playback-rate="0.7" autoplay muted loop playsinline
-                                   poster="{{ asset('guest/assets/img/hero/hero_bg_10_1.jpg') }}">
-                                @if (! empty($site['hero_video_url']))
+                            <video data-hero-video data-playback-rate="0.7" autoplay muted loop playsinline preload="auto"
+                                   poster="{{ $site['hero_video_poster_url'] ?? asset('guest/assets/img/hero/hero_bg_14_1.jpg') }}">
+                                @if (! empty($site['hero_video_webm_url']))
+                                    <source src="{{ $site['hero_video_webm_url'] }}" type="video/webm">
+                                @endif
+                                @if (! empty($site['hero_video_stream_url']))
+                                    <source src="{{ $site['hero_video_stream_url'] }}" type="video/mp4">
+                                @elseif (! empty($site['hero_video_url']))
                                     <source src="{{ $site['hero_video_url'] }}" type="video/mp4">
                                 @endif
                             </video>

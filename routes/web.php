@@ -20,15 +20,16 @@ use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ValueController;
 use App\Http\Controllers\CitabicController;
+use App\Http\Controllers\VideoStreamController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/locale/{locale}', function (Request $request, string $locale) {
-    abort_unless(in_array($locale, config('localization.supported', ['fr', 'en']), true), 404);
+    abort_unless(in_array($locale, config('localization.supported', ['fr', 'en', 'ar']), true), 404);
 
     $request->session()->put('locale', $locale);
 
-    return redirect()->back();
+    return redirect()->back(fallback: route('home'))->withCookie(cookie()->forever('locale', $locale));
 })->name('locale.switch');
 
 Route::get('/', [CitabicController::class, 'home'])->name('home');
@@ -37,6 +38,10 @@ Route::get('/references', [CitabicController::class, 'references'])->name('refer
 Route::get('/references/{slug}', [CitabicController::class, 'reference'])->name('references.show');
 Route::get('/contact', [CitabicController::class, 'contact'])->name('contact');
 Route::post('/contact-submit', [CitabicController::class, 'submitContact'])->name('contact.submit');
+
+Route::get('/media/stream/{path}', [VideoStreamController::class, 'stream'])
+    ->where('path', '.*')
+    ->name('media.stream');
 
 Route::prefix('admins')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');

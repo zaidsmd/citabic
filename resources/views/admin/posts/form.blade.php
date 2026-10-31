@@ -6,6 +6,7 @@
     $isEdit = isset($post) && $post->exists;
     $postTranslations = is_array($post->translations ?? null) ? $post->translations : [];
     $englishTranslations = is_array($postTranslations['en'] ?? null) ? $postTranslations['en'] : [];
+    $arabicTranslations = is_array($postTranslations['ar'] ?? null) ? $postTranslations['ar'] : [];
     $featuredImageValue = old('featured_image', $post->featured_image ?? '');
     $blocksValue = old('blocks', json_encode($post->blocks ?? []));
     $blocksJson = is_string($blocksValue) ? $blocksValue : json_encode($blocksValue);
@@ -324,6 +325,11 @@
                            {{ __('admin.common.language.en') }}
                         </button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="ar-tab" data-bs-toggle="tab" data-bs-target="#ar-content" type="button" role="tab">
+                           {{ __('admin.common.language.ar') }}
+                        </button>
+                    </li>
                 </ul>
 
                 <div class="tab-content" id="langTabsContent">
@@ -402,6 +408,39 @@
                         </div>
 
                         <div id="blocks-container-en"></div>
+                    </div>
+
+                    <div class="tab-pane fade" id="ar-content" role="tabpanel">
+                        <div class="alert alert-info alert-dismissible fade show mb-3" role="alert">
+                            <i class="ti ti-info-circle me-1"></i>
+                            {{ __('admin.posts.ar_translation_info') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+                        <div class="card mb-3" dir="rtl">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">{{ __('admin.posts.title') }} (AR)</label>
+                                    <input type="text"
+                                           name="ar[title]"
+                                           class="form-control"
+                                           value="{{ old('ar.title', $arabicTranslations['title'] ?? '') }}"
+                                           placeholder="{{ __('admin.posts.title_placeholder') }}"
+                                           dir="rtl">
+                                </div>
+
+                                <div class="mb-0">
+                                    <label class="form-label">{{ __('admin.posts.excerpt') }} (AR)</label>
+                                    <textarea name="ar[excerpt]"
+                                              class="form-control"
+                                              rows="3"
+                                              placeholder="{{ __('admin.posts.excerpt_placeholder') }}"
+                                              dir="rtl">{{ old('ar.excerpt', $arabicTranslations['excerpt'] ?? '') }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="blocks-container-ar" dir="rtl"></div>
                     </div>
                 </div>
             </div>

@@ -37,11 +37,8 @@ class SectionContentController extends Controller
 
     /**
      * Handle image upload and return the stored media path.
-
      *
-
-     * @param Request $request Parameter.
-
+     * @param  Request  $request  Parameter.
      * @param  ImageUploadService  $imageService  Parameter.
      */
     public function uploadImage(Request $request, ImageUploadService $imageService): JsonResponse
@@ -53,27 +50,31 @@ class SectionContentController extends Controller
     }
 
     /**
-     * Handle video upload and return the stored media path.
-
+     * Handle video upload, optimize/compress it, and return streaming and poster assets.
      *
-
-     * @param Request $request Parameter.
-
+     * @param  Request  $request  Parameter.
      * @param  VideoUploadService  $videoService  Parameter.
      */
     public function uploadVideo(Request $request, VideoUploadService $videoService): JsonResponse
     {
         $request->validate(['video' => 'required|file|mimetypes:video/mp4,video/webm,video/ogg|max:102400']);
-        $path = $videoService->store($request->file('video'), 'hero');
+        $result = $videoService->storeWithOptimization($request->file('video'), 'hero');
 
-        return response()->json(['path' => $path, 'url' => Storage::disk('public')->url($path)]);
+        return response()->json([
+            'path' => $result['path'],
+            'url' => $result['stream_url'] ?? $result['url'],
+            'stream_url' => $result['stream_url'],
+            'poster_url' => $result['poster_url'],
+            'webm_url' => $result['webm_url'],
+            'original_size' => $result['original_size'],
+            'compressed_size' => $result['compressed_size'],
+            'reduction_percent' => $result['reduction_percent'],
+        ]);
     }
 
     /**
      * Persist updates to the resource.
-
      *
-
      * @param  Request  $request  Parameter.
      */
     public function update(Request $request): RedirectResponse

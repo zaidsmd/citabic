@@ -8,14 +8,13 @@ use Illuminate\Support\Collection;
 
 class CompanyInfo extends Model
 {
-
     protected $fillable = [
         'key',
         'value',
         'lang',
     ];
 
-    public function getInfo(CompanyInfoKey $key,string $lang = 'fr'): ?string
+    public function getInfo(CompanyInfoKey $key, string $lang = 'fr'): ?string
     {
         return $this->where('key', $key->value)->where('lang', $lang)->first()?->value ?? null;
     }
@@ -40,5 +39,4 @@ class CompanyInfo extends Model
 
         return array_replace($defaults, $stored);
     }
-
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Helpers;
+
 class NumberWrapper
 {
     /**
@@ -9,7 +10,7 @@ class NumberWrapper
      */
     public static function wrapNumbers($text)
     {
-        if (empty($text) || !is_string($text)) {
+        if (empty($text) || ! is_string($text)) {
             return $text;
         }
 
@@ -52,13 +53,13 @@ class NumberWrapper
             // Supports: optional sign, digits, optional compact letter, optional +, optional currency/%, optional unit+superscript
             preg_match(
                 '/^([-+]?(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d+)?)([kKmMbBtT]?\+?(?:%|€|\$|£|¥|₪|₩|₹)?(?:[a-zA-Z]*[²³])?)$'
-                . '|^([€\$£¥₪₩₹]\s*(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d+)?)([kKmMbBtT]?\+?)$/u',
+                .'|^([€\$£¥₪₩₹]\s*(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d+)?)([kKmMbBtT]?\+?)$/u',
                 $number,
                 $parts
             );
 
-            if (!empty($parts)) {
-                if (!empty($parts[1])) {
+            if (! empty($parts)) {
+                if (! empty($parts[1])) {
                     $numericPart = $parts[1];
                     $suffix = $parts[2];
                 } else {
@@ -77,7 +78,7 @@ class NumberWrapper
             if (is_numeric($cleanNumber)) {
                 // Store raw numeric value in span so JS counter can parse it correctly (parseFloat)
                 // The sign is preserved but no locale formatting (spaces/commas) that would break JS parsing
-                return '<span class="counter-number">' . htmlspecialchars($cleanNumber) . '</span>' . htmlspecialchars($suffix);
+                return '<span class="counter-number">'.htmlspecialchars($cleanNumber).'</span>'.htmlspecialchars($suffix);
             }
 
             return $number;
@@ -101,7 +102,7 @@ class NumberWrapper
         }
 
         // Only format plain integers (no compact suffix like k/m/b)
-        if (!preg_match('/[kKmMbBtT]/', $numericPart) && is_numeric($cleanNumber)) {
+        if (! preg_match('/[kKmMbBtT]/', $numericPart) && is_numeric($cleanNumber)) {
             try {
                 $locale = config('app.locale', 'fr');
             } catch (\Throwable $e) {
@@ -113,12 +114,14 @@ class NumberWrapper
                 $fmt->setAttribute(\NumberFormatter::GROUPING_USED, true);
                 $fmt->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 10);
                 $formatted = $fmt->format((float) $cleanNumber);
-                return $sign !== '' ? ($sign === '+' ? '+' . $formatted : $formatted) : $formatted;
+
+                return $sign !== '' ? ($sign === '+' ? '+'.$formatted : $formatted) : $formatted;
             }
 
             // Fallback: use number_format with locale-aware separator
             $formatted = number_format((float) $cleanNumber, strpos($cleanNumber, '.') !== false ? strlen(substr(strrchr($cleanNumber, '.'), 1)) : 0, '.', ',');
-            return $sign !== '' ? ($sign === '+' ? '+' . $formatted : $formatted) : $formatted;
+
+            return $sign !== '' ? ($sign === '+' ? '+'.$formatted : $formatted) : $formatted;
         }
 
         return $numericPart;
@@ -130,7 +133,7 @@ class NumberWrapper
     public static function wrapNumbersInHtml($html)
     {
         // Parse HTML safely
-        $dom = new \DOMDocument();
+        $dom = new \DOMDocument;
         libxml_use_internal_errors(true);
         $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();

@@ -24,36 +24,36 @@ class ProcessController extends Controller
     {
         if ($request->ajax()) {
             $query = CitabicProcess::query();
-            $table = datatables()->of($query);
-            $table->addColumn('actions', function ($row) {
-                $actions = [
-                    [
-                        'type' => 'link',
-                        'classNames' => 'btn-sm btn-light-primary',
-                        'icon' => 'fa fa-pen',
-                        'link' => route('admin.processes.edit', $row->id),
-                        'attributes' => [
-                            'data-bs-toggle' => 'tooltip',
-                            'data-bs-placement' => 'top',
-                            'title' => __('admin.common.edit'),
-                            'aria-label' => __('admin.common.edit'),
-                        ],
-                    ],
-                    [
-                        'type' => 'destroy',
-                        'link' => route('admin.processes.destroy', $row->id),
-                    ],
-                ];
 
-                return view('admin.layouts.data-table-actions', compact('actions'));
-            })->rawColumns(['actions']);
+            $table = datatables()->of($query)
+                ->addColumn('actions', function (CitabicProcess $process): View {
+                    $actions = [
+                        [
+                            'type' => 'link',
+                            'classNames' => 'btn-sm btn-light-primary',
+                            'icon' => 'fa fa-pen',
+                            'link' => route('admin.processes.edit', $process),
+                            'attributes' => [
+                                'data-bs-toggle' => 'tooltip',
+                                'data-bs-placement' => 'top',
+                                'title' => __('admin.common.edit'),
+                                'aria-label' => __('admin.common.edit'),
+                            ],
+                        ],
+                        [
+                            'type' => 'destroy',
+                            'link' => route('admin.processes.destroy', $process),
+                        ],
+                    ];
+
+                    return view('admin.layouts.data-table-actions', compact('actions'));
+                })
+                ->rawColumns(['actions']);
 
             return $table->make(true);
         }
 
-        $processes = CitabicProcess::query()->latest()->get();
-
-        return view('admin.processes.index', compact('processes'));
+        return view('admin.processes.index');
     }
 
     /**
@@ -69,9 +69,7 @@ class ProcessController extends Controller
 
     /**
      * Persist a newly created resource.
-
      *
-
      * @param  Request  $request  Parameter.
      */
     public function store(Request $request): RedirectResponse
@@ -82,10 +80,14 @@ class ProcessController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'en' => 'nullable|array',
+            'ar' => 'nullable|array',
         ]);
 
-        $data['translations'] = ['en' => $data['en'] ?? []];
-        unset($data['en']);
+        $data['translations'] = [
+            'en' => $data['en'] ?? [],
+            'ar' => $data['ar'] ?? [],
+        ];
+        unset($data['en'], $data['ar']);
 
         $profile->processes()->create($data);
 
@@ -94,9 +96,7 @@ class ProcessController extends Controller
 
     /**
      * Show the edit form for the resource.
-
      *
-
      * @param  CitabicProcess  $process  Parameter.
      */
     public function edit(CitabicProcess $process): View
@@ -109,11 +109,8 @@ class ProcessController extends Controller
 
     /**
      * Persist updates to the resource.
-
      *
-
-     * @param Request $request Parameter.
-
+     * @param  Request  $request  Parameter.
      * @param  CitabicProcess  $process  Parameter.
      */
     public function update(Request $request, CitabicProcess $process): RedirectResponse
@@ -122,10 +119,14 @@ class ProcessController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'en' => 'nullable|array',
+            'ar' => 'nullable|array',
         ]);
 
-        $data['translations'] = ['en' => $data['en'] ?? []];
-        unset($data['en']);
+        $translations = $process->translations ?? [];
+        $translations['en'] = $data['en'] ?? [];
+        $translations['ar'] = $data['ar'] ?? [];
+        $data['translations'] = $translations;
+        unset($data['en'], $data['ar']);
 
         $process->update($data);
 
@@ -134,9 +135,7 @@ class ProcessController extends Controller
 
     /**
      * Delete the specified resource.
-
      *
-
      * @param  CitabicProcess  $process  Parameter.
      */
     public function destroy(CitabicProcess $process): RedirectResponse
@@ -152,6 +151,7 @@ class ProcessController extends Controller
             'title' => old('title', $process?->title),
             'description' => old('description', $process?->description),
             'en' => old('en', $process?->translations['en'] ?? []),
+            'ar' => old('ar', $process?->translations['ar'] ?? []),
         ];
     }
 }

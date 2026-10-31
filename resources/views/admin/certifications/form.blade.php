@@ -37,46 +37,62 @@
 
                         <div class="row g-3">
                             <div class="col-12">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <x-admin.section-title
-                                            class="mb-3"
-                                            icon="fa fa-language"
-                                            :title="__('admin.certification.form.tabs.french')"/>
-                                        <x-admin.text-input
-                                            name="name_fr"
-                                            id="certification-name-fr"
-                                            :label="__('admin.certification.form.fields.name_fr')"
-                                            :value="$form['name_fr']"
-                                            :required="true"/>
-                                        <x-admin.textarea
-                                            name="description_fr"
-                                            id="certification-description-fr"
-                                            :label="__('admin.certification.form.fields.description_fr')"
-                                            :value="$form['description_fr']"
-                                            :rows="4"
-                                            :floating="true"
-                                            :required="true"/>
+                                <x-admin.language-tabs id-prefix="certification" class="mb-3"/>
+
+                                <div class="tab-content" id="certificationTabsContent">
+                                    <div class="tab-pane fade show active" id="certification-fr-content" role="tabpanel" aria-labelledby="certification-fr-tab">
+                                        <div class="border rounded p-3">
+                                            <x-admin.text-input
+                                                name="name_fr"
+                                                id="certification-name-fr"
+                                                :label="__('admin.certification.form.fields.name_fr')"
+                                                :value="$form['name_fr']"
+                                                :required="true"/>
+                                            <x-admin.textarea
+                                                name="description_fr"
+                                                id="certification-description-fr"
+                                                :label="__('admin.certification.form.fields.description_fr')"
+                                                :value="$form['description_fr']"
+                                                :rows="4"
+                                                :floating="true"
+                                                :required="true"/>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <x-admin.section-title
-                                            class="mb-3"
-                                            icon="fa fa-language"
-                                            :title="__('admin.certification.form.tabs.english')"/>
-                                        <x-admin.text-input
-                                            name="name_en"
-                                            id="certification-name-en"
-                                            :label="__('admin.certification.form.fields.name_en')"
-                                            :value="$form['name_en']"
-                                            :required="true"/>
-                                        <x-admin.textarea
-                                            name="description_en"
-                                            id="certification-description-en"
-                                            :label="__('admin.certification.form.fields.description_en')"
-                                            :value="$form['description_en']"
-                                            :rows="4"
-                                            :floating="true"
-                                            :required="true"/>
+
+                                    <div class="tab-pane fade" id="certification-en-content" role="tabpanel" aria-labelledby="certification-en-tab">
+                                        <div class="border rounded p-3">
+                                            <x-admin.text-input
+                                                name="name_en"
+                                                id="certification-name-en"
+                                                :label="__('admin.certification.form.fields.name_en')"
+                                                :value="$form['name_en']"
+                                                :required="true"/>
+                                            <x-admin.textarea
+                                                name="description_en"
+                                                id="certification-description-en"
+                                                :label="__('admin.certification.form.fields.description_en')"
+                                                :value="$form['description_en']"
+                                                :rows="4"
+                                                :floating="true"
+                                                :required="true"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="certification-ar-content" role="tabpanel" aria-labelledby="certification-ar-tab">
+                                        <div class="border rounded p-3" dir="rtl">
+                                            <x-admin.text-input
+                                                name="name_ar"
+                                                id="certification-name-ar"
+                                                :label="__('admin.certification.form.fields.name_ar')"
+                                                :value="$form['name_ar'] ?? ''"/>
+                                            <x-admin.textarea
+                                                name="description_ar"
+                                                id="certification-description-ar"
+                                                :label="__('admin.certification.form.fields.description_ar')"
+                                                :value="$form['description_ar'] ?? ''"
+                                                :rows="4"
+                                                :floating="true"/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

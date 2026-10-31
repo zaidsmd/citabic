@@ -134,7 +134,10 @@ class PostController extends Controller
         $validated['author_id'] = auth()->id() ?? 1;
         $validated['featured'] = $request->has('featured');
         $validated['allow_comments'] = $request->has('allow_comments');
-        $validated['translations'] = ['en' => $request->en ?? []];
+        $validated['translations'] = [
+            'en' => $request->en ?? [],
+            'ar' => $request->ar ?? [],
+        ];
         $validated['content'] = $validated['content'] ?? '';
         $validated['blocks'] = $validated['blocks'] ?? [];
         $validated = $this->applyAutoSeoDefaults($validated);
@@ -206,7 +209,10 @@ class PostController extends Controller
 
         $validated['featured'] = $request->has('featured');
         $validated['allow_comments'] = $request->has('allow_comments');
-        $validated['translations'] = ['en' => $request->en ?? []];
+        $validated['translations'] = [
+            'en' => $request->en ?? [],
+            'ar' => $request->ar ?? [],
+        ];
         $validated['content'] = $validated['content'] ?? '';
         $validated['blocks'] = $validated['blocks'] ?? [];
         $validated = $this->applyAutoSeoDefaults($validated, $post);

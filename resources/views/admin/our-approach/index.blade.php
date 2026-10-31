@@ -4,7 +4,7 @@
 
 @php
     $formItems = old('items', $items);
-    $locales   = ['fr' => 'Français', 'en' => 'English'];
+    $locales   = ['fr' => 'Français', 'en' => 'English', 'ar' => 'العربية'];
     $colors    = ['blue', 'teal', 'amber', 'coral', 'indigo'];
 
     $fontAwesomeIcons = [];
@@ -103,6 +103,7 @@
                                                 name="section[translations][{{ $code }}][title]"
                                                 class="form-control @error("section.translations.$code.title") is-invalid @enderror"
                                                 value="{{ old("section.translations.$code.title", $sectionMeta['translations'][$code]['title'] ?? '') }}"
+                                                @if ($code === 'ar') dir="rtl" @endif
                                                 required
                                             >
                                             @error("section.translations.$code.title")

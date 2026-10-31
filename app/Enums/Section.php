@@ -18,7 +18,7 @@ enum Section: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::HERO => __('admin.sections.hero'),
             self::HOME => __('admin.sections.home'),
             self::ABOUT => __('admin.sections.about'),

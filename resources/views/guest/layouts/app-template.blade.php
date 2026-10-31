@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="{{ app()->getLocale() }}" dir="ltr">
+<html class="no-js" lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -10,6 +10,10 @@
     <meta name="robots" content="@yield('meta_robots', 'index,follow')">
     <link rel="canonical" href="@yield('canonical_url', url()->current())">
     <meta property="og:type" content="@yield('og_type', 'article')">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'ar' ? 'ar_MA' : (app()->getLocale() === 'en' ? 'en_US' : 'fr_FR') }}">
+    @foreach (config('localization.supported', ['fr', 'en', 'ar']) as $altLocale)
+        <link rel="alternate" hreflang="{{ $altLocale }}" href="{{ route('locale.switch', $altLocale) }}">
+    @endforeach
     <meta property="og:title" content="@yield('og_title', trim($__env->yieldContent('title', 'CITABIC')))">
     <meta property="og:description" content="@yield('og_description', trim($__env->yieldContent('meta_description', __('site.meta_description'))))">
     <meta property="og:url" content="@yield('og_url', url()->current())">
@@ -23,9 +27,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('guest/assets/img/favicons/favicon-32x32.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300..900&family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('guest/assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset(app()->getLocale() === 'ar' ? 'guest/assets/css/bootstrap.rtl.min.css' : 'guest/assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('guest/assets/css/fontawesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('guest/assets/css/magnific-popup.min.css') }}">
     <link rel="stylesheet" href="{{ asset('guest/assets/css/swiper-bundle.min.css') }}">
@@ -120,6 +124,86 @@
             font-weight: 600;
             letter-spacing: 0.06em;
         }
+
+        /* RTL & Arabic Typography */
+        html[dir="rtl"], [dir="rtl"] body {
+            font-family: 'Cairo', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            text-align: right;
+            direction: rtl;
+        }
+
+        [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6,
+        [dir="rtl"] .sec-title, [dir="rtl"] .hero-title, [dir="rtl"] .box-title, [dir="rtl"] .title-area h2 {
+            font-family: 'Cairo', 'Outfit', sans-serif;
+            letter-spacing: normal;
+        }
+
+        [dir="rtl"] .lang-switcher-link {
+            font-family: 'Cairo', sans-serif;
+            letter-spacing: normal;
+        }
+
+        [dir="rtl"] .mobile-lang-switcher .lang-switcher-link small {
+            margin-left: 0;
+            margin-right: 6px;
+        }
+
+        /* Mirror directional indicators in RTL */
+        [dir="rtl"] .th-btn-icon i,
+        [dir="rtl"] .th-btn i.fa-arrow-right,
+        [dir="rtl"] .th-btn i.fa-angle-right,
+        [dir="rtl"] .th-btn i.fa-chevron-right,
+        [dir="rtl"] .th-btn i.fa-arrow-left,
+        [dir="rtl"] .th-btn i.fa-angle-left,
+        [dir="rtl"] .slider-drag-cursor i,
+        [dir="rtl"] .breadcumb-menu li:after,
+        [dir="rtl"] .pagination li a i.fa-angle-right {
+            transform: scaleX(-1);
+            display: inline-block;
+        }
+
+        [dir="rtl"] .th-btn.th-btn-icon {
+            flex-direction: row-reverse;
+        }
+
+        [dir="rtl"] .main-menu ul li {
+            margin: 0 0 0 34px;
+        }
+
+        [dir="rtl"] .header-button .lang-switcher {
+            margin-right: 0 !important;
+            margin-left: 1rem !important;
+        }
+
+        [dir="rtl"] .footer-widget .widget_title:after {
+            right: 0;
+            left: auto;
+        }
+
+        [dir="rtl"] .th-mobile-menu ul li {
+            text-align: right;
+        }
+
+        [dir="rtl"] .counter-card .media-body,
+        [dir="rtl"] .process-card2 .box-content,
+        [dir="rtl"] .contact-feature .media-body,
+        [dir="rtl"] .about-feature .media-body {
+            text-align: right;
+        }
+
+        [dir="rtl"] .breadcumb-menu {
+            direction: rtl;
+        }
+
+        [dir="rtl"] .breadcumb-menu li {
+            margin-right: 0;
+            margin-left: 15px;
+        }
+
+        [dir="rtl"] .breadcumb-menu li:after {
+            right: auto;
+            left: -10px;
+        }
     </style>
     @yield('structured_data')
     @stack('styles')
@@ -145,22 +229,7 @@
                     <li><a href="{{ route('blog.index') }}">{{ __('site.nav.blog') }}</a></li>
                     <li><a href="{{ route('contact') }}">{{ __('site.nav.contact') }}</a></li>
                 </ul>
-                <div class="mobile-lang-switcher">
-                    <div class="lang-switcher">
-                        <div class="lang-switcher-track">
-                            <a href="{{ route('locale.switch', 'fr') }}"
-                               class="lang-switcher-link{{ $currentLocale === 'fr' ? ' is-active' : '' }}"
-                               @if ($currentLocale === 'fr') aria-current="true" @endif>
-                                {{ __('site.language.fr') }} <small>{{ __('site.language.fr_name') }}</small>
-                            </a>
-                            <a href="{{ route('locale.switch', 'en') }}"
-                               class="lang-switcher-link{{ $currentLocale === 'en' ? ' is-active' : '' }}"
-                               @if ($currentLocale === 'en') aria-current="true" @endif>
-                                {{ __('site.language.en') }} <small>{{ __('site.language.en_name') }}</small>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                @include('guest.partials.language-switcher', ['mobile' => true])
             </div>
         </div>
     </div>
@@ -197,20 +266,7 @@
                         </div>
                         <div class="col-auto d-none d-xl-block">
                             <div class="header-button">
-                                <div class="lang-switcher me-3">
-                                    <div class="lang-switcher-track">
-                                        <a href="{{ route('locale.switch', 'fr') }}"
-                                           class="lang-switcher-link{{ $currentLocale === 'fr' ? ' is-active' : '' }}"
-                                           @if ($currentLocale === 'fr') aria-current="true" @endif>
-                                            {{ __('site.language.fr') }} <small>{{ __('site.language.fr_name') }}</small>
-                                        </a>
-                                        <a href="{{ route('locale.switch', 'en') }}"
-                                           class="lang-switcher-link{{ $currentLocale === 'en' ? ' is-active' : '' }}"
-                                           @if ($currentLocale === 'en') aria-current="true" @endif>
-                                            {{ __('site.language.en') }} <small>{{ __('site.language.en_name') }}</small>
-                                        </a>
-                                    </div>
-                                </div>
+                                @include('guest.partials.language-switcher', ['mobile' => false])
                                 <a href="{{ route('contact') }}" class="th-btn style4 th-btn-icon">{{ __('site.actions.request_meeting') }}</a>
                             </div>
                         </div>

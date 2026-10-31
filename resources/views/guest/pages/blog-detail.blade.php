@@ -47,11 +47,11 @@
             ? \Carbon\Carbon::parse($post['published_at'])
             : (! empty($post['created_at'] ?? null) ? \Carbon\Carbon::parse($post['created_at']) : null);
 
-        $resolveBlockText = function (array $block, string $field = 'content') use ($isEnglish): string {
-            $localizedField = $field . '_en';
+        $resolveBlockText = function (array $block, string $field = 'content') use ($locale): string {
+            $localizedField = $field . '_' . $locale;
 
-            if ($isEnglish) {
-                $value = $block[$localizedField] ?? $block[$field] ?? '';
+            if ($locale !== 'fr' && ! empty($block[$localizedField])) {
+                $value = $block[$localizedField];
             } else {
                 $value = $block[$field] ?? '';
             }
@@ -59,9 +59,11 @@
             return is_string($value) ? $value : '';
         };
 
-        $resolveListItems = function (array $block) use ($isEnglish): array {
-            if ($isEnglish && ! empty($block['items_en']) && is_array($block['items_en'])) {
-                return array_values(array_filter($block['items_en'], fn ($item) => is_string($item) && trim($item) !== ''));
+        $resolveListItems = function (array $block) use ($locale): array {
+            $localizedField = 'items_' . $locale;
+
+            if ($locale !== 'fr' && ! empty($block[$localizedField]) && is_array($block[$localizedField])) {
+                return array_values(array_filter($block[$localizedField], fn ($item) => is_string($item) && trim($item) !== ''));
             }
 
             if (! empty($block['items']) && is_array($block['items'])) {

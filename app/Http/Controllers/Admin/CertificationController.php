@@ -115,6 +115,7 @@ class CertificationController extends Controller
         $pairSlug = $certification->slug;
         $fr = Certification::query()->where('slug', $pairSlug)->where('language', 'fr')->first() ?? $certification;
         $en = Certification::query()->where('slug', $pairSlug)->where('language', 'en')->first();
+        $ar = Certification::query()->where('slug', $pairSlug)->where('language', 'ar')->first();
 
         return view('admin.certifications.form', [
             'mode' => 'edit',
@@ -124,6 +125,8 @@ class CertificationController extends Controller
                 'description_fr' => old('description_fr', $fr->description),
                 'name_en' => old('name_en', $en?->name ?? ''),
                 'description_en' => old('description_en', $en?->description ?? ''),
+                'name_ar' => old('name_ar', $ar?->name ?? ''),
+                'description_ar' => old('description_ar', $ar?->description ?? ''),
                 'slug' => old('slug', $fr->slug),
                 'image_url' => $this->imageUrl($fr->image),
             ],
@@ -150,6 +153,8 @@ class CertificationController extends Controller
             'description_fr' => ['required', 'string', 'max:1000'],
             'name_en' => ['required', 'string', 'max:255'],
             'description_en' => ['required', 'string', 'max:1000'],
+            'name_ar' => ['nullable', 'string', 'max:255'],
+            'description_ar' => ['nullable', 'string', 'max:1000'],
             'image' => ['required', 'image', 'max:5120'],
         ]);
 
@@ -170,6 +175,15 @@ class CertificationController extends Controller
             'language' => 'en',
             'image' => $imagePath,
         ]);
+        if (! empty($data['name_ar'])) {
+            Certification::create([
+                'name' => $data['name_ar'],
+                'slug' => $slug,
+                'description' => $data['description_ar'] ?? '',
+                'language' => 'ar',
+                'image' => $imagePath,
+            ]);
+        }
 
         return redirect()->route('admin.certifications.index')->with('status', 'Certification created successfully.');
     }
@@ -196,6 +210,8 @@ class CertificationController extends Controller
             'description_fr' => ['required', 'string', 'max:1000'],
             'name_en' => ['required', 'string', 'max:255'],
             'description_en' => ['required', 'string', 'max:1000'],
+            'name_ar' => ['nullable', 'string', 'max:255'],
+            'description_ar' => ['nullable', 'string', 'max:1000'],
             'image' => ['nullable', 'image', 'max:5120'],
         ]);
 
@@ -206,6 +222,13 @@ class CertificationController extends Controller
             $en = new Certification([
                 'slug' => $pairSlug,
                 'language' => 'en',
+            ]);
+        }
+        $ar = Certification::query()->where('slug', $pairSlug)->where('language', 'ar')->first();
+        if (! $ar && ! empty($data['name_ar'])) {
+            $ar = new Certification([
+                'slug' => $pairSlug,
+                'language' => 'ar',
             ]);
         }
 
@@ -235,6 +258,16 @@ class CertificationController extends Controller
             'language' => 'en',
             'image' => $imagePath,
         ])->save();
+
+        if ($ar) {
+            $ar->fill([
+                'name' => $data['name_ar'] ?? '',
+                'slug' => $newSlug,
+                'description' => $data['description_ar'] ?? '',
+                'language' => 'ar',
+                'image' => $imagePath,
+            ])->save();
+        }
 
         return redirect()->route('admin.certifications.index')->with('status', 'Certification updated successfully.');
     }

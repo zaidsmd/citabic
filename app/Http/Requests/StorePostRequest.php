@@ -39,6 +39,9 @@ class StorePostRequest extends FormRequest
             'en' => ['nullable', 'array'],
             'en.title' => ['nullable', 'string', 'max:255'],
             'en.excerpt' => ['nullable', 'string'],
+            'ar' => ['nullable', 'array'],
+            'ar.title' => ['nullable', 'string', 'max:255'],
+            'ar.excerpt' => ['nullable', 'string'],
         ];
     }
 
