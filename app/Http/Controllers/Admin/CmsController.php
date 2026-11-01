@@ -15,6 +15,7 @@ use App\Models\Post;
 use App\Models\PostComment;
 use App\Models\Tag;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -168,34 +169,55 @@ class CmsController extends Controller
                     return '<img src="'.e($url).'" alt="'.e($row->title).'" class="rounded" style="height:50px; width:50px; object-fit:cover;">';
                 })
                 ->addColumn('actions', function ($row) {
+                    $refUrl = route('references.show', $row->slug);
+                    $encodedUrl = urlencode($refUrl);
+                    $fbShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' . $encodedUrl;
+                    $liShareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' . $encodedUrl;
+                    $refTitle = e($row->title);
+                    $refClient = e($row->client ?? '');
+                    $refSummary = e($row->summary ?? '');
+
+                    $showButton = sprintf(
+                        '<a href="%s" class="btn btn-sm btn-light-secondary me-1" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.common.view').'"><i class="fa fa-eye"></i></a>',
+                        $refUrl
+                    );
+
+                    $facebookButton = sprintf(
+                        '<a href="%s" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-light-primary me-1 btn-social-share" data-platform="facebook" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.references.share_facebook').'" aria-label="'.__('admin.references.share_facebook').'"><i class="fab fa-facebook-f text-primary"></i></a>',
+                        $fbShareUrl
+                    );
+
+                    $linkedinButton = sprintf(
+                        '<a href="%s" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-light-info me-1 btn-social-share" data-platform="linkedin" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.references.share_linkedin').'" aria-label="'.__('admin.references.share_linkedin').'"><i class="fab fa-linkedin-in text-info"></i></a>',
+                        $liShareUrl
+                    );
+
+                    $cleanExcerpt = $row->getCleanExcerpt();
+                    $shareCaption = $row->getShareCaption();
+
+                    $shareModalButton = sprintf(
+                        '<button type="button" class="btn btn-sm btn-light-warning me-1 btn-open-share-modal" data-id="%s" data-url="%s" data-title="%s" data-client="%s" data-summary="%s" data-caption="%s" data-fb="%s" data-li="%s" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.references.share_modal_title').'" aria-label="'.__('admin.references.share_modal_title').'"><i class="ti ti-share text-warning"></i></button>',
+                        $row->id,
+                        $refUrl,
+                        $refTitle,
+                        $refClient,
+                        e($cleanExcerpt),
+                        e($shareCaption),
+                        $fbShareUrl,
+                        $liShareUrl
+                    );
+
                     $editButton = sprintf(
-                        '<a href="%s"
-   class="btn btn-sm btn-light-primary me-1"
-   data-bs-toggle="tooltip"
-   data-bs-placement="top"
-   title="'.__('admin.common.edit').'"
-   aria-label="'.__('admin.common.edit').'">
-    <i class="fa fa-pen"></i>
-</a>',
+                        '<a href="%s" class="btn btn-sm btn-light-primary me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.common.edit').'" aria-label="'.__('admin.common.edit').'"><i class="fa fa-pen"></i></a>',
                         route('admin.references.edit', $row->id)
                     );
 
                     $deleteForm = sprintf(
-                        '<button data-table-action="delete"  data-href="%s"
-   class="btn btn-sm btn-light-danger"
-   data-bs-toggle="tooltip"
-   data-bs-placement="top"
-   title="'.__('admin.common.delete').'"
-   aria-label="'.__('admin.common.delete').'">
-    <i class="fa fa-trash-alt"></i>
-</button>',
+                        '<button data-table-action="delete" data-href="%s" class="btn btn-sm btn-light-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.common.delete').'" aria-label="'.__('admin.common.delete').'"><i class="fa fa-trash-alt"></i></button>',
                         route('admin.references.destroy', $row->id)
                     );
-                    $showButton = sprintf('<a href="%s" class="btn btn-sm btn-light-secondary me-1" target="_blank">
-<i class="fa fa-eye"></i>
-</a>', route('references.show', $row->slug));
 
-                    return $showButton.$editButton.$deleteForm;
+                    return $showButton.$shareModalButton.$facebookButton.$linkedinButton.$editButton.$deleteForm;
                 })
                 ->rawColumns(['image_preview', 'actions']);
 
@@ -210,6 +232,25 @@ class CmsController extends Controller
     /**
      * Create reference.
      */
+    /**
+     * Get social share data for a reference.
+     */
+    public function referenceShareData(CitabicReference $reference): JsonResponse
+    {
+        $url = route('references.show', $reference->slug);
+
+        return response()->json([
+            'id' => $reference->id,
+            'title' => $reference->title,
+            'client' => $reference->client,
+            'url' => $url,
+            'excerpt' => $reference->getCleanExcerpt(),
+            'caption' => $reference->getShareCaption(),
+            'facebook_url' => 'https://www.facebook.com/sharer/sharer.php?u=' . urlencode($url),
+            'linkedin_url' => 'https://www.linkedin.com/sharing/share-offsite/?url=' . urlencode($url),
+        ]);
+    }
+
     public function createReference(): View
     {
         return view('admin.references.reference-form', [

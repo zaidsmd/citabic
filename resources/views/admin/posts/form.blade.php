@@ -587,6 +587,50 @@
                     </div>
                 </div>
 
+                @if($isEdit && !empty($post))
+                    <div class="card mb-3 border-0 shadow-sm" style="background: #fdfdfe; border: 1px solid rgba(70, 128, 255, 0.2) !important;">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                            <h6 class="mb-0 fw-bold text-primary">
+                                <i class="ti ti-share me-1"></i>{{ __("admin.posts.share_social") }}
+                            </h6>
+                            <span class="badge bg-light-primary text-primary" style="font-size: 10px;">{{ __("admin.posts.publish_action") }}</span>
+                        </div>
+                        <div class="card-body p-3">
+                            @php
+                                $postShareUrl = route("blog.show", $post->slug);
+                                $postFbUrl = "https://www.facebook.com/sharer/sharer.php?u=" . urlencode($postShareUrl);
+                                $postLiUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" . urlencode($postShareUrl);
+                                $postShareCaption = $post instanceof \App\Models\Post
+                                    ? $post->getShareCaption()
+                                    : "Découvrez notre nouvel article : " . ($post["title"] ?? "") . "\n\n👉 " . $postShareUrl . "\n\n#CITABIC #Blog #Architecture #GénieCivil #Construction #Maroc";
+                            @endphp
+
+                            <p class="text-muted small mb-2" style="font-size: 12px;">
+                                {{ __("admin.posts.share_card_description") }}
+                            </p>
+
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="form-label mb-0 small text-secondary fw-semibold">{{ __("admin.posts.share_caption") }}</label>
+                                    <button type="button" class="btn btn-sm btn-link text-primary p-0 text-decoration-none" id="btnCopyEditCaption" style="font-size: 11px;">
+                                        <i class="ti ti-copy me-1"></i><span id="copyEditCaptionText">{{ __("admin.posts.copy_caption") }}</span>
+                                    </button>
+                                </div>
+                                <textarea class="form-control form-control-sm bg-light" id="editPageShareCaption" rows="3" readonly style="font-size: 12px;">{{ $postShareCaption }}</textarea>
+                            </div>
+
+                            <div class="d-grid gap-2 pt-1">
+                                <a href="{{ $postFbUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm text-white py-1 d-flex align-items-center justify-content-center btn-social-form-popup" data-platform="facebook" style="background-color: #1877F2; border-color: #1877F2;">
+                                    <i class="fab fa-facebook-f me-2"></i> {{ __("admin.posts.share_facebook") }}
+                                </a>
+                                <a href="{{ $postLiUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm text-white py-1 d-flex align-items-center justify-content-center btn-social-form-popup" data-platform="linkedin" style="background-color: #0A66C2; border-color: #0A66C2;">
+                                    <i class="fab fa-linkedin-in me-2"></i> {{ __("admin.posts.share_linkedin") }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Live Preview -->
                 <div class="preview-panel mb-3" id="preview-panel">
                     <div class="preview-header">
@@ -671,4 +715,30 @@
     </script>
     <script src="/build/js/post-builder.js"></script>
     <script src="/build/js/post-form-handler.js"></script>
+    <script>
+        $(document).on("click", ".btn-social-form-popup", function(e) {
+            e.preventDefault();
+            const url = $(this).attr("href");
+            if (!url || url === "#") return;
+            const w = 600, h = 650;
+            const left = (window.innerWidth / 2) - (w / 2) + window.screenLeft;
+            const top = (window.innerHeight / 2) - (h / 2) + window.screenTop;
+            const popup = window.open(url, $(this).data("platform") || "SocialShare", `scrollbars=yes,width=${w},height=${h},top=${top},left=${left}`);
+            if (popup && window.focus) {
+                popup.focus();
+            }
+        });
+
+        $(document).on("click", "#btnCopyEditCaption", function() {
+            const text = $("#editPageShareCaption").val();
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const $label = $("#copyEditCaptionText");
+                    const original = $label.text();
+                    $label.text("✓ " + (@json(__("admin.posts.copied")) || "Copié !"));
+                    setTimeout(() => $label.text(original), 2500);
+                });
+            }
+        });
+    </script>
 @endpush

@@ -108,4 +108,31 @@ class Post extends Model
 
         return (int) $minutes;
     }
+
+    /**
+     * Get a plain-text excerpt with all HTML tags and HTML entities stripped.
+     */
+    public function getCleanExcerpt(int $limit = 250): string
+    {
+        $raw = !empty($this->excerpt) ? $this->excerpt : (!empty($this->meta_description) ? $this->meta_description : ($this->content ?? ""));
+        $clean = strip_tags((string) $raw);
+        $clean = html_entity_decode($clean, ENT_QUOTES | ENT_HTML5, "UTF-8");
+        $clean = str_replace(["\xc2\xa0", "&nbsp;"], " ", $clean);
+        $clean = trim((string) preg_replace("/\s+/", " ", $clean));
+
+        return Str::limit($clean, $limit);
+    }
+
+    /**
+     * Build the social share caption with clean plain text.
+     */
+    public function getShareCaption(): string
+    {
+        $url = route("blog.show", $this->slug);
+        $title = trim((string) ($this->title ?? ""));
+        $excerpt = $this->getCleanExcerpt();
+        $excerptText = $excerpt !== "" ? "\n\n" . $excerpt : "";
+
+        return "Découvrez notre nouvel article : {$title}.{$excerptText}\n\n👉 {$url}\n\n#CITABIC #Blog #Architecture #GénieCivil #Construction #Maroc";
+    }
 }

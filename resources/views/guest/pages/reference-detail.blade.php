@@ -1,6 +1,23 @@
 @extends('guest.layouts.app-template')
 
-@section('title', 'CITABIC | ' . $reference['title'])
+@php
+    $blocks = $reference['blocks'] ?? [];
+    $coverBlock = array_find($blocks, fn($item) => ($item['type'] ?? '') === 'coverImage');
+    $heroBlock = array_find($blocks, fn($item) => ($item['type'] ?? '') === 'heroImage');
+    $rawCover = $coverBlock['content'] ?? ($heroBlock['content'] ?? ($reference['image'] ?? null));
+    $ogImage = $reference['image_url'] ?? ($rawCover ? (str_starts_with($rawCover, 'http') ? $rawCover : asset($rawCover)) : '');
+    $rawExcerpt = !empty($reference['summary']) ? $reference['summary'] : ($reference['description'] ?? '');
+    $refExcerpt = \Illuminate\Support\Str::limit(trim((string) preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string) $rawExcerpt), ENT_QUOTES | ENT_HTML5, 'UTF-8'))), 180);
+@endphp
+
+@section('title', 'CITABIC | ' . ($reference['title'] ?? ''))
+@section('meta_description', $refExcerpt)
+@section('og_title', ($reference['title'] ?? 'CITABIC') . ' | CITABIC')
+@section('og_description', $refExcerpt)
+@section('og_url', route('references.show', $reference['slug']))
+@if(!empty($ogImage))
+@section('og_image', $ogImage)
+@endif
 
 @push('styles')
 <style>
@@ -47,7 +64,7 @@
 
 @section('content')
     <div class="breadcumb-wrapper"
-         data-bg-src="{{ asset(array_find($reference['blocks'],fn($item)=>$item['type'] === 'coverImage')['content']) }}">
+         data-bg-src="{{ asset($rawCover ?: 'guest/assets/img/bg/breadcumb-bg.jpg') }}">
         <div class="breadcumb-overlay" data-bg-src="{{ asset('guest/assets/img/bg/breadcumb-bg-overlay.png') }}"></div>
         <div class="container">
             <div class="breadcumb-content">

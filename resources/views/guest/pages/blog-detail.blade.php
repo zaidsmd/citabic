@@ -1,18 +1,23 @@
 @extends('guest.layouts.app-template')
 
+@php
+    $rawPostDesc = ($post['og_description'] ?? null) ?: (($post['meta_description'] ?? null) ?: ($post['excerpt'] ?? ($post['content'] ?? '')));
+    $cleanPostDesc = \Illuminate\Support\Str::limit(trim((string) preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string) $rawPostDesc), ENT_QUOTES | ENT_HTML5, 'UTF-8'))), 200);
+@endphp
+
 @section('title', 'CITABIC | ' . (($post['meta_title'] ?? null) ?: $post['title']))
-@section('meta_description', (($post['meta_description'] ?? null) ?: ($post['excerpt'] ?? __('site.meta_description'))))
+@section('meta_description', $cleanPostDesc ?: __('site.meta_description'))
 @section('meta_keywords', $post['meta_keywords'] ?? '')
 @section('meta_robots', (($post['robots_index'] ?? true) ? 'index' : 'noindex') . ',' . (($post['robots_follow'] ?? true) ? 'follow' : 'nofollow'))
 @section('canonical_url', (($post['canonical_url'] ?? null) ?: route('blog.show', $post['slug'])))
 @section('og_type', 'article')
 @section('og_title', (($post['og_title'] ?? null) ?: (($post['meta_title'] ?? null) ?: $post['title'])))
-@section('og_description', (($post['og_description'] ?? null) ?: (($post['meta_description'] ?? null) ?: ($post['excerpt'] ?? ''))))
+@section('og_description', $cleanPostDesc)
 @section('og_url', route('blog.show', $post['slug']))
 @section('og_image', (($post['og_image'] ?? null) ?: ($post['image_url'] ?? '')))
 @section('twitter_card', (($post['twitter_card'] ?? null) ?: 'summary_large_image'))
 @section('twitter_title', (($post['twitter_title'] ?? null) ?: (($post['og_title'] ?? null) ?: (($post['meta_title'] ?? null) ?: $post['title']))))
-@section('twitter_description', (($post['twitter_description'] ?? null) ?: (($post['og_description'] ?? null) ?: (($post['meta_description'] ?? null) ?: ($post['excerpt'] ?? '')))))
+@section('twitter_description', $cleanPostDesc)
 @section('twitter_image', (($post['twitter_image'] ?? null) ?: (($post['og_image'] ?? null) ?: ($post['image_url'] ?? ''))))
 
 @section('structured_data')

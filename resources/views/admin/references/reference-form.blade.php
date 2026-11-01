@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 
-@php($isEdit = isset($reference))
+<?php $isEdit = isset($reference); ?>
 
 @section('title', $isEdit ? __('admin.references.edit_title') : __('admin.references.create_title'))
 
@@ -340,6 +340,50 @@
                     </div>
                 </div>
 
+                                @if($isEdit && !empty($reference))
+                    <div class="card mb-3 border-0 shadow-sm" style="background: #fdfdfe; border: 1px solid rgba(70, 128, 255, 0.2) !important;">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                            <h6 class="mb-0 fw-bold text-primary">
+                                <i class="ti ti-share me-1"></i>{{ __("admin.references.share_social") }}
+                            </h6>
+                            <span class="badge bg-light-primary text-primary" style="font-size: 10px;">{{ __("admin.references.publish_action") }}</span>
+                        </div>
+                        <div class="card-body p-3">
+                            @php
+                                $refShareUrl = route("references.show", $reference->slug);
+                                $refFbUrl = "https://www.facebook.com/sharer/sharer.php?u=" . urlencode($refShareUrl);
+                                $refLiUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" . urlencode($refShareUrl);
+                                $refShareCaption = $reference instanceof \App\Models\CitabicReference
+                                    ? $reference->getShareCaption()
+                                    : "Découvrez notre réalisation : " . ($reference["title"] ?? "") . "\n\n👉 " . $refShareUrl . "\n\n#CITABIC #Architecture #GénieCivil #Construction #Maroc";
+                            @endphp
+
+                            <p class="text-muted small mb-2" style="font-size: 12px;">
+                                {{ __("admin.references.share_card_description") }}
+                            </p>
+
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="form-label mb-0 small text-secondary fw-semibold">{{ __("admin.references.share_caption") }}</label>
+                                    <button type="button" class="btn btn-sm btn-link text-primary p-0 text-decoration-none" id="btnCopyEditCaption" style="font-size: 11px;">
+                                        <i class="ti ti-copy me-1"></i><span id="copyEditCaptionText">{{ __("admin.references.copy_caption") }}</span>
+                                    </button>
+                                </div>
+                                <textarea class="form-control form-control-sm bg-light" id="editPageShareCaption" rows="3" readonly style="font-size: 12px;">{{ $refShareCaption }}</textarea>
+                            </div>
+
+                            <div class="d-grid gap-2 pt-1">
+                                <a href="{{ $refFbUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm text-white py-1 d-flex align-items-center justify-content-center btn-social-form-popup" data-platform="facebook" style="background-color: #1877F2; border-color: #1877F2;">
+                                    <i class="fab fa-facebook-f me-2"></i> {{ __("admin.references.share_facebook") }}
+                                </a>
+                                <a href="{{ $refLiUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm text-white py-1 d-flex align-items-center justify-content-center btn-social-form-popup" data-platform="linkedin" style="background-color: #0A66C2; border-color: #0A66C2;">
+                                    <i class="fab fa-linkedin-in me-2"></i> {{ __("admin.references.share_linkedin") }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="preview-panel mb-3" id="preview-panel">
                     <div class="preview-header">
                         <span><i class="ti ti-eye me-1"></i>{{ __('admin.references.live_preview') }}</span>
@@ -422,4 +466,30 @@
         };
     </script>
     <script src="/build/js/reference-form.js"></script>
+    <script>
+        $(document).on("click", ".btn-social-form-popup", function(e) {
+            e.preventDefault();
+            const url = $(this).attr("href");
+            if (!url || url === "#") return;
+            const w = 600, h = 650;
+            const left = (window.innerWidth / 2) - (w / 2) + window.screenLeft;
+            const top = (window.innerHeight / 2) - (h / 2) + window.screenTop;
+            const popup = window.open(url, $(this).data("platform") || "SocialShare", `scrollbars=yes,width=${w},height=${h},top=${top},left=${left}`);
+            if (popup && window.focus) {
+                popup.focus();
+            }
+        });
+
+        $(document).on("click", "#btnCopyEditCaption", function() {
+            const text = $("#editPageShareCaption").val();
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const $label = $("#copyEditCaptionText");
+                    const original = $label.text();
+                    $label.text("✓ " + (@json(__("admin.references.copied")) || "Copié !"));
+                    setTimeout(() => $label.text(original), 2500);
+                });
+            }
+        });
+    </script>
 @endpush

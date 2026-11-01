@@ -57,6 +57,7 @@ Route::prefix('admins')->name('admin.')->middleware(['admin.auth', 'guest.cache.
         Route::get('/references', [CmsController::class, 'references'])->name('references.index');
         Route::get('/references/create', [CmsController::class, 'createReference'])->name('references.create');
         Route::post('/references', [CmsController::class, 'storeReference'])->name('references.store');
+        Route::get('/references/{reference}/share-data', [CmsController::class, 'referenceShareData'])->name('references.share-data');
         Route::get('/references/{reference}/edit', [CmsController::class, 'editReference'])->name('references.edit');
         Route::put('/references/{reference}', [CmsController::class, 'updateReference'])->name('references.update');
         Route::delete('/references/{reference}', [CmsController::class, 'destroyReference'])->name('references.destroy');
@@ -111,6 +112,7 @@ Route::prefix('admins')->name('admin.')->middleware(['admin.auth', 'guest.cache.
         Route::resource('categories', CategoryController::class)->except(['show']);
         Route::resource('tags', TagController::class)->except(['show']);
         Route::resource('posts', PostController::class);
+        Route::get('posts/{post}/share-data', [PostController::class, 'postShareData'])->name('posts.share-data');
         Route::patch('posts/{post}/publish', [PostController::class, 'publish'])->name('posts.publish');
         Route::patch('posts/{post}/unpublish', [PostController::class, 'unpublish'])->name('posts.unpublish');
         Route::post('posts/translate-fr-en', [PostController::class, 'translateFrToEn'])->name('posts.translate-fr-en');

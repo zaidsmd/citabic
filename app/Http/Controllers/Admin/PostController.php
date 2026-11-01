@@ -65,8 +65,41 @@ class PostController extends Controller
                     return $post->published_at ? $post->published_at->format('d M Y H:i') : '-';
                 })
                 ->addColumn('actions', function (Post $post): string {
+                    $postUrl = route('blog.show', $post->slug);
+                    $encodedUrl = urlencode($postUrl);
+                    $fbShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' . $encodedUrl;
+                    $liShareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' . $encodedUrl;
+                    $cleanExcerpt = $post->getCleanExcerpt();
+                    $shareCaption = $post->getShareCaption();
+
+                    $showButton = sprintf(
+                        '<a href="%s" class="btn btn-sm btn-light-secondary me-1" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.common.view').'"><i class="fa fa-eye"></i></a>',
+                        $postUrl
+                    );
+
+                    $shareModalButton = sprintf(
+                        '<button type="button" class="btn btn-sm btn-light-warning me-1 btn-open-post-share-modal" data-id="%s" data-url="%s" data-title="%s" data-summary="%s" data-caption="%s" data-fb="%s" data-li="%s" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.posts.share_modal_title').'" aria-label="'.__('admin.posts.share_modal_title').'"><i class="ti ti-share text-warning"></i></button>',
+                        $post->id,
+                        $postUrl,
+                        e($post->title),
+                        e($cleanExcerpt),
+                        e($shareCaption),
+                        $fbShareUrl,
+                        $liShareUrl
+                    );
+
+                    $facebookButton = sprintf(
+                        '<a href="%s" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-light-primary me-1 btn-social-share" data-platform="facebook" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.posts.share_facebook').'" aria-label="'.__('admin.posts.share_facebook').'"><i class="fab fa-facebook-f text-primary"></i></a>',
+                        $fbShareUrl
+                    );
+
+                    $linkedinButton = sprintf(
+                        '<a href="%s" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-light-info me-1 btn-social-share" data-platform="linkedin" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.posts.share_linkedin').'" aria-label="'.__('admin.posts.share_linkedin').'"><i class="fab fa-linkedin-in text-info"></i></a>',
+                        $liShareUrl
+                    );
+
                     $editButton = sprintf(
-                        '<a href="%s" class="btn btn-sm btn-light-primary me-1"><i class="fa fa-pen" ></i></a>',
+                        '<a href="%s" class="btn btn-sm btn-light-primary me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="'.__('admin.common.edit').'" aria-label="'.__('admin.common.edit').'"><i class="fa fa-pen"></i></a>',
                         route('admin.posts.edit', $post),
                     );
 
@@ -92,7 +125,7 @@ class PostController extends Controller
                         e(__('admin.common.delete'))
                     );
 
-                    return $toggleButton.$editButton.$deleteButton;
+                    return $showButton.$shareModalButton.$facebookButton.$linkedinButton.$toggleButton.$editButton.$deleteButton;
                 })
                 ->rawColumns(['image_preview', 'status_badge', 'categories_badges', 'actions']);
 
@@ -285,6 +318,25 @@ class PostController extends Controller
             ->route('admin.posts.index')
             ->with('success', __('admin.posts.messages.unpublished'));
     }
+
+    /**
+     * Get social share data for a blog post.
+     */
+    public function postShareData(Post $post): JsonResponse
+    {
+        $url = route('blog.show', $post->slug);
+
+        return response()->json([
+            'id' => $post->id,
+            'title' => $post->title,
+            'url' => $url,
+            'excerpt' => $post->getCleanExcerpt(),
+            'caption' => $post->getShareCaption(),
+            'facebook_url' => 'https://www.facebook.com/sharer/sharer.php?u=' . urlencode($url),
+            'linkedin_url' => 'https://www.linkedin.com/sharing/share-offsite/?url=' . urlencode($url),
+        ]);
+    }
+
 
     /**
      * Upload featured image.
