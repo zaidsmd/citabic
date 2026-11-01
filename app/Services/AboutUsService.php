@@ -58,14 +58,14 @@ class AboutUsService
                 ContentKey::WHY_US_CARDS->value,
             ],
         ],
-        [
-            'title_key' => 'admin.pages.about.sections.organisation',
-            'icon' => 'fa fa-sitemap',
-            'fields' => [
-                ContentKey::ORGANIGRAME_TITLE->value,
-                ContentKey::CARTOGRAPHIE_TITLE->value,
-            ],
-        ],
+//        [
+//            'title_key' => 'admin.pages.about.sections.organisation',
+//            'icon' => 'fa fa-sitemap',
+//            'fields' => [
+//                ContentKey::ORGANIGRAME_TITLE->value,
+//                ContentKey::CARTOGRAPHIE_TITLE->value,
+//            ],
+//        ],
     ];
 
     protected array $imageSectionsConfig = [
@@ -77,14 +77,14 @@ class AboutUsService
                 ContentKey::SECTION_IMAGE->value,
             ],
         ],
-        [
-            'title_key' => 'admin.pages.about.sections.organization_images',
-            'icon' => 'fa fa-diagram-project',
-            'fields' => [
-                ContentKey::ORGANIGRAME->value,
-                ContentKey::CARTOGRAPHIE->value,
-            ],
-        ],
+//        [
+//            'title_key' => 'admin.pages.about.sections.organization_images',
+//            'icon' => 'fa fa-diagram-project',
+//            'fields' => [
+//                ContentKey::ORGANIGRAME->value,
+//                ContentKey::CARTOGRAPHIE->value,
+//            ],
+//        ],
     ];
 
     protected array $contentFields = [
@@ -96,15 +96,15 @@ class AboutUsService
         ContentKey::WHY_US_TITLE,
         ContentKey::WHY_US_TEXT,
         ContentKey::WHY_US_CARDS,
-        ContentKey::ORGANIGRAME_TITLE,
-        ContentKey::CARTOGRAPHIE_TITLE,
+//        ContentKey::ORGANIGRAME_TITLE,
+//        ContentKey::CARTOGRAPHIE_TITLE,
     ];
 
     protected array $imageFields = [
         ContentKey::ABOUT_HEADER_BG_IMG,
         ContentKey::SECTION_IMAGE,
-        ContentKey::ORGANIGRAME,
-        ContentKey::CARTOGRAPHIE,
+//        ContentKey::ORGANIGRAME,
+//        ContentKey::CARTOGRAPHIE,
     ];
 
     protected array $locales = ['fr', 'en', 'ar'];

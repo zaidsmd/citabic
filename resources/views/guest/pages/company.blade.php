@@ -118,11 +118,11 @@
         </div>
     </section>
 
-    <div class="bg-smoke2">
+    <div class="bg-white">
         <div class="container">
             <div class="video-area-1-1 space-bottom position-relative" data-sec-pos="top-half"
                  data-pos-for="#process-area2">
-                <div class="video-wrap1 style2 overflow-hidden">
+                <div class="video-wrap1 style2 overflow-hidden shadow-lg">
                     <div class="p-5 bg-white">
                         <div class="title-area mb-45">
                             <h2 class="sec-title">{{ $cp['why_us_title'] }}</h2>
@@ -149,7 +149,7 @@
         </div>
     </div>
 
-    <section class="bg-smoke2 space-bottom shape-mockup-wrap">
+    <section class="bg-smoke2 space-bottom shape-mockup-wrap d-none">
         <div class="container">
             <div class="title-area">
                 <h2 class="sec-title pb-2">{!! $cp['organigrame_title'] !!}</h2>
@@ -162,7 +162,7 @@
         </div>
     </section>
 
-    <section class="bg-smoke4 space shape-mockup-wrap">
+    <section class="bg-smoke4 space shape-mockup-wrap d-none">
         <div class="sec-bg-shape9-1 spin shape-mockup d-xxl-block d-none" style="top: 4%; right: -2%;">
             <img src="/guest/assets/img/shape/section_shape_2_1.jpg" alt="img">
         </div>
