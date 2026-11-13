@@ -58,14 +58,14 @@ class AboutUsService
                 ContentKey::WHY_US_CARDS->value,
             ],
         ],
-//        [
-//            'title_key' => 'admin.pages.about.sections.organisation',
-//            'icon' => 'fa fa-sitemap',
-//            'fields' => [
-//                ContentKey::ORGANIGRAME_TITLE->value,
-//                ContentKey::CARTOGRAPHIE_TITLE->value,
-//            ],
-//        ],
+        //        [
+        //            'title_key' => 'admin.pages.about.sections.organisation',
+        //            'icon' => 'fa fa-sitemap',
+        //            'fields' => [
+        //                ContentKey::ORGANIGRAME_TITLE->value,
+        //                ContentKey::CARTOGRAPHIE_TITLE->value,
+        //            ],
+        //        ],
     ];
 
     protected array $imageSectionsConfig = [
@@ -77,14 +77,14 @@ class AboutUsService
                 ContentKey::SECTION_IMAGE->value,
             ],
         ],
-//        [
-//            'title_key' => 'admin.pages.about.sections.organization_images',
-//            'icon' => 'fa fa-diagram-project',
-//            'fields' => [
-//                ContentKey::ORGANIGRAME->value,
-//                ContentKey::CARTOGRAPHIE->value,
-//            ],
-//        ],
+        //        [
+        //            'title_key' => 'admin.pages.about.sections.organization_images',
+        //            'icon' => 'fa fa-diagram-project',
+        //            'fields' => [
+        //                ContentKey::ORGANIGRAME->value,
+        //                ContentKey::CARTOGRAPHIE->value,
+        //            ],
+        //        ],
     ];
 
     protected array $contentFields = [
@@ -96,15 +96,15 @@ class AboutUsService
         ContentKey::WHY_US_TITLE,
         ContentKey::WHY_US_TEXT,
         ContentKey::WHY_US_CARDS,
-//        ContentKey::ORGANIGRAME_TITLE,
-//        ContentKey::CARTOGRAPHIE_TITLE,
+        //        ContentKey::ORGANIGRAME_TITLE,
+        //        ContentKey::CARTOGRAPHIE_TITLE,
     ];
 
     protected array $imageFields = [
         ContentKey::ABOUT_HEADER_BG_IMG,
         ContentKey::SECTION_IMAGE,
-//        ContentKey::ORGANIGRAME,
-//        ContentKey::CARTOGRAPHIE,
+        //        ContentKey::ORGANIGRAME,
+        //        ContentKey::CARTOGRAPHIE,
     ];
 
     protected array $locales = ['fr', 'en', 'ar'];
@@ -212,11 +212,11 @@ class AboutUsService
 
         return [
             'key' => $fieldKey,
-            'name' => $locale === 'fr' ? $fieldKey : "en[{$fieldKey}]",
+            'name' => $locale === 'fr' ? $fieldKey : "{$locale}[{$fieldKey}]",
             'label' => $label.' ('.strtoupper($locale).')',
             'value' => $locale === 'fr'
                 ? ($data[$fieldKey] ?? '')
-                : ($data['en'][$fieldKey] ?? ''),
+                : ($data[$locale][$fieldKey] ?? ''),
             'required' => $locale === 'fr' && in_array($fieldKey, $this->requiredFields, true),
             'component' => $isTextarea ? 'textarea' : 'text-input',
             'rows' => $fieldKey === ContentKey::WHY_US_CARDS->value ? 13 : 6,
@@ -244,14 +244,18 @@ class AboutUsService
 
     protected function buildTinyMceSelectors(): array
     {
-        return [
-            'textarea#about_text',
-            'textarea[id^="en_about_text"]',
-            'textarea#why_us_text',
-            'textarea[id^="en_why_us_text"]',
-            'textarea#mission_text',
-            'textarea[id^="en_mission_text"]',
-        ];
+        $selectors = [];
+
+        foreach ($this->richTextFields as $field) {
+            $selectors[] = "textarea#{$field}";
+            foreach ($this->locales as $locale) {
+                if ($locale !== 'fr') {
+                    $selectors[] = "textarea[id^=\"{$locale}_{$field}\"]";
+                }
+            }
+        }
+
+        return $selectors;
     }
 
     protected function fetchContents(): Collection
@@ -281,7 +285,7 @@ class AboutUsService
                 if ($locale === 'fr') {
                     $data[$fieldValue] = $value;
                 } else {
-                    $data['en'][$fieldValue] = $value;
+                    $data[$locale][$fieldValue] = $value;
                 }
             }
         }
@@ -302,8 +306,8 @@ class AboutUsService
         foreach ($this->imageFields as $field) {
             $fieldValue = $field->value;
             $imageGroup = $storedImages->get($fieldValue, collect());
-            $image = $imageGroup->firstWhere('language', null)
-                ?? $imageGroup->firstWhere('language', 'fr')
+            $image = $imageGroup->firstWhere('language', 'fr')
+                ?? $imageGroup->firstWhere('language', null)
                 ?? $imageGroup->first();
 
             $images[$fieldValue] = $image?->value;
@@ -314,9 +318,7 @@ class AboutUsService
 
     /**
      * Update about data.
-
      *
-
      * @param  Request  $request  Parameter.
      */
     public function updateAboutData(Request $request): void
@@ -340,12 +342,18 @@ class AboutUsService
                 );
             }
 
-            if ($request->has("en.{$fieldValue}") && ! empty($request->input("en.{$fieldValue}"))) {
-                $this->updateOrCreateContent(
-                    $fieldValue,
-                    'en',
-                    $request->input("en.{$fieldValue}")
-                );
+            foreach ($this->locales as $locale) {
+                if ($locale === 'fr') {
+                    continue;
+                }
+
+                if ($request->has("{$locale}.{$fieldValue}") && ! empty($request->input("{$locale}.{$fieldValue}"))) {
+                    $this->updateOrCreateContent(
+                        $fieldValue,
+                        $locale,
+                        $request->input("{$locale}.{$fieldValue}")
+                    );
+                }
             }
         }
     }
@@ -358,7 +366,7 @@ class AboutUsService
             if ($request->has($fieldValue) && ! empty($request->input($fieldValue))) {
                 $this->updateOrCreateContent(
                     $fieldValue,
-                    null,
+                    'fr',
                     $request->input($fieldValue)
                 );
             }
@@ -367,6 +375,8 @@ class AboutUsService
 
     protected function updateOrCreateContent(string $key, ?string $language, string $value): void
     {
+        $language = $language ?: 'fr';
+
         SectionContent::query()->updateOrCreate(
             [
                 'section' => Section::ABOUT_PAGE,
@@ -379,9 +389,7 @@ class AboutUsService
 
     /**
      * Validate update.
-
      *
-
      * @param  Request  $request  Parameter.
      */
     public function validateUpdate(Request $request): array
@@ -392,7 +400,11 @@ class AboutUsService
         foreach ($this->contentFields as $field) {
             $fieldValue = $field->value;
             $rules[$fieldValue] = 'nullable|string|max:65535';
-            $rules["en.{$fieldValue}"] = 'nullable|string|max:65535';
+            foreach ($this->locales as $locale) {
+                if ($locale !== 'fr') {
+                    $rules["{$locale}.{$fieldValue}"] = 'nullable|string|max:65535';
+                }
+            }
         }
 
         // Rules for image fields
@@ -417,7 +429,11 @@ class AboutUsService
             $fieldRules = $this->getFieldValidationRules($field);
 
             $rules[$fieldValue] = $fieldRules;
-            $rules["en.{$fieldValue}"] = $fieldRules;
+            foreach ($this->locales as $locale) {
+                if ($locale !== 'fr') {
+                    $rules["{$locale}.{$fieldValue}"] = $fieldRules;
+                }
+            }
         }
 
         // Rules for image fields
@@ -464,8 +480,13 @@ class AboutUsService
             $messages["{$fieldValue}.required"] = __('validation.required', ['attribute' => $label]);
             $messages["{$fieldValue}.max"] = __('validation.max.string', ['attribute' => $label, 'max' => ':max']);
 
-            $messages["en.{$fieldValue}.required"] = __('validation.required', ['attribute' => $label.' (EN)']);
-            $messages["en.{$fieldValue}.max"] = __('validation.max.string', ['attribute' => $label.' (EN)', 'max' => ':max']);
+            foreach ($this->locales as $locale) {
+                if ($locale !== 'fr') {
+                    $localeUpper = strtoupper($locale);
+                    $messages["{$locale}.{$fieldValue}.required"] = __('validation.required', ['attribute' => $label." ({$localeUpper})"]);
+                    $messages["{$locale}.{$fieldValue}.max"] = __('validation.max.string', ['attribute' => $label." ({$localeUpper})", 'max' => ':max']);
+                }
+            }
         }
 
         return $messages;

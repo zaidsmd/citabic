@@ -37,6 +37,7 @@ class UpdateAboutUsRequest extends FormRequest
             $fieldValue = $field->value;
             $attributes[$fieldValue] = __('admin.pages.about.'.$fieldValue).' (FR)';
             $attributes["en.{$fieldValue}"] = __('admin.pages.about.'.$fieldValue).' (EN)';
+            $attributes["ar.{$fieldValue}"] = __('admin.pages.about.'.$fieldValue).' (AR)';
         }
 
         return $attributes;
